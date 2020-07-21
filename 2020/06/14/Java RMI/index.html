@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x01 什么是Java RMI？Java RMI（Java Remote Method Invocation），即Java远程方法调用。是Java编程语言里，一种用于实现远程过程调用的应用程序编程接口。能直接传输序列化后的Java对象和分布式垃圾收集。它的实现依赖于Java虚拟机(JVM)，因此它仅支持从一个JVM到另一个JVM的调用 看到这里你知道什么是Java RMI了吗？我比较笨，反正我没">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP">
+<meta property="og:url" content="http://yoursite.com/2020/06/14/Java%20RMI/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="0x01 什么是Java RMI？Java RMI（Java Remote Method Invocation），即Java远程方法调用。是Java编程语言里，一种用于实现远程过程调用的应用程序编程接口。能直接传输序列化后的Java对象和分布式垃圾收集。它的实现依赖于Java虚拟机(JVM)，因此它仅支持从一个JVM到另一个JVM的调用 看到这里你知道什么是Java RMI了吗？我比较笨，反正我没">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200609170235235.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200609170331156.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200609170552480.png">
+<meta property="article:published_time" content="2020-06-14T05:13:00.000Z">
+<meta property="article:modified_time" content="2020-06-14T05:13:00.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="Java RMI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20200609170235235.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/06/14/JNDI/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/06/13/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/06/14/Java%20RMI/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/06/14/Java%20RMI/&text=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/06/14/Java%20RMI/&is_video=false&description=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP&body=Check out this article: http://yoursite.com/2020/06/14/Java%20RMI/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/06/14/Java%20RMI/&name=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/06/14/Java%20RMI/&t=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-什么是Java-RMI？"><span class="toc-number">1.</span> <span class="toc-text">0x01 什么是Java RMI？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-通过一个例子来理解下"><span class="toc-number">2.</span> <span class="toc-text">0x02 通过一个例子来理解下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-扩展"><span class="toc-number">3.</span> <span class="toc-text">0x03 扩展</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-06-14T05:13:00.000Z" itemprop="datePublished">2020-06-14</time>
+        
+        (Updated: <time datetime="2020-06-14T05:13:00.000Z" itemprop="dateModified">2020-06-14</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/JAVA%E5%AE%89%E5%85%A8/">JAVA安全</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Java-RMI/" rel="tag">Java RMI</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x01-什么是Java-RMI？"><a href="#0x01-什么是Java-RMI？" class="headerlink" title="0x01 什么是Java RMI？"></a>0x01 什么是Java RMI？</h2><p>Java RMI（Java Remote Method Invocation），即Java远程方法调用。是Java编程语言里，一种用于实现远程过程调用的应用程序编程接口。能直接传输序列化后的Java对象和<a href="https://links.jianshu.com/go?to=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FDistributed_Garbage_Collection" target="_blank" rel="noopener">分布式垃圾收集</a>。它的实现依赖于<a href="https://links.jianshu.com/go?to=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FJava_Virtual_Machine" target="_blank" rel="noopener">Java虚拟机</a>(JVM)，因此它仅支持从一个JVM到另一个JVM的调用</p>
+<p>看到这里你知道什么是Java RMI了吗？我比较笨，反正我没看懂。</p>
+<p>没关系，我又找了一篇博文，来看下它给出的解释：RMI，是Remote Method  Invocation（远程方法调用）的缩写，即在一个JVM中java程序调用在另一个远程JVM中运行的java程序，这个远程JVM既可以在同一台实体机上，也可以在不同的实体机上，两者之间通过网络进行通信。</p>
+<p>到这里，好像能看懂点了，RMI顾名思义-远程调用，远程指什么？调用什么？远程指的是同一台主机上不同JVM之间的远程或者两台主机上的JVM的远程，调用的是JVM上运行的程序。</p>
+<h2 id="0x02-通过一个例子来理解下"><a href="#0x02-通过一个例子来理解下" class="headerlink" title="0x02 通过一个例子来理解下"></a>0x02 通过一个例子来理解下</h2><p>RMI包括以下三个部分：</p>
+<ul>
+<li>Registry: 提供服务注册与服务获取。即Server端向Registry注册服务，比如地址、端口等一些信息，Client端从Registry获取远程对象的一些信息，如地址、端口等，然后进行远程调用。</li>
+<li>Server: 远程方法的提供者，并向Registry注册自身提供的服务</li>
+<li>Client: 远程方法的消费者，从Registry获取远程方法的相关信息并且调用</li>
+</ul>
+<p>以下例子根据参考链接改编，一个远程接口IGoods，一个实现接口的类Goods，一个注册远程对象的类PutOnSaleServer，一个客户端调用的类ShoppingClient：</p>
+<p>IGoods：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.Remote;</span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 必须继承Remote接口。</span></span><br><span class="line"><span class="comment"> * 所有参数和返回类型必须序列化(因为要网络传输)。</span></span><br><span class="line"><span class="comment"> * 任意远程对象都必须实现此接口。</span></span><br><span class="line"><span class="comment"> * 只有远程接口中指定的方法可以被调用。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IGoods</span> <span class="keyword">extends</span> <span class="title">Remote</span></span>&#123;</span><br><span class="line">    <span class="comment">// 所有方法必须抛出RemoteException</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">add</span><span class="params">(<span class="keyword">double</span> a, <span class="keyword">double</span> b)</span> <span class="keyword">throws</span> RemoteException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">subtract</span><span class="params">(<span class="keyword">double</span> a, <span class="keyword">double</span> b)</span> <span class="keyword">throws</span> RemoteException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">shopping</span><span class="params">(String person)</span> <span class="keyword">throws</span> RemoteException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Goods:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"><span class="keyword">import</span> java.rmi.server.UnicastRemoteObject;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 服务器端实现远程接口。</span></span><br><span class="line"><span class="comment"> * 必须继承UnicastRemoteObject，以允许JVM创建远程的存根/代理。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Goods</span> <span class="keyword">extends</span> <span class="title">UnicastRemoteObject</span> <span class="keyword">implements</span> <span class="title">IGoods</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> numberOfComputations;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Goods</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">        numberOfComputations = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">add</span><span class="params">(<span class="keyword">double</span> a, <span class="keyword">double</span> b)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">        numberOfComputations++;</span><br><span class="line">        System.out.println(<span class="string">"Number of computations performed so far = "</span></span><br><span class="line">            + numberOfComputations);</span><br><span class="line">        <span class="keyword">return</span> (a+b);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">subtract</span><span class="params">(<span class="keyword">double</span> a, <span class="keyword">double</span> b)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">        numberOfComputations++;</span><br><span class="line">        System.out.println(<span class="string">"Number of computations performed so far = "</span></span><br><span class="line">            + numberOfComputations);</span><br><span class="line">        <span class="keyword">return</span> (a-b);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">shopping</span><span class="params">(String person)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Number of computations performed so far = "</span></span><br><span class="line">            + numberOfComputations);</span><br><span class="line">        System.out.println(person + <span class="string">"is Shopping"</span>);</span><br><span class="line">        String a = person + <span class="string">" is shopping!"</span>;</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>PutOnSaleServer.java:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 创建IGoods类的实例并在rmiregistry中注册。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PutOnSaleServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span>  </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 注册远程对象,向客户端提供远程对象服务。</span></span><br><span class="line">            <span class="comment">// 远程对象是在远程服务上创建的，你无法确切地知道远程服务器上的对象的名称，</span></span><br><span class="line">            <span class="comment">// 但是,将远程对象注册到RMI Registry之后,</span></span><br><span class="line">            <span class="comment">// 客户端就可以通过RMI Registry请求到该远程服务对象的stub，</span></span><br><span class="line">            <span class="comment">// 利用stub代理就可以访问远程服务对象了。</span></span><br><span class="line">            IGoods goods = <span class="keyword">new</span> Goods();</span><br><span class="line">            LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">            Registry registry = LocateRegistry.getRegistry();</span><br><span class="line">            registry.bind(<span class="string">"Compute"</span>, goods);</span><br><span class="line">            System.out.println(<span class="string">"货物上架完成"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ShoppingClient.java：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShoppingClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 如果RMI Registry就在本地机器上，URL就是:rmi://localhost:1099/hello</span></span><br><span class="line">            <span class="comment">// 否则，URL就是：rmi://RMIService_IP:1099/hello</span></span><br><span class="line">            Registry registry = LocateRegistry.getRegistry(<span class="string">"localhost"</span>);</span><br><span class="line">            <span class="comment">// 从Registry中检索远程对象的存根/代理</span></span><br><span class="line">            IGoods goods = (IGoods) registry.lookup(<span class="string">"Compute"</span>);</span><br><span class="line">            <span class="comment">// 调用远程对象的方法</span></span><br><span class="line">            System.out.println(goods.shopping(<span class="string">"小陈"</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果：</p>
+<img src="/imgs/image-20200609170235235.png" alt="image-20200609170235235" style="zoom:50%;" />
+
+<img src="/imgs/image-20200609170331156.png" alt="image-20200609170331156" style="zoom:50%;" />
+
+<p>现在看完例子，可以梳理下：</p>
+<img src="/imgs/image-20200609170552480.png" alt="image-20200609170552480" style="zoom:67%;" />
+
+<p>货物-远程对象、备货员-server、货架-骨架；</p>
+<p>消费者-client、购买凭证-存根；</p>
+<p>小货仓-RMI Registry</p>
+<p>可以把Java RMI理解成地铁站的无人售货机</p>
+<p>1、备货员先将货物信息存到<strong>小货仓</strong>，保证售货机有货物</p>
+<p>2、消费者购买需要在显示屏的找到要买的物品然后进行支付，支付完成获取到了<strong>购买凭证</strong></p>
+<p>3、消费者通过购买凭证，告诉售货机我要获取某个货物，然后售货机在<strong>货架</strong>上找到目标货物推到售货口，消费者通过可以获取到货物。</p>
+<h2 id="0x03-扩展"><a href="#0x03-扩展" class="headerlink" title="0x03 扩展"></a>0x03 扩展</h2><p>RMI原理</p>
+<ol>
+<li>将可以远程调用的对象进行序列化，然后绑定到RMI Server（被调方，运行者）中作为存根（stub）</li>
+<li>RMI Client 会先去下载stub<strong>反序列化</strong>然后发起client调用，RMI 底层（RMI Interface Layer &amp; Transport Layer）会讲请求参数封装发送到RMI Server </li>
+<li>RMI Server 接收到封装的参数，传递给骨架（skeleton），由桩解析参数并且以参数调用对应的存根（stub）方法。</li>
+<li>存根方法在RMI Server执行完毕之后，返回结果将被RMI底层封装并传输给RMI Client（也就是主调方，调用者）</li>
+</ol>
+<p>这里有一点需要注意：RMI是基于序列化和反序列化的，远程对象在进行注册时，序列化作为存根，客户端调用的时候会把序列化后的对象进行反序列化再调用。</p>
+<p>参考链接：</p>
+<p><a href="https://www.jianshu.com/p/de85fad05dcb" target="_blank" rel="noopener">https://www.jianshu.com/p/de85fad05dcb</a></p>
+<p><a href="https://www.jianshu.com/p/5c6f2b6d458a" target="_blank" rel="noopener">https://www.jianshu.com/p/5c6f2b6d458a</a></p>
+<p><a href="https://segmentfault.com/a/1190000016598069" target="_blank" rel="noopener">https://segmentfault.com/a/1190000016598069</a></p>
+<p><a href="https://blog.csdn.net/qq_28081453/article/details/83279066" target="_blank" rel="noopener">https://blog.csdn.net/qq_28081453/article/details/83279066</a></p>
+<p><a href="https://www.cnblogs.com/lvyahui/p/5425507.html" target="_blank" rel="noopener">https://www.cnblogs.com/lvyahui/p/5425507.html</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-什么是Java-RMI？"><span class="toc-number">1.</span> <span class="toc-text">0x01 什么是Java RMI？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-通过一个例子来理解下"><span class="toc-number">2.</span> <span class="toc-text">0x02 通过一个例子来理解下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-扩展"><span class="toc-number">3.</span> <span class="toc-text">0x03 扩展</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/06/14/Java%20RMI/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/06/14/Java%20RMI/&text=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/06/14/Java%20RMI/&is_video=false&description=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP&body=Check out this article: http://yoursite.com/2020/06/14/Java%20RMI/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/06/14/Java%20RMI/&title=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/06/14/Java%20RMI/&name=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/06/14/Java%20RMI/&t=Java RMI（Java Remote Method Invocation)、JRMP、RMI-IIOP" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
