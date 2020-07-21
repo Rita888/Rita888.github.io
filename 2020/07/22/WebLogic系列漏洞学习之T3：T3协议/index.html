@@ -6,12 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="0x00 前言因为涉及RMI和JNDI的基础知识，推荐先阅读下： [RMI](&#x2F;2020&#x2F;06&#x2F;14&#x2F;Java RMI&#x2F;) JNDI 0x01 什么是T3协议？T3也称为丰富套接字，是BEA内部协议，功能丰富，可扩展性好。T3是多工双向和异步协议，经过高度优化，只使用一个套接字和一条线程。借助这种方法，基于Java的客户端可以根据服务器方需求使用多种RMI对象，但仍使用一个套接字和一条线程。 We">
+    <meta name="description" content="0x00 前言因为涉及RMI和JNDI的基础知识，推荐先阅读下： RMI JNDI 0x01 什么是T3协议？T3也称为丰富套接字，是BEA内部协议，功能丰富，可扩展性好。T3是多工双向和异步协议，经过高度优化，只使用一个套接字和一条线程。借助这种方法，基于Java的客户端可以根据服务器方需求使用多种RMI对象，但仍使用一个套接字和一条线程。 WebLogic T3协议指的是WebLogic的rm">
 <meta property="og:type" content="article">
 <meta property="og:title" content="WebLogic系列漏洞学习之T3：T3协议">
 <meta property="og:url" content="http://yoursite.com/2020/07/22/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/index.html">
 <meta property="og:site_name" content="R17a&#39;s blog">
-<meta property="og:description" content="0x00 前言因为涉及RMI和JNDI的基础知识，推荐先阅读下： [RMI](&#x2F;2020&#x2F;06&#x2F;14&#x2F;Java RMI&#x2F;) JNDI 0x01 什么是T3协议？T3也称为丰富套接字，是BEA内部协议，功能丰富，可扩展性好。T3是多工双向和异步协议，经过高度优化，只使用一个套接字和一条线程。借助这种方法，基于Java的客户端可以根据服务器方需求使用多种RMI对象，但仍使用一个套接字和一条线程。 We">
+<meta property="og:description" content="0x00 前言因为涉及RMI和JNDI的基础知识，推荐先阅读下： RMI JNDI 0x01 什么是T3协议？T3也称为丰富套接字，是BEA内部协议，功能丰富，可扩展性好。T3是多工双向和异步协议，经过高度优化，只使用一个套接字和一条线程。借助这种方法，基于Java的客户端可以根据服务器方需求使用多种RMI对象，但仍使用一个套接字和一条线程。 WebLogic T3协议指的是WebLogic的rm">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://yoursite.com/imgs/image-20200721155118447.png">
 <meta property="og:image" content="http://yoursite.com/imgs/image-20200721155152125.png">
@@ -175,7 +175,7 @@
 
   <div class="content" itemprop="articleBody">
     <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>因为涉及RMI和JNDI的基础知识，推荐先阅读下：</p>
-<p>[RMI](/2020/06/14/Java RMI/)</p>
+<p><a href="/2020/06/14/Java%20RMI/">RMI</a></p>
 <p><a href="/2020/06/14/JNDI/">JNDI</a></p>
 <h2 id="0x01-什么是T3协议？"><a href="#0x01-什么是T3协议？" class="headerlink" title="0x01 什么是T3协议？"></a>0x01 什么是T3协议？</h2><p>T3也称为丰富套接字，是BEA内部协议，功能丰富，可扩展性好。T3是多工双向和异步协议，经过高度优化，只使用一个套接字和一条线程。借助这种方法，基于Java的客户端可以根据服务器方需求使用多种RMI对象，但仍使用一个套接字和一条线程。</p>
 <p>WebLogic T3协议指的是WebLogic的rmi（远程方法调用）使用的T3协议。</p>
