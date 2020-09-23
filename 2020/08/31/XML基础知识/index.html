@@ -6,12 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="0x00 XML基础知识123456789101112131415&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;&lt;bookstore&gt;    &lt;book category&#x3D;&quot;CHILDREN&quot;&gt;        &lt;title&gt;Harry Potter&lt;&#x2F;title&gt;        &lt;author&gt;J">
+    <meta name="description" content="0x00 XML基础知识XML主要被设计用于传输和存储数据。 12345678910111213141516171819&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;&lt;!--这里是声明--&gt;&lt;bookstore&gt;&lt;!--根元素--&gt;    &lt;book category&#x3D;&quot;CHILDREN&quot;&gt;&lt;!--ca">
 <meta property="og:type" content="article">
 <meta property="og:title" content="XML基础知识">
 <meta property="og:url" content="http://yoursite.com/2020/08/31/XML%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html">
 <meta property="og:site_name" content="R17a&#39;s blog">
-<meta property="og:description" content="0x00 XML基础知识123456789101112131415&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;&lt;bookstore&gt;    &lt;book category&#x3D;&quot;CHILDREN&quot;&gt;        &lt;title&gt;Harry Potter&lt;&#x2F;title&gt;        &lt;author&gt;J">
+<meta property="og:description" content="0x00 XML基础知识XML主要被设计用于传输和存储数据。 12345678910111213141516171819&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;&lt;!--这里是声明--&gt;&lt;bookstore&gt;&lt;!--根元素--&gt;    &lt;book category&#x3D;&quot;CHILDREN&quot;&gt;&lt;!--ca">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://yoursite.com/imgs/image-20200831201621950.png">
 <meta property="og:image" content="http://yoursite.com/imgs/image-20200831211951566.png">
@@ -116,7 +116,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-XML基础知识"><span class="toc-number">1.</span> <span class="toc-text">0x00 XML基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-了解SOAP"><span class="toc-number">2.</span> <span class="toc-text">0x01 了解SOAP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-了解WSDL"><span class="toc-number">3.</span> <span class="toc-text">0x02 了解WSDL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WSDL绑定"><span class="toc-number">3.1.</span> <span class="toc-text">WSDL绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WSDL-UDDI"><span class="toc-number">3.2.</span> <span class="toc-text">WSDL UDDI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-XML-DTD"><span class="toc-number">4.</span> <span class="toc-text">0x03 XML DTD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-XML实体"><span class="toc-number">5.</span> <span class="toc-text">0x04 XML实体</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-XML基础知识"><span class="toc-number">1.</span> <span class="toc-text">0x00 XML基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-XML-DTD"><span class="toc-number">2.</span> <span class="toc-text">0x01 XML DTD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-DTD-实体"><span class="toc-number">3.</span> <span class="toc-text">0x02 DTD 实体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-了解SOAP"><span class="toc-number">4.</span> <span class="toc-text">0x03 了解SOAP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-了解WSDL"><span class="toc-number">5.</span> <span class="toc-text">0x04 了解WSDL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WSDL绑定"><span class="toc-number">5.1.</span> <span class="toc-text">WSDL绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WSDL-UDDI"><span class="toc-number">5.2.</span> <span class="toc-text">WSDL UDDI</span></a></li></ol></li></ol>
     </div>
   </span>
 </div>
@@ -167,11 +167,14 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="0x00-XML基础知识"><a href="#0x00-XML基础知识" class="headerlink" title="0x00 XML基础知识"></a>0x00 XML基础知识</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bookstore</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">book</span> <span class="attr">category</span>=<span class="string">"CHILDREN"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Harry Potter<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">author</span>&gt;</span>J K. Rowling<span class="tag">&lt;/<span class="name">author</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">year</span>&gt;</span>2005<span class="tag">&lt;/<span class="name">year</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">price</span>&gt;</span>29.99<span class="tag">&lt;/<span class="name">price</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">book</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">book</span> <span class="attr">category</span>=<span class="string">"WEB"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Learning XML<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">author</span>&gt;</span>Erik T. Ray<span class="tag">&lt;/<span class="name">author</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">year</span>&gt;</span>2003<span class="tag">&lt;/<span class="name">year</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">price</span>&gt;</span>39.95<span class="tag">&lt;/<span class="name">price</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">book</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bookstore</span>&gt;</span></span><br></pre></td></tr></table></figure>
+    <h2 id="0x00-XML基础知识"><a href="#0x00-XML基础知识" class="headerlink" title="0x00 XML基础知识"></a>0x00 XML基础知识</h2><p>XML主要被设计用于<strong>传输和存储数据。</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><span class="comment">&lt;!--这里是声明--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bookstore</span>&gt;</span><span class="comment">&lt;!--根元素--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">book</span> <span class="attr">category</span>=<span class="string">"CHILDREN"</span>&gt;</span><span class="comment">&lt;!--category="CHILDREN"属性--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Harry Potter<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="comment">&lt;!--&gt;PCDATA：Harry Potter。--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">author</span>&gt;</span>J K. Rowling<span class="tag">&lt;/<span class="name">author</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">year</span>&gt;</span>2005<span class="tag">&lt;/<span class="name">year</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">price</span>&gt;</span>29.99<span class="tag">&lt;/<span class="name">price</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">book</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">book</span> <span class="attr">category</span>=<span class="string">"WEB"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Learning XML<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">author</span>&gt;</span>Erik T. Ray<span class="tag">&lt;/<span class="name">author</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">year</span>&gt;</span>2003<span class="tag">&lt;/<span class="name">year</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">price</span>&gt;</span>39.95<span class="tag">&lt;/<span class="name">price</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">book</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--XML文档中的所有文本均会被解析器解析。只有 CDATA 区段中的文本会被解析器忽略。当某个 XML 元素被解析时，其标签之间的文本也会被解析，所以PCDATA就是被解析的字符数据。--&gt;</span></span><br><span class="line">    &lt;![CDATA[</span><br><span class="line">	select id from user;</span><br><span class="line">	]]&gt;</span><br><span class="line"><span class="tag">&lt;/<span class="name">bookstore</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <ol>
 <li><p>XML文档基于树结构，从根部开始扩展到树叶。如上示例，&lt;?xml..&gt;是XML声明，&lt;bookstore&gt;是根元素，book是bookstore的子元素，title、author、year、price是book的子元素</p>
 <p><img src="/imgs/image-20200831201621950.png" alt="image-20200831201621950"></p>
+</li>
+<li><p>XML主要包含：声明、元素、属性、注释、CDATA区、转义字符等</p>
 </li>
 <li><p>一个元素可以包含下级元素、文本、属性中的一种或多种。如上，title是元素book的子元素，而book元素有属性category，title也有文本harry potter</p>
 </li>
@@ -180,7 +183,72 @@
 
 </li>
 </ol>
-<h2 id="0x01-了解SOAP"><a href="#0x01-了解SOAP" class="headerlink" title="0x01 了解SOAP"></a>0x01 了解SOAP</h2><p>SOAP（Simple Object Access Protocol，简单对象访问协议）是一种简单的基于 XML 的协议，它使应用程序通过 HTTP 来交换信息，简单来说SOAP 是用于访问网络服务的协议。</p>
+<h2 id="0x01-XML-DTD"><a href="#0x01-XML-DTD" class="headerlink" title="0x01 XML DTD"></a>0x01 XML DTD</h2><p>文档类型定义（DTD）可定义合法的XML文档构建模块，可用来验证XML的合法性。它使用一系列合法的元素来定义文档的结构。</p>
+<ol>
+<li><p>DTD分为内部文档声明、外部文档声明和公共文档声明。</p>
+</li>
+<li><p>内部文档声明：DTD在XML文档内部进行声明&lt;!DOCTYPE root-element [element-declarations]&gt;</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="comment">&lt;!--DTD内部声明--&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">note</span> [</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">note</span> (<span class="meta-keyword">to</span>,<span class="meta-keyword">from</span>,<span class="meta-keyword">heading</span>,<span class="meta-keyword">body</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">to</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">from</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">heading</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">body</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">to</span>&gt;</span>Tove<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">from</span>&gt;</span>Jani<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">heading</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">heading</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span>Don't forget me this weekend<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上DTD解析：</p>
+<ul>
+<li><strong>!DOCTYPE note</strong> (第二行)定义此文档是 <strong>note</strong> 类型的文档。</li>
+<li><strong>!ELEMENT note</strong> (第三行)定义 <strong>note</strong> 元素有四个元素：”to、from、heading、body”</li>
+<li>*<em>!ELEMENT to、from、heading、body (第四-七行)定义 *</em>to、from、heading、body元素为PCDATA类型</li>
+</ul>
+</li>
+<li><p>外部文档声明：在XML文件引入一个单独的DTD文档&lt;!DOCTYPE root-element SYSTEM “filename”&gt;</p>
+<figure class="highlight plain"><figcaption><span>note.dtd</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT note (to,from,heading,body)&gt;</span><br><span class="line">&lt;!ELEMENT to (#PCDATA)&gt;</span><br><span class="line">&lt;!ELEMENT from (#PCDATA)&gt;</span><br><span class="line">&lt;!ELEMENT heading (#PCDATA)&gt;</span><br><span class="line">&lt;!ELEMENT body (#PCDATA)&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在xml引入外部note.dtd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!--外部引入DTD文档note.dtd--&gt;</span><br><span class="line">&lt;!DOCTYPE note SYSTEM &quot;note.dtd&quot;&gt;</span><br><span class="line">&lt;note&gt;</span><br><span class="line">  &lt;to&gt;Tove&lt;&#x2F;to&gt;</span><br><span class="line">  &lt;from&gt;Jani&lt;&#x2F;from&gt;</span><br><span class="line">  &lt;heading&gt;Reminder&lt;&#x2F;heading&gt;</span><br><span class="line">  &lt;body&gt;Don&#39;t forget me this weekend!&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;note&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>公共文档声明：在XML文件中引入公共的文件，其实也属于外部文档声明。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--格式--&gt;</span><br><span class="line">&lt;!DOCTYPE 根元素名称 PUBLIC “DTD标识名” “公用DTD的URI”&gt;</span><br><span class="line">&lt;!--示例--&gt;</span><br><span class="line">&lt;!DOCTYPE taglib PUBLIC &quot;-&#x2F;&#x2F;Sun Microsystems, Inc.&#x2F;&#x2F;DTD JSP Tag Library 1.2&#x2F;&#x2F;EN&quot; &quot;http:&#x2F;&#x2F;java.sun.com&#x2F;dtd&#x2F;web-jsptaglibrary_1_2.dtd&quot;&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>外部引用支持的协议</p>
+<table>
+<thead>
+<tr>
+<th>程序</th>
+<th>协议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>libxml2</td>
+<td>file<br>http<br>ftp</td>
+</tr>
+<tr>
+<td>PHP</td>
+<td>file<br>http<br>ftp<br>php<br>compress.zlib<br>compress.bzip2<br>data<br>glob<br>phar<br>更多协议如<br>https、ftps、zip、ssh2.shell、ssh2.scp等协议需要扩展支持</td>
+</tr>
+<tr>
+<td>JAVA</td>
+<td>file<br/>http<br/>ftp<br/>jar<br>netdoc<br>mailto<br>gopher *</td>
+</tr>
+<tr>
+<td>.NET</td>
+<td>file<br/>http<br/>https<br>ftp</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+<h2 id="0x02-DTD-实体"><a href="#0x02-DTD-实体" class="headerlink" title="0x02 DTD 实体"></a>0x02 DTD 实体</h2><ol>
+<li><p>实体是用于定义引用普通文本或特殊字符的快捷方式的变量</p>
+</li>
+<li><p>实体根据数据类型分为字符实体、命名实体、参数实体，另外根据数据引用方式，也分为外部实体和内部实体。所以一个实体既是参数实体也是外部实体不难理解。</p>
+</li>
+<li><p>字符实体、命名实体统一为通用实体都是以一个&amp;开始，以;结尾，通用实体可以用在XML、DTD等，示例：”&test;”。参数实体是以%开始、;结尾，参数实体只能在DTD文档中使用，示例：”%test;”</p>
+</li>
+<li><p>内部实体声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--语法--&gt;</span><br><span class="line">&lt;!ENTITY entity-name &quot;entity-value&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--示例--&gt;</span><br><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;ISO-8859-1&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE foo [</span><br><span class="line">&lt;!ELEMENT foo ANY &gt;</span><br><span class="line">&lt;!ENTITY xxe &quot;test&quot; &gt;]&gt;</span><br><span class="line"></span><br><span class="line">&lt;creds&gt;</span><br><span class="line">	&lt;user&gt;&amp;xxe;&lt;&#x2F;user&gt;</span><br><span class="line">	&lt;pass&gt;mypass&lt;&#x2F;pass&gt;</span><br><span class="line">&lt;&#x2F;creds&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>外部实体声明，可引入本地资源[SYSTEM]和公共资源[PUBLIC]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">z&lt;!--语法--&gt;</span><br><span class="line">&lt;!ENTITY entity-name SYSTEM &quot;URI&#x2F;URL&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--示例--&gt;</span><br><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;ISO-8859-1&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE foo [</span><br><span class="line">&lt;!ELEMENT foo ANY &gt;</span><br><span class="line">&lt;!ENTITY file SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd&quot;&gt;</span><br><span class="line">&lt;!ENTITY taglib PUBLIC &quot;-&#x2F;&#x2F;Sun Microsystems, Inc.&#x2F;&#x2F;DTD JSP Tag Library 1.2&#x2F;&#x2F;EN&quot; &quot;http:&#x2F;&#x2F;java.sun.com&#x2F;dtd&#x2F;web-jsptaglibrary_1_2.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;creds&gt;</span><br><span class="line">	&lt;file&gt;&amp;file;&lt;&#x2F;file&gt;</span><br><span class="line">	&lt;taglib&gt;&amp;taglib;&lt;&#x2F;taglib&gt;</span><br><span class="line">&lt;&#x2F;creds&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="0x03-了解SOAP"><a href="#0x03-了解SOAP" class="headerlink" title="0x03 了解SOAP"></a>0x03 了解SOAP</h2><p>SOAP（Simple Object Access Protocol，简单对象访问协议）是一种简单的基于 XML 的协议，它使应用程序通过 HTTP 来交换信息，简单来说SOAP 是用于访问网络服务的协议。</p>
 <p>SOAP语法：</p>
 <ul>
 <li><strong>SOAP 消息必须用 XML 来编码</strong></li>
@@ -195,52 +263,21 @@
 <p>SOAP故障处理soapenv或SOAP-ENV</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">soapenv:Envelope</span> <span class="attr">xmlns:soapenv</span>=<span class="string">"http://schemas.xmlsoap.org/soap/envelope/"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">soapenv:Header</span>&gt;</span></span><br><span class="line">  ...</span><br><span class="line">  <span class="tag">&lt;/<span class="name">soapenv:Header</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">soapenv:Body</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">soapenv:Envelope</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="0x02-了解WSDL"><a href="#0x02-了解WSDL" class="headerlink" title="0x02 了解WSDL"></a>0x02 了解WSDL</h2><p>WSDL（Web Services Description Language，网络服务描述语言）是一门<strong>基于 XML</strong> 的语言，用于描述 Web Services 以及如何对它们进行访问。</p>
+<h2 id="0x04-了解WSDL"><a href="#0x04-了解WSDL" class="headerlink" title="0x04 了解WSDL"></a>0x04 了解WSDL</h2><p>WSDL（Web Services Description Language，网络服务描述语言）是一门<strong>基于 XML</strong> 的语言，用于描述 Web Services 以及如何对它们进行访问。</p>
 <p><img src="/imgs/image-20200831211951566.png" alt="image-20200831211951566"></p>
 <h3 id="WSDL绑定"><a href="#WSDL绑定" class="headerlink" title="WSDL绑定"></a>WSDL绑定</h3><p>WSDL 绑定可为 web service 定义消息格式和协议细节。runoob提供了绑定soap的例子</p>
 <p><img src="/imgs/image-20200831212338946.png" alt="image-20200831212338946"></p>
 <p>所以其实 wsdl与soap的关系在于：wsdl绑定服务的时候可以设定使用的协议，协议可以是soap、http、smtp、ftp等任何一种传输协议，除此以外wsdl还可以绑定jms、ejb及local java等等，不过都是需要对binding和service元素做扩展的，而且需要扩展服务器的功能以支持这种扩展。</p>
 <h3 id="WSDL-UDDI"><a href="#WSDL-UDDI" class="headerlink" title="WSDL UDDI"></a>WSDL UDDI</h3><p>UDDI（“Universal Description, Discovery and Integration”，通用描述、发现与集成服务） 是一种目录服务，企业可以使用它对 Web services 进行注册和搜索。</p>
-<h2 id="0x03-XML-DTD"><a href="#0x03-XML-DTD" class="headerlink" title="0x03 XML DTD"></a>0x03 XML DTD</h2><p>文档类型定义（DTD）可定义合法的XML文档构建模块。它使用一系列合法的元素来定义文档的结构。</p>
-<ol>
-<li><p>DTD分为内部文档申明和外部文档声明。</p>
-</li>
-<li><p>内部文档声明：DTD在XML文档内部进行声明&lt;!DOCTYPE root-element [element-declarations]&gt;</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="comment">&lt;!--DTD内部声明--&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">note</span> [</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">note</span> (<span class="meta-keyword">to</span>,<span class="meta-keyword">from</span>,<span class="meta-keyword">heading</span>,<span class="meta-keyword">body</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">to</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">from</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">heading</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">body</span> (<span class="meta-keyword">#PCDATA</span>)&gt;</span></span></span><br><span class="line"><span class="meta">]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">to</span>&gt;</span>Tove<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">from</span>&gt;</span>Jani<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">heading</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">heading</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span>Don't forget me this weekend<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>以上DTD解析：</p>
-<ul>
-<li><strong>!DOCTYPE note</strong> (第二行)定义此文档是 <strong>note</strong> 类型的文档。</li>
-<li><strong>!ELEMENT note</strong> (第三行)定义 <strong>note</strong> 元素有四个元素：”to、from、heading、body”</li>
-<li><strong>!ELEMENT to、from、heading、body (第四-七行)定义 **to、from、heading、body</strong> 元素为 “#PCDATA” 类型</li>
-</ul>
-</li>
-<li><p>外部文档声明：在XML文件引入一个单独的DTD文档&lt;!DOCTYPE root-element SYSTEM “filename”&gt;</p>
-<figure class="highlight plain"><figcaption><span>note.dtd</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ELEMENT note (to,from,heading,body)&gt;</span><br><span class="line">&lt;!ELEMENT to (#PCDATA)&gt;</span><br><span class="line">&lt;!ELEMENT from (#PCDATA)&gt;</span><br><span class="line">&lt;!ELEMENT heading (#PCDATA)&gt;</span><br><span class="line">&lt;!ELEMENT body (#PCDATA)&gt;</span><br></pre></td></tr></table></figure>
-
-<p>在xml引入外部note.dtd</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="comment">&lt;!--外部引入DTD文档note.dtd--&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">note</span> <span class="meta-keyword">SYSTEM</span> <span class="meta-string">"note.dtd"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">note</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">to</span>&gt;</span>Tove<span class="tag">&lt;/<span class="name">to</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">from</span>&gt;</span>Jani<span class="tag">&lt;/<span class="name">from</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">heading</span>&gt;</span>Reminder<span class="tag">&lt;/<span class="name">heading</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>Don't forget me this weekend!<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">note</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h2 id="0x04-XML实体"><a href="#0x04-XML实体" class="headerlink" title="0x04 XML实体"></a>0x04 XML实体</h2><ol>
-<li><p>实体是对数据的引用</p>
-</li>
-<li><p>实体分为字符实体、命名实体、外部实体、参数实体。另外根据数据引用方式，也分为外部实体和内部实体</p>
-</li>
-<li><p>字符实体、命名实体、外部实体统一为通用实体都是以一个&amp;开始，以;结尾，示例：”&test;”。参数实体是以%开始、;结尾，示例：”%test;”</p>
-</li>
-<li><p>下面示例&amp;xxe；就是一个通用实体，根据前面的实体定义，xxe的数据值就是test，所以user xxe就是test</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">foo</span> [</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ELEMENT <span class="meta-keyword">foo</span> <span class="meta-keyword">ANY</span> &gt;</span></span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="meta-keyword">xxe</span> <span class="meta-string">"test"</span> &gt;</span>]&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">creds</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">pass</span>&gt;</span>mypass<span class="tag">&lt;/<span class="name">pass</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">creds</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
 <p>参考链接：</p>
 <p><a href="https://www.runoob.com/xml/" target="_blank" rel="noopener">https://www.runoob.com/xml/</a></p>
 <p><a href="https://www.runoob.com/soap/" target="_blank" rel="noopener">https://www.runoob.com/soap/</a></p>
 <p><a href="https://www.runoob.com/wsdl/" target="_blank" rel="noopener">https://www.runoob.com/wsdl/</a></p>
+<p><a href="https://www.jianshu.com/p/8cd50bb9c7bd" target="_blank" rel="noopener">https://www.jianshu.com/p/8cd50bb9c7bd</a></p>
 <p><a href="https://blog.csdn.net/vtopqx/article/details/86674184" target="_blank" rel="noopener">soap和wsdl区别说明</a></p>
 <p><a href="https://blog.csdn.net/janchin/article/details/46849209" target="_blank" rel="noopener">https://blog.csdn.net/janchin/article/details/46849209</a></p>
+<p><a href="https://www.w3school.com.cn/dtd/dtd_entities.asp" target="_blank" rel="noopener">https://www.w3school.com.cn/dtd/dtd_entities.asp</a></p>
+<p><a href="https://xz.aliyun.com/t/6887" target="_blank" rel="noopener">https://xz.aliyun.com/t/6887</a></p>
 
   </div>
 </article>
@@ -268,7 +305,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-XML基础知识"><span class="toc-number">1.</span> <span class="toc-text">0x00 XML基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-了解SOAP"><span class="toc-number">2.</span> <span class="toc-text">0x01 了解SOAP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-了解WSDL"><span class="toc-number">3.</span> <span class="toc-text">0x02 了解WSDL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WSDL绑定"><span class="toc-number">3.1.</span> <span class="toc-text">WSDL绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WSDL-UDDI"><span class="toc-number">3.2.</span> <span class="toc-text">WSDL UDDI</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-XML-DTD"><span class="toc-number">4.</span> <span class="toc-text">0x03 XML DTD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-XML实体"><span class="toc-number">5.</span> <span class="toc-text">0x04 XML实体</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-XML基础知识"><span class="toc-number">1.</span> <span class="toc-text">0x00 XML基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-XML-DTD"><span class="toc-number">2.</span> <span class="toc-text">0x01 XML DTD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-DTD-实体"><span class="toc-number">3.</span> <span class="toc-text">0x02 DTD 实体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-了解SOAP"><span class="toc-number">4.</span> <span class="toc-text">0x03 了解SOAP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-了解WSDL"><span class="toc-number">5.</span> <span class="toc-text">0x04 了解WSDL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#WSDL绑定"><span class="toc-number">5.1.</span> <span class="toc-text">WSDL绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WSDL-UDDI"><span class="toc-number">5.2.</span> <span class="toc-text">WSDL UDDI</span></a></li></ol></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">

