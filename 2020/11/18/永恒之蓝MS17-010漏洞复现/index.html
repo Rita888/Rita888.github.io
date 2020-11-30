@@ -6,12 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="环境victim：windows 2008 r2  - 192.168.116.148 attack：kali2020 - 192.168.116.11 步骤：先用nmap扫描目标是否开启smb服务 1sudo  nmap -T4 -sS -Pn -sV -p445 192.168.116.148   确认开启了445端口，可以尝试进行下一步 先在msf查找永恒之蓝相关的模块： 1search m">
+    <meta name="description" content="作为内网横向渗透&#x2F;HW刷分漏洞，还是值得看下。 环境victim：windows 2008 r2  - 192.168.116.148 attack：kali2020 - 192.168.116.11 步骤：先用nmap扫描目标是否开启smb服务 1sudo  nmap -T4 -sS -Pn -sV -p445 192.168.116.148   确认开启了445端口，可以尝试进行下一步 先在m">
 <meta property="og:type" content="article">
 <meta property="og:title" content="永恒之蓝MS17-010漏洞复现">
 <meta property="og:url" content="http://yoursite.com/2020/11/18/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9DMS17-010%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/index.html">
 <meta property="og:site_name" content="R17a&#39;s blog">
-<meta property="og:description" content="环境victim：windows 2008 r2  - 192.168.116.148 attack：kali2020 - 192.168.116.11 步骤：先用nmap扫描目标是否开启smb服务 1sudo  nmap -T4 -sS -Pn -sV -p445 192.168.116.148   确认开启了445端口，可以尝试进行下一步 先在msf查找永恒之蓝相关的模块： 1search m">
+<meta property="og:description" content="作为内网横向渗透&#x2F;HW刷分漏洞，还是值得看下。 环境victim：windows 2008 r2  - 192.168.116.148 attack：kali2020 - 192.168.116.11 步骤：先用nmap扫描目标是否开启smb服务 1sudo  nmap -T4 -sS -Pn -sV -p445 192.168.116.148   确认开启了445端口，可以尝试进行下一步 先在m">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://yoursite.com/imgs/image-20201118201450681.png">
 <meta property="og:image" content="http://yoursite.com/imgs/image-20201118201758536.png">
@@ -88,8 +88,10 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" href="/2020/11/19/metasploit%E5%AD%A6%E4%B9%A0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
-        <li><a class="icon" href="/2020/11/17/XStream-CVE-2020-26217-%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="/2020/11/18/%E5%85%B3%E4%BA%8E%E6%8C%96%E7%9F%BF%E7%9A%84%E9%82%A3%E4%BA%9B%E4%BA%8B/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -168,7 +170,8 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h4 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h4><p>victim：windows 2008 r2  - 192.168.116.148</p>
+    <p>作为内网横向渗透/HW刷分漏洞，还是值得看下。</p>
+<h4 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h4><p>victim：windows 2008 r2  - 192.168.116.148</p>
 <p>attack：kali2020 - 192.168.116.11</p>
 <h4 id="步骤："><a href="#步骤：" class="headerlink" title="步骤："></a>步骤：</h4><p>先用nmap扫描目标是否开启smb服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo  nmap -T4 -sS -Pn -sV -p445 192.168.116.148</span><br></pre></td></tr></table></figure>
