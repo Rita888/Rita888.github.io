@@ -6,12 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="撕口子1、nday RCE（常用的有Shiro、OA、fastjson、weblogic、solr等）&#x2F;0day rce 2、（弱口令登录-&gt;）注册上传头像、上传图片、上传文件等处Getshell 3、VPN&#x2F;wifi&#x2F;安全设备&#x2F;虚拟化桌面系统&#x2F;邮件服务系统直接进入内网 4、社工&#x2F;邮件钓鱼 -&gt; 员工PC做跳板进入内网 5、sql注入getshell 6、子公司&#x2F;供应链 建立通道 建立">
+    <meta name="description" content="入口权限 &#x3D;&gt; 内网搜集&#x2F;探测 &#x3D;&gt; 免杀提权&#x3D;&gt; 抓取登录凭证 &#x3D;&gt; 跨平台横向 &#x3D;&gt; 入口维持 &#x3D;&gt; 数据回传 &#x3D;&gt; 定期权限维护 撕口子信息收集：https:&#x2F;&#x2F;www.4hou.com&#x2F;posts&#x2F;n8qD 1、nday RCE（常用的有Shiro、OA、fastjson、weblogic、solr等）&#x2F;0day rce 2、（弱口令登录-&gt;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="红队思路">
 <meta property="og:url" content="http://yoursite.com/2020/10/29/%E7%BA%A2%E9%98%9F%E6%80%9D%E8%B7%AF/index.html">
 <meta property="og:site_name" content="R17a&#39;s blog">
-<meta property="og:description" content="撕口子1、nday RCE（常用的有Shiro、OA、fastjson、weblogic、solr等）&#x2F;0day rce 2、（弱口令登录-&gt;）注册上传头像、上传图片、上传文件等处Getshell 3、VPN&#x2F;wifi&#x2F;安全设备&#x2F;虚拟化桌面系统&#x2F;邮件服务系统直接进入内网 4、社工&#x2F;邮件钓鱼 -&gt; 员工PC做跳板进入内网 5、sql注入getshell 6、子公司&#x2F;供应链 建立通道 建立">
+<meta property="og:description" content="入口权限 &#x3D;&gt; 内网搜集&#x2F;探测 &#x3D;&gt; 免杀提权&#x3D;&gt; 抓取登录凭证 &#x3D;&gt; 跨平台横向 &#x3D;&gt; 入口维持 &#x3D;&gt; 数据回传 &#x3D;&gt; 定期权限维护 撕口子信息收集：https:&#x2F;&#x2F;www.4hou.com&#x2F;posts&#x2F;n8qD 1、nday RCE（常用的有Shiro、OA、fastjson、weblogic、solr等）&#x2F;0day rce 2、（弱口令登录-&gt;">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-10-29T06:35:27.000Z">
 <meta property="article:modified_time" content="2020-10-29T06:35:27.000Z">
@@ -112,7 +112,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#撕口子"><span class="toc-number">1.</span> <span class="toc-text">撕口子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#建立据点，维权"><span class="toc-number">2.</span> <span class="toc-text">建立据点，维权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内网横向渗透-拿分重点"><span class="toc-number">3.</span> <span class="toc-text">内网横向渗透-拿分重点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#"><span class="toc-number">4.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#其它值得参考的思路文章（更新于12-27）："><span class="toc-number">5.</span> <span class="toc-text">其它值得参考的思路文章（更新于12.27）：</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#撕口子"><span class="toc-number">1.</span> <span class="toc-text">撕口子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#建立据点，维权"><span class="toc-number">2.</span> <span class="toc-text">建立据点，维权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内网横向渗透-拿分重点"><span class="toc-number">3.</span> <span class="toc-text">内网横向渗透-拿分重点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#其它值得参考的思路文章（更新于12-27）："><span class="toc-number">4.</span> <span class="toc-text">其它值得参考的思路文章（更新于12.27）：</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -163,7 +163,9 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h4 id="撕口子"><a href="#撕口子" class="headerlink" title="撕口子"></a>撕口子</h4><p>1、nday RCE（常用的有Shiro、OA、fastjson、weblogic、solr等）/0day rce</p>
+    <p>入口权限 =&gt; 内网搜集/探测 =&gt; 免杀提权=&gt; 抓取登录凭证 =&gt; 跨平台横向 =&gt; 入口维持 =&gt; 数据回传 =&gt; 定期权限维护</p>
+<h4 id="撕口子"><a href="#撕口子" class="headerlink" title="撕口子"></a>撕口子</h4><p>信息收集：<a href="https://www.4hou.com/posts/n8qD" target="_blank" rel="noopener">https://www.4hou.com/posts/n8qD</a></p>
+<p>1、nday RCE（常用的有Shiro、OA、fastjson、weblogic、solr等）/0day rce</p>
 <p>2、（弱口令登录-&gt;）注册上传头像、上传图片、上传文件等处Getshell</p>
 <p>3、VPN/wifi/安全设备/虚拟化桌面系统/邮件服务系统直接进入内网</p>
 <p>4、社工/邮件钓鱼 -&gt; 员工PC做跳板进入内网</p>
@@ -177,7 +179,7 @@
 <p>2、寻找域控、寻找核心生产业务、堡垒机</p>
 <p>3、MS17-010、CVE-2020-1742 windows拿权限利器</p>
 <p>4、复用一套密码</p>
-<h4 id=""><a href="#" class="headerlink" title=""></a></h4><h4 id="其它值得参考的思路文章（更新于12-27）："><a href="#其它值得参考的思路文章（更新于12-27）：" class="headerlink" title="其它值得参考的思路文章（更新于12.27）："></a>其它值得参考的思路文章（更新于12.27）：</h4><p><a href="https://www.freebuf.com/articles/network/256580.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/network/256580.html</a></p>
+<h4 id="其它值得参考的思路文章（更新于12-27）："><a href="#其它值得参考的思路文章（更新于12-27）：" class="headerlink" title="其它值得参考的思路文章（更新于12.27）："></a>其它值得参考的思路文章（更新于12.27）：</h4><p><a href="https://www.freebuf.com/articles/network/256580.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/network/256580.html</a></p>
 <p>奇安信蓝队视角下的防御体系突破</p>
 
   </div>
@@ -208,7 +210,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#撕口子"><span class="toc-number">1.</span> <span class="toc-text">撕口子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#建立据点，维权"><span class="toc-number">2.</span> <span class="toc-text">建立据点，维权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内网横向渗透-拿分重点"><span class="toc-number">3.</span> <span class="toc-text">内网横向渗透-拿分重点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#"><span class="toc-number">4.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#其它值得参考的思路文章（更新于12-27）："><span class="toc-number">5.</span> <span class="toc-text">其它值得参考的思路文章（更新于12.27）：</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#撕口子"><span class="toc-number">1.</span> <span class="toc-text">撕口子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#建立据点，维权"><span class="toc-number">2.</span> <span class="toc-text">建立据点，维权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内网横向渗透-拿分重点"><span class="toc-number">3.</span> <span class="toc-text">内网横向渗透-拿分重点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#其它值得参考的思路文章（更新于12-27）："><span class="toc-number">4.</span> <span class="toc-text">其它值得参考的思路文章（更新于12.27）：</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">

