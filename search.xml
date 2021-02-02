@@ -912,11 +912,11 @@
             
             <tag> WebLogic </tag>
             
+            <tag> T3 </tag>
+            
             <tag> CVE-2020-2883 </tag>
             
             <tag> CVE-2020-2555 </tag>
-            
-            <tag> T3 </tag>
             
         </tags>
       
@@ -947,9 +947,9 @@
             
             <tag> WebLogic </tag>
             
-            <tag> T3 </tag>
-            
             <tag> CVE-2015-4852 </tag>
+            
+            <tag> T3 </tag>
             
         </tags>
       
