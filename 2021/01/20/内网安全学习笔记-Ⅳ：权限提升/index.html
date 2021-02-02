@@ -89,6 +89,8 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" href="/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
         
         <li><a class="icon" href="/2021/01/20/%E6%9D%83%E9%99%90%E7%BB%B4%E6%8C%81%EF%BC%9AWindows%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E5%88%9B%E5%BB%BA%E9%9A%90%E8%97%8F%E5%B8%90%E5%8F%B7/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
@@ -382,6 +384,33 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#2.02 to 5.21版本 用交互模式执行shell命令</span></span><br><span class="line">sudo nmap --interactive		</span><br><span class="line">nmap&gt; !sh</span><br></pre></td></tr></table></figure>
 
 <h3 id="8、Docker逃逸"><a href="#8、Docker逃逸" class="headerlink" title="8、Docker逃逸"></a>8、Docker逃逸</h3><p>参考：<a href="https://www.freebuf.com/articles/system/170783.html，https://blog.csdn.net/qq_41874930/article/details/109216506，https://www.cnblogs.com/xiaozi/p/13423853.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/system/170783.html，https://blog.csdn.net/qq_41874930/article/details/109216506，https://www.cnblogs.com/xiaozi/p/13423853.html</a></p>
+<p>判断是否在docker环境里：<code>ls -lah /.dockerenv</code></p>
+<p>主要有以下几种提权方式：</p>
+<p>配置不当引起的逃逸：</p>
+<ul>
+<li><p>Docker Remote API 未授权访问</p>
+</li>
+<li><p>docker.sock 挂载到容器内部</p>
+</li>
+<li><p>docker 高危启动参数</p>
+</li>
+<li><ul>
+<li>privileged 特权模式</li>
+<li>挂载敏感目录</li>
+<li>相关启动参数存在的安全问题</li>
+</ul>
+</li>
+</ul>
+<p>Docker 软件设计引起的逃逸：</p>
+<ul>
+<li>Shocker攻击</li>
+<li>runC容器逃逸漏洞(CVE-2019-5736)</li>
+<li>Docker cp 命令(CVE-2019-14271)</li>
+</ul>
+<p>内核漏洞引起的逃逸：</p>
+<ul>
+<li>脏牛漏洞（dirtycow-docker-vdso）</li>
+</ul>
 <h2 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h2><p><a href="https://yoga7xm.top/2019/04/09/IPentest-admin/#Windows-Hash%E8%8E%B7%E5%8F%96" target="_blank" rel="noopener">https://yoga7xm.top/2019/04/09/IPentest-admin/#Windows-Hash%E8%8E%B7%E5%8F%96</a></p>
 <p><a href="https://wiki.wgpsec.org/knowledge/hw/privilege.html#%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87" target="_blank" rel="noopener">https://wiki.wgpsec.org/knowledge/hw/privilege.html#%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87</a></p>
 <p><a href="https://www.freebuf.com/articles/system/254836.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/system/254836.html</a></p>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="以下是对Windows注册表学习的记录，内容多来自参考链接，这里仅作学习记录和日后查询。 一、理解注册表 定义及作用 注册表（Registry，繁体中文版Windows操作系统称之为登录档）是Microsoft Windows中的一个重要的数据库，用于存储系统和应用程序的设置信息。 注册表是 Windows操作系统中的一个核心数据库，其中存放着各种参数，直接控制着 Windows的启动、 硬件驱动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows注册表学习">
+<meta property="og:url" content="http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="以下是对Windows注册表学习的记录，内容多来自参考链接，这里仅作学习记录和日后查询。 一、理解注册表 定义及作用 注册表（Registry，繁体中文版Windows操作系统称之为登录档）是Microsoft Windows中的一个重要的数据库，用于存储系统和应用程序的设置信息。 注册表是 Windows操作系统中的一个核心数据库，其中存放着各种参数，直接控制着 Windows的启动、 硬件驱动">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210201145405641.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210201152118963.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210201153925476.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210201160101343.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210201162424093.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210201161842280.png">
+<meta property="article:published_time" content="2021-02-01T01:26:35.000Z">
+<meta property="article:modified_time" content="2021-02-01T01:26:35.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="注册表">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20210201145405641.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Windows注册表学习</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2021/02/01/Linux-sudo%E6%8F%90%E6%9D%83-CVE-2021-3156%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2021/01/20/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A3%EF%BC%9A%E6%9D%83%E9%99%90%E6%8F%90%E5%8D%87/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&text=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&is_video=false&description=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Windows注册表学习&body=Check out this article: http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&name=Windows注册表学习&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&t=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、理解注册表"><span class="toc-number">1.</span> <span class="toc-text">一、理解注册表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义及作用"><span class="toc-number">1.1.</span> <span class="toc-text">定义及作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据库结构"><span class="toc-number">1.2.</span> <span class="toc-text">数据库结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、注册表的增删改查"><span class="toc-number">2.</span> <span class="toc-text">二、注册表的增删改查</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#打开注册表图形界面"><span class="toc-number">2.0.1.</span> <span class="toc-text">打开注册表图形界面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#操作命令："><span class="toc-number">2.0.2.</span> <span class="toc-text">操作命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#权限设置："><span class="toc-number">2.0.3.</span> <span class="toc-text">权限设置：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询注册表项："><span class="toc-number">2.0.4.</span> <span class="toc-text">查询注册表项：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#增加或修改-更新注册表项："><span class="toc-number">2.0.5.</span> <span class="toc-text">增加或修改&#x2F;更新注册表项：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#删除注册表项："><span class="toc-number">2.0.6.</span> <span class="toc-text">删除注册表项：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#导入导出注册表项："><span class="toc-number">2.0.7.</span> <span class="toc-text">导入导出注册表项：</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Windows注册表学习
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-02-01T01:26:35.000Z" itemprop="datePublished">2021-02-01</time>
+        
+        (Updated: <time datetime="2021-02-01T01:26:35.000Z" itemprop="dateModified">2021-02-01</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Windows/">Windows</a> › <a class="category-link" href="/categories/Windows/%E6%B3%A8%E5%86%8C%E8%A1%A8/">注册表</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/%E6%B3%A8%E5%86%8C%E8%A1%A8/" rel="tag">注册表</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>以下是对Windows注册表学习的记录，内容多来自参考链接，这里仅作学习记录和日后查询。</p>
+<h2 id="一、理解注册表"><a href="#一、理解注册表" class="headerlink" title="一、理解注册表"></a>一、理解注册表</h2><p><img src="/imgs/image-20210201145405641.png" alt="image-20210201145405641"></p>
+<h3 id="定义及作用"><a href="#定义及作用" class="headerlink" title="定义及作用"></a>定义及作用</h3><blockquote>
+<p>注册表（Registry，繁体中文版Windows操作系统称之为登录档）是Microsoft Windows中的一个重要的<strong>数据库</strong>，用于存储系统和应用程序的设置信息。</p>
+<p>注册表是 Windows操作系统中的一个核心数据库，其中存放着各种参数，直接控制着 Windows的启动、 硬件驱动程序的装载以及一些Windows应用程序的运行，从而在整个系统中起着核心作用。这些作用包括了软、硬件的相关配置和状态信息，比如注册表中保存有应用程序和资源管理器外壳的初始条件、首选项和卸载数据等，联网计算机的整个系统的设置和各种许可，文件扩展名与应用程序的关联， 硬件部件的描述、状态和属性，性能记录和其他底层的系统状态信息，以及其他数据等。</p>
+</blockquote>
+<h3 id="数据库结构"><a href="#数据库结构" class="headerlink" title="数据库结构"></a>数据库结构</h3><p>根据定义可以看出注册表就是一个数据库，那么肯定是有数据结构、类型和存储方式的。</p>
+<p><strong>数据结构:</strong></p>
+<blockquote>
+<p>注册表由键（key，或称“项”）、子键（subkey，子项）和值项（value）构成。</p>
+<p>一个键就是树状数据结构中的一个节点，而子键就是这个节点的子节点，子键也是键。</p>
+<p>一个值项则是一个键的一条<strong>属性</strong>，由名称（name）、<strong>数据类型（datatype）</strong>以及数据（data）组成。</p>
+<p>一个键可以有一个或多个值，每个值的名称各不相同，如果一个值的名称为空，则该值为该键的默认值。</p>
+</blockquote>
+<p>根据上面的理解，那么下图Account可以是一个键，Users是Account的子键，而右侧则是值项。</p>
+<p><img src="/imgs/image-20210201152118963.png" alt="image-20210201152118963"></p>
+<p>注册表的<strong>数据类型</strong>常用的有以下五种：</p>
+<table>
+<thead>
+<tr>
+<th align="left">显示类型</th>
+<th align="left">数据类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">REG_SZ</td>
+<td align="left">字符串</td>
+<td align="left">文本字符串</td>
+</tr>
+<tr>
+<td align="left">REG_BINARY</td>
+<td align="left">二进制数</td>
+<td align="left">不定长度的二进制值，以十六进制显示</td>
+</tr>
+<tr>
+<td align="left">REG_DWORD</td>
+<td align="left">双字</td>
+<td align="left">一个 32 位的二进制值，显示为 8 位的十六进制值</td>
+</tr>
+<tr>
+<td align="left">REG_MULTI_SZ</td>
+<td align="left">多字符串</td>
+<td align="left">含有多个文本值的字符串，此名来源于字符串间用 nul 分隔、结尾两个 nul</td>
+</tr>
+<tr>
+<td align="left">REG_EXPAND_SZ</td>
+<td align="left">可扩充字符串</td>
+<td align="left">含有环境变量的字符串</td>
+</tr>
+</tbody></table>
+<p>注册表的<strong>5大根键</strong>：</p>
+<p>注册表有五个一级分支，也就是根键：</p>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th>简称</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">HKEY_CLASSES_ROOT</td>
+<td>HKCR</td>
+<td align="left">存储Windows可识别的文件类型的详细列表，以及相关联的程序。</td>
+</tr>
+<tr>
+<td align="left">HKEY_CURRENT_USER</td>
+<td>HKCU</td>
+<td align="left">存储当前用户设置的信息。</td>
+</tr>
+<tr>
+<td align="left">HKEY_LOCAL_MACHINE</td>
+<td>HKLM</td>
+<td align="left">包括安装在计算机上的硬件和软件的信息。</td>
+</tr>
+<tr>
+<td align="left">HKEY_USERS</td>
+<td>HKU</td>
+<td align="left">包含使用计算机的用户的信息。</td>
+</tr>
+<tr>
+<td align="left">HKEY_CURRENT_CONFIG</td>
+<td>HKCC</td>
+<td align="left">这个分支包含计算机当前的硬件配置信息。</td>
+</tr>
+</tbody></table>
+<p><strong>存储方式：</strong></p>
+<p>在XP及以后注册表都存放于C:\WINDOWS\SYSTEM32\CONFIG。</p>
+<p><img src="/imgs/image-20210201153925476.png" alt="image-20210201153925476"></p>
+<p>在WIN NT操作系统下，计算机配置和缺省用户设置的注册表数据在Win NT中被保存在下面这五个文件中：<br>DEFAULT，SAM，SECURITY，SOFTWARE，SYSTEM，NTUSER.DAT。</p>
+<p>配置单元文件：</p>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="left">注册表分支</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">SYSTEM</td>
+<td align="left">HKEY_LOCAL_MACHINE\SYSTEM</td>
+<td align="left">存储计算机硬件和系统的信息</td>
+</tr>
+<tr>
+<td align="left">NTUSER.DAT</td>
+<td align="left">HKEY_CURRENT_USER</td>
+<td align="left">存储用户参数选择的信息（此文件放置于用户个人目录，和其他注册表文件是分开的）</td>
+</tr>
+<tr>
+<td align="left">SAM</td>
+<td align="left">HKEY_LOCAL_MACHINE\SAM</td>
+<td align="left">用户及密码的数据库</td>
+</tr>
+<tr>
+<td align="left">SECURITY</td>
+<td align="left">HKEY_LOCAL_MACHINE\SECURITY</td>
+<td align="left">安全性设置信息</td>
+</tr>
+<tr>
+<td align="left">SOFTWARE</td>
+<td align="left">HKEY_LOCAL_MACHINE\SOFTWARE</td>
+<td align="left">安装的软件信息</td>
+</tr>
+<tr>
+<td align="left">DEFAULT</td>
+<td align="left">HKEY_USERS\DEFAULT</td>
+<td align="left">缺省启动用户的信息</td>
+</tr>
+<tr>
+<td align="left">USERDIFF</td>
+<td align="left">HKEY_USERS</td>
+<td align="left">管理员对用户强行进行的设置</td>
+</tr>
+</tbody></table>
+<h2 id="二、注册表的增删改查"><a href="#二、注册表的增删改查" class="headerlink" title="二、注册表的增删改查"></a>二、注册表的增删改查</h2><p>图形界面操作注册表比较简单，不在这里赘述，主要记录下命令行操作，在命令行下操作一般需要以管理员权限打开CMD。</p>
+<h4 id="打开注册表图形界面"><a href="#打开注册表图形界面" class="headerlink" title="打开注册表图形界面"></a>打开注册表图形界面</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">regedit</span><br></pre></td></tr></table></figure>
+
+<h4 id="操作命令："><a href="#操作命令：" class="headerlink" title="操作命令："></a>操作命令：</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&gt; reg -h</span><br><span class="line"></span><br><span class="line">REG QUERY /?</span><br><span class="line">REG ADD /?</span><br><span class="line">REG DELETE /?</span><br><span class="line">REG <span class="built_in">COPY</span> /?</span><br><span class="line">REG SAVE /? </span><br><span class="line">REG <span class="built_in">RESTORE</span> /?</span><br><span class="line">REG LOAD /?</span><br><span class="line">REG UNLOAD /?</span><br><span class="line">REG COMPARE /?</span><br><span class="line">REG EXPORT /?</span><br><span class="line">REG IMPORT /?</span><br><span class="line">REG FLAGS /?</span><br></pre></td></tr></table></figure>
+
+<h4 id="权限设置："><a href="#权限设置：" class="headerlink" title="权限设置："></a>权限设置：</h4><p>为用户赋予相应权限，可以参考<a href="https://blog.csdn.net/weixin_33826268/article/details/92316569" target="_blank" rel="noopener">Regini修改注册表权限命令</a>：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># [<span class="number">1</span> <span class="number">8</span> <span class="number">17</span>]表示赋予 administrator、everyone、system分别是完全控制、只读、完全控制权限</span><br><span class="line"><span class="built_in">echo</span> HKLM\SAM\SAM\Domains\Account\Users [<span class="number">1</span> <span class="number">8</span> <span class="number">17</span>] &gt;regini.ini</span><br><span class="line">regini regini.ini</span><br></pre></td></tr></table></figure>
+
+<h4 id="查询注册表项："><a href="#查询注册表项：" class="headerlink" title="查询注册表项："></a>查询注册表项：</h4><p>REG QUERY KeyName [/v [ValueName] | /ve] [/s]<br>          [/f Data [/k] [/d] [/c] [/e]] [/t Type] [/z] [/se Separator]<br>          [/reg:32 | /reg:64]</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 示例：查询administrator用户 注册表项</span><br><span class="line">reg query HKLM\SAM\SAM\Domains\Account\Users\Names\administrator /ve</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210201160101343.png" alt="image-20210201160101343"></p>
+<h4 id="增加或修改-更新注册表项："><a href="#增加或修改-更新注册表项：" class="headerlink" title="增加或修改/更新注册表项："></a>增加或修改/更新注册表项：</h4><p>REG ADD KeyName [/v ValueName | /ve] [/t Type] [/s Separator] [/d Data] [/f]<br>        [/reg:32 | /reg:64]</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 添加注册表项</span><br><span class="line">reg add hkcu\test</span><br><span class="line"># 示例：创建一个注册表项test，并且添加一个值名称为"hello"，类型为"REG_SZ"，数据为"hello! this is test!"</span><br><span class="line">reg add hkcu\test /v hello /t REG_SZ /d "hello! this is test!"</span><br><span class="line"># 示例：修改注册表项的某个值项的数据</span><br><span class="line">reg add hkcu\test /v hello /t REG_SZ /d "hello! this is test222!"</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210201162424093.png" alt="image-20210201162424093"></p>
+<h4 id="删除注册表项："><a href="#删除注册表项：" class="headerlink" title="删除注册表项："></a>删除注册表项：</h4><p>REG DELETE KeyName [/v ValueName | /ve | /va] [/f] [/reg:32 | /reg:64]</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 删除注册表删除hkcu\test下刚才创建的"hello"值</span><br><span class="line">reg delete hkcu\test /v hello /f</span><br><span class="line"># 删除注册表项</span><br><span class="line">reg delete hkcu\test /f</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210201161842280.png" alt="image-20210201161842280"></p>
+<h4 id="导入导出注册表项："><a href="#导入导出注册表项：" class="headerlink" title="导入导出注册表项："></a>导入导出注册表项：</h4><p>可以将注册表导出修改，删除原来的再导入</p>
+<p>导出注册表</p>
+<p>REG EXPORT KeyName FileName [/y] [/reg:32 | /reg:64]</p>
+<p>  Keyname    ROOTKEY[\SubKey] (只是本地机器)。<br>    ROOTKEY  [ HKLM | HKCU | HKCR | HKU | HKCC ]<br>    SubKey   所选 ROOTKEY 下的注册表项的全名。</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 导出到本地</span><br><span class="line">reg export HKLM\SAM\SAM\Domains\Account\Users\Names\administrator C:\test.reg</span><br></pre></td></tr></table></figure>
+
+<p>导入注册表</p>
+<p>REG IMPORT FileName[/reg:32 | /reg:64]</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg import C:\test.reg</span><br></pre></td></tr></table></figure>
+
+<p>参考链接：</p>
+<p><a href="https://blog.csdn.net/haiross/article/details/45890901" target="_blank" rel="noopener">https://blog.csdn.net/haiross/article/details/45890901</a></p>
+<p><a href="https://www.qingsword.com/qing/163.html" target="_blank" rel="noopener">https://www.qingsword.com/qing/163.html</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、理解注册表"><span class="toc-number">1.</span> <span class="toc-text">一、理解注册表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义及作用"><span class="toc-number">1.1.</span> <span class="toc-text">定义及作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据库结构"><span class="toc-number">1.2.</span> <span class="toc-text">数据库结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、注册表的增删改查"><span class="toc-number">2.</span> <span class="toc-text">二、注册表的增删改查</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#打开注册表图形界面"><span class="toc-number">2.0.1.</span> <span class="toc-text">打开注册表图形界面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#操作命令："><span class="toc-number">2.0.2.</span> <span class="toc-text">操作命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#权限设置："><span class="toc-number">2.0.3.</span> <span class="toc-text">权限设置：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询注册表项："><span class="toc-number">2.0.4.</span> <span class="toc-text">查询注册表项：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#增加或修改-更新注册表项："><span class="toc-number">2.0.5.</span> <span class="toc-text">增加或修改&#x2F;更新注册表项：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#删除注册表项："><span class="toc-number">2.0.6.</span> <span class="toc-text">删除注册表项：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#导入导出注册表项："><span class="toc-number">2.0.7.</span> <span class="toc-text">导入导出注册表项：</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&text=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&is_video=false&description=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Windows注册表学习&body=Check out this article: http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&title=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&name=Windows注册表学习&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/02/01/Windows%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%AD%A6%E4%B9%A0/&t=Windows注册表学习" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
