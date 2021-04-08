@@ -207,14 +207,14 @@
 <p>merge源码逻辑：</p>
 <ol>
 <li>根据chunkcount分片数检查所有分片.part是否都存在</li>
-<li>如果所有文件分片都上传完毕，开始合并：从0到chunkcount分片数，把所有.part文件进行合并，写入文件，位置为destFile，由于<code>$destFile = @fopen($uploadPath, &quot;wb&quot;)</code>而<code>$uploadPath = $filePath</code>并且<code>$filePath = $this-&gt;chunkDir . DS . $chunkid</code>，因此$destFile就是POST传入的chunkid值，因此chunkid如果是包含路径的文件名的话，就可以指定文件存放位置。chunkDir根据源码知道是RUNTIEM_PATH[即runtime]+chunks，其实就是fastadmin项目目录的runtime/chunks，DS是DIRECTORY_SEPARATOR，查了下DIRECTORY_SEPARATOR就是显示系统分隔符的命令 通俗讲就是转换适合系统的文件分隔符，所以如果想让webshell放置在<a href="http://ip/webshell.php，构造chunkDir就可以用`../../public/webshell.php`来达成目的。" target="_blank" rel="noopener">http://ip/webshell.php，构造chunkDir就可以用`../../public/webshell.php`来达成目的。</a></li>
+<li>如果所有文件分片都上传完毕，开始合并：从0到chunkcount分片数，把所有.part文件进行合并，写入文件，位置为destFile，由于<code>$destFile = @fopen($uploadPath, &quot;wb&quot;)</code>而<code>$uploadPath = $filePath</code>并且<code>$filePath = $this-&gt;chunkDir . DS . $chunkid</code>，因此$destFile就是POST传入的chunkid值，因此chunkid如果是包含路径的文件名的话，就可以指定文件存放位置。chunkDir根据源码知道是RUNTIEM_PATH[即runtime]+chunks，其实就是fastadmin项目目录的runtime/chunks，DS是DIRECTORY_SEPARATOR，查了下DIRECTORY_SEPARATOR就是显示系统分隔符的命令 通俗讲就是转换适合系统的文件分隔符，所以如果想让webshell放置在<a href="http://ip/webshell.php" target="_blank" rel="noopener">http://ip/webshell.php</a> ，构造chunkDir就可以用<code>../../public/webshell.php</code>来达成目的。</li>
 </ol>
 <p><img src="/imgs/image-20210408094404668.png" alt="image-20210408094404668"></p>
 <p><img src="/imgs/image-20210408094640492.png" alt="image-20210408094640492"></p>
 <h4 id="4、梳理漏洞信息"><a href="#4、梳理漏洞信息" class="headerlink" title="4、梳理漏洞信息"></a>4、梳理漏洞信息</h4><p>根据上面代码逻辑梳理</p>
 <ol>
 <li>post上传，需要chunkid、action、chunkindex、chunkcount、filename，其中chunkid是可包含存放路径的文件名，action属于文件操作（merge是合并、clean是删除冗余，其它情况就是上传分片）、chunkindex是分片位置，chunkcount是分片数，filename是文件名；另外文件类型需要是application/octet-stream</li>
-<li>指定文件合并的话<code>action=merge&amp;chunkid=../../webshell.php&amp;chunkindex=0&amp;chunkcount=1&amp;filename=webshell.php-0.part</code>就可以达到合并的目的</li>
+<li>指定文件合并的话<code>action=merge&amp;chunkid=../../public/webshell.php&amp;chunkindex=0&amp;chunkcount=1&amp;filename=webshell.php-0.part</code>就可以达到合并的目的</li>
 </ol>
 <h3 id="三、搭建漏洞环境"><a href="#三、搭建漏洞环境" class="headerlink" title="三、搭建漏洞环境"></a>三、搭建漏洞环境</h3><h4 id="1、下载Fastadmin：V1-2-0-20201001-beta"><a href="#1、下载Fastadmin：V1-2-0-20201001-beta" class="headerlink" title="1、下载Fastadmin：V1.2.0.20201001_beta"></a>1、下载Fastadmin：<a href="https://www.fastadmin.net/download/full.html?version=1.2.0.20201001_beta" target="_blank" rel="noopener">V1.2.0.20201001_beta</a></h4><h4 id="2、搭建php-mysql-nginx环境"><a href="#2、搭建php-mysql-nginx环境" class="headerlink" title="2、搭建php+mysql+nginx环境"></a>2、搭建php+mysql+nginx环境</h4><p>使用docker-phper搭建，搭建步骤参考：<a href="https://ask.fastadmin.net/article/12492.html" target="_blank" rel="noopener">docker 一键部署fastadmin</a>，默认mysql密码是root/123456</p>
 <h4 id="3、问题解决："><a href="#3、问题解决：" class="headerlink" title="3、问题解决："></a>3、问题解决：</h4><p>搭建环境遇到了很多问题，遇到的问题不少，基本通过下面几个链接可以解决：</p>
