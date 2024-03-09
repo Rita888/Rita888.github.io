@@ -6,7 +6,7 @@ const SkillsAndEducations = () => {
   // const allTabs = ['Skills', 'Educations', 'Certifications']
   const tabInfo = {
     'Skills': ['Ecology', 'Mobile App Development', 'Electrical Designing'],
-    'Educations': ['University of California, Santa Cruz'],
+    'Educations': ['University College London'],
     'Professional Memberships': ['Landscape Institute'] ['Institute of Environment']
   }
 
