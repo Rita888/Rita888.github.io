@@ -5,9 +5,9 @@ const SkillsAndEducations = () => {
 
   // const allTabs = ['Skills', 'Educations', 'Certifications']
   const tabInfo = {
-    'Skills': ['Machine Learning', 'Mobile App Development', 'Electrical Designing'],
+    'Skills': ['Ecology', 'Mobile App Development', 'Electrical Designing'],
     'Educations': ['University of California, Santa Cruz'],
-    'Certifications': ['Google Professional Cloud Developer']
+    'Professional Memberships': ['Landscape Institute'] ['Institute of Environment']
   }
 
   const renderRespectiveTabBody = () => { 
