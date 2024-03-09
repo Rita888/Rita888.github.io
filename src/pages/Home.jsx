@@ -32,9 +32,9 @@ const Home = () => {
         <div className="mainArea">
           <div className="textContent">
             <div className="title">Hello, I&apos;m</div>
-            <div className="title">Margarita Margarita</div>
+            <div className="title">Margarita Smoldareva</div>
             <div className="otherText">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
+              Welcome to my World.
             </div>
             <Link
               to="/files/cv.txt"
@@ -68,8 +68,8 @@ const Home = () => {
           <div className="textArea">
             <div className="title">About Me</div>
             <div className="bodyText">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
+              I am an ecologist based in London, South-East, covering all the local counties. I trade under Bee.Wise.Eco as a sole trader. 
+              
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
             </div>
             <SkillsAndEducations />
@@ -104,8 +104,8 @@ const Home = () => {
             I&apos;m currently looking for new opportunities, my inbox is always open. Whether you have a question or just want to say hi, I&apos;ll try my best to get back to you!
           </div>
           <div className="contactInfoArea">
-            <a href="mailto:margarita@gmail.com" className="contactLink">margarita@gmail.com</a>
-            <a href="tel:+9779876543210" className="contactLink">+977 9876543210</a>
+            <a href="mailto:margarita@gmail.com" className="contactLink">rita@beewise.eco</a>
+            <a href="tel:+9779876543210" className="contactLink">+447832329687</a>
           </div>
           <div className="socialIconsArea">
             <a href="https://facebook.com" target="_blank" rel="noreferrer">
