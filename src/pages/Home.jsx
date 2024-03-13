@@ -31,7 +31,7 @@ const Home = () => {
       <div className="landingContainer">
         <div className="mainArea">
           <div className="textContent">
-            <div className="title">Hello, I&apos;m</div>
+            <div className="title">Hello, I'm</div>
             <div className="title">Margarita Smoldareva</div>
             <div className="otherText">
               Welcome to my World.
@@ -69,8 +69,6 @@ const Home = () => {
             <div className="title">About Me</div>
             <div className="bodyText">
               I am an ecologist based in London, South-East, covering all the local counties. I trade under Bee.Wise.Eco as a sole trader. 
-              
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
             </div>
             <SkillsAndEducations />
           </div>
