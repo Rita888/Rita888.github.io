@@ -1,5 +1,5 @@
 import Layout from "../layout/layout";
-import avatar from '../assets/images/hero-image.png'
+import avatar from '../assets/images/Rita-Headshot.png'
 import aboutMeImage from '../assets/images/aboutMeNature.jpg'
 import SkillsAndEducations from "../components/SkillsAndEducations";
 import blogData from "../data/blogs.json"
@@ -37,7 +37,7 @@ const Home = () => {
               Welcome to my World.
             </div>
             <Link
-              to="/files/cv.txt"
+              to="public\files\2024_Margarita_Smoldareva_Resume.pdf"
               target="_blank"
               className="primaryButton"
               download={true}
