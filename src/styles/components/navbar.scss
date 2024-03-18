@@ -1,0 +1,318 @@
+.HeaderBar--root {
+  height: 100px;
+  background-color: #022b3a;
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-self: center;
+  margin: 0 120px;
+  width: 100%;
+
+  z-index: 289;
+  position: sticky;
+  top: 0;
+
+  .content {
+    width: 1440px;
+    padding: 0 120px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    .mainArea {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .logobox {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        text-decoration: none;
+        margin: 0 40px 0 0;
+
+        .logo_img {
+          width: 33.33px;
+          height: 36.84px;
+        }
+      }
+
+      .navs {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0;
+        padding-left: 0;
+
+        li {
+          margin: 0 10px 0 0;
+          display: inline-block;
+
+          a {
+            text-decoration: none;
+            color: #fff;
+            font-family: "Poppins";
+            font-style: normal;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            padding: 0 10px;
+          }
+
+          @media only screen and (max-width: 1081px) {
+            .navLink {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+          }
+        }
+      }
+    }
+    .borderedButton {
+      font-family: "Poppins";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 24px;
+      padding: 10px 20px;
+
+      color: #34baf7;
+      outline: none;
+      border: 1px solid #34baf7;
+      background-color: transparent;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .buttonArea {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      .primaryButton {
+        padding: 10px 20px;
+        font-family: "Poppins";
+        font-style: normal;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 24px;
+        background-color: #34baf7;
+        outline: none;
+        border: none;
+        color: #ffffff;
+        border-radius: 8px;
+        margin-left: 20px;
+        cursor: pointer;
+      }
+    }
+
+    @media only screen and (max-width: 1250px) {
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    @media only screen and (max-width: 975px) {
+      .mainArea {
+        .navs {
+          display: none;
+        }
+      }
+      .buttonArea {
+        display: none;
+      }
+    }
+  }
+
+  .nav_btn {
+    display: none;
+    position: relative;
+    padding: 0 20px 0 0;
+
+    .btn-primary {
+      background-color: transparent;
+      outline: none;
+      border: none;
+      // background-color: #98dfaf;
+      border-radius: 6px;
+    }
+  }
+
+  @media only screen and (max-width: 1220px) {
+    margin: 0 60px;
+  }
+
+  @media only screen and (max-width: 975px) {
+    margin: 0 20px;
+    .content {
+      .navs {
+        display: none;
+      }
+    }
+    .nav_btn {
+      display: grid;
+      align-items: center;
+
+      .btn {
+        padding: 8px 12px;
+        box-shadow: none !important;
+
+        &.btn-primary {
+          .normal {
+            display: block;
+          }
+          .open {
+            display: none;
+          }
+
+          &.active {
+            .normal {
+              display: none;
+            }
+            .open {
+              display: block;
+            }
+          }
+        }
+      }
+
+      svg {
+        font-size: 16.67px;
+      }
+
+      .navs__sm {
+        display: block;
+        position: fixed;
+        width: 100vw;
+        background-color: #022b3a;
+        z-index: 10;
+        left: 0;
+        top: 100px;
+        height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 1s ease-in-out;
+
+        &.active {
+          height: calc(100vh - 100px);
+          opacity: 1;
+        }
+
+        .nav__box {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+
+          .links {
+            margin-top: 40px;
+            padding: 0 20px;
+            flex: 1;
+
+            .link {
+              margin-top: 34px;
+              padding-bottom: 32px;
+              color: #fff;
+              width: 100%;
+              display: inline-block;
+              border-bottom: 1px solid #fff;
+              text-decoration: none;
+
+              &:first-child {
+                margin-top: 0;
+              }
+
+              .nav_icon {
+                font-size: 20px;
+                margin-right: 9px;
+                color: #fff;
+              }
+
+              span {
+                font-weight: 800;
+                font-size: 16px;
+                line-height: 20px;
+                color: #fff;
+              }
+
+              .arrow_right {
+                float: right;
+                color: #fff;
+              }
+
+              &.active {
+                .nav_icon {
+                  color: #1f90ff;
+                }
+
+                span {
+                  color: #1f90ff;
+                }
+
+                .arrow_right {
+                  display: none;
+                }
+              }
+            }
+            .comingSoonText {
+              font-weight: 600;
+              font-size: 14px;
+              line-height: 21px;
+              color: #ffffff;
+              margin-top: 20px;
+              opacity: 0.8;
+            }
+            .buttonArea {
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              margin-top: 30px;
+              width: 100%;
+
+              .primaryButton {
+                width: 100%;
+                padding: 10px 20px;
+                font-family: "Poppins";
+                font-style: normal;
+                font-weight: 500;
+                font-size: 16px;
+                line-height: 24px;
+                background-color: #34baf7;
+                outline: none;
+                border: none;
+                color: #ffffff;
+                border-radius: 8px;
+                cursor: pointer;
+              }
+            }
+          }
+
+          .footer {
+            padding: 0 20px;
+
+            p {
+              text-align: center;
+              color: #adaeb6;
+              font-weight: 500;
+              font-size: 12px;
+              line-height: 15px;
+              margin-bottom: 30px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 941px) {
+    margin: 0 40px;
+  }
+  @media only screen and (max-width: 901px) {
+    margin: 0 20px;
+  }
+}
