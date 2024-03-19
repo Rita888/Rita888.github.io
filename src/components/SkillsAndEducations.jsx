@@ -1,7 +1,7 @@
 import {useState} from "react";
 
 const SkillsAndEducations = () => {
-  const [tab, setTab] = useState('Skills')
+  const [tab, setTab] = useState('Services')
 
   // const allTabs = ['Services', 'Education', 'Certifications']
   const tabInfo = {
