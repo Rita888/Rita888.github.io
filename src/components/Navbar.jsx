@@ -48,7 +48,7 @@ const Navbar = () => {
                 className="navLink"
                 to="/#about"
               >
-                About Me
+                Services
               </HashLink>
             </li>
             {/* <li>
