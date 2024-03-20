@@ -131,7 +131,7 @@ const Navbar = () => {
               </HashLink>
             </div>
             <div className="footer">
-              <p>Copyright © Margarita. All Rights Reserved.</p>
+              <p>Copyright © Margarita Smoldareva. All Rights Reserved.</p>
             </div>
           </div>
         </div>
